@@ -9,19 +9,28 @@ $config = [
     'bootstrap' => ['log'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
+        '@npm' => '@vendor/npm-asset',
+    ],
+    'modules' => [
+        'v1' => [
+            'class' => 'app\modules\v1\V1Mod',
+        ],
     ],
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'yQdIbN-4kT5Z_nTKa_0TUtEJY1rF3_0e',
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ]
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
+            'identityClass' => 'app\modules\base\models\BaseUser',
             'enableAutoLogin' => true,
+            'loginUrl' => ['/'], // это return $this->goHome();
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -43,14 +52,28 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
+        'authManager' => [
+            'class' => 'yii\rbac\PhpManager',
+        ],
         'urlManager' => [
             'enablePrettyUrl' => true,
+            'enableStrictParsing' => false,
             'showScriptName' => false,
+
             'rules' => [
+
+                'api/<module:[A-Za-z0-9_-]+>/<cmd:[A-Za-z0-9_-]+>' => 'api',
+
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'pluralize' => false,
+                    'controller' => ['api'],
+                    'extraPatterns' => [
+                        'OPTIONS <action:.*>' => 'options',
+                    ],
+                ],
             ],
         ],
-        */
     ],
     'params' => $params,
 ];
