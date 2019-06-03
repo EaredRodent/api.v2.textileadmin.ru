@@ -28,7 +28,7 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\modules\base\models\BaseUser',
+            'identityClass' => 'app\models\AnxUser',
             'enableAutoLogin' => true,
             'loginUrl' => ['/'], // это return $this->goHome();
         ],
@@ -54,6 +54,7 @@ $config = [
         'db' => $db,
         'authManager' => [
             'class' => 'yii\rbac\PhpManager',
+            'defaultRoles' => ['ROLE Guest'],
         ],
         'urlManager' => [
             'enablePrettyUrl' => true,
@@ -61,7 +62,18 @@ $config = [
             'showScriptName' => false,
 
             'rules' => [
-
+                'sales/orders/order/<id:\d+>' => 'sales/orders/order',
+                'api/excel-price/<key:[A-Za-z0-9_-]+>' => 'api/excel-price',
+                'get-file/<key:[A-Za-z0-9_-]+>' => 'file-storage/amfiles-def/api-shared-download',
+                'PUT,PATCH <module:[\w-]+>/<controller:[\w-]+>/<id:\d+>' => '<module>/<controller>/update',
+                'DELETE <module:[\w-]+>/<controller:[\w-]+>/<id:\d+>' => '<module>/<controller>/delete',
+                'GET,HEAD <module:[\w-]+>/<controller:[\w-]+>/<id:\d+>' => '<module>/<controller>/view',
+                'POST <module:[\w-]+>/<controller:[\w-]+>' => '<module>/<controller>/create',
+                'GET,HEAD <module:[\w-]+>/<controller:[\w-]+>' => '<module>/<controller>/index',
+                '<module:[\w-]+>/<controller:[\w-]+>/<id:\d+>' => '<module>/<controller>/options',
+                '<module:[\w-]+>/<controller:[\w-]+>' => '<module>/<controller>/options',
+                'GET,HEAD,POST <module:[\w-]+>/<controller:[\w-]+>/<action:[\w-]+>' => '<module>/<controller>/<action>',   // custom action
+                '<module:[\w-]+>/<controller:[\w-]+>/<action:[\w-]+>' => '<module>/<controller>/options',    // custom action
                 'api/<module:[A-Za-z0-9_-]+>/<cmd:[A-Za-z0-9_-]+>' => 'api',
 
                 [
