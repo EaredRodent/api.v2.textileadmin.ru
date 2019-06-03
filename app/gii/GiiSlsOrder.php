@@ -2,7 +2,12 @@
 
 namespace app\gii;
 
+use app\models\AnxUser;
+use app\modules\v1\models\SlsClient;
+use app\modules\v1\models\SlsMoney;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "sls_order".
@@ -40,7 +45,7 @@ use Yii;
  * @property AnxUser $userFk
  * @property SlsClient $clientFk
  */
-class GiiSlsOrder extends \yii\db\ActiveRecord
+class GiiSlsOrder extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -101,7 +106,7 @@ class GiiSlsOrder extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getPrStorProds()
     {
@@ -109,7 +114,7 @@ class GiiSlsOrder extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getPrTsdTasks()
     {
@@ -117,7 +122,7 @@ class GiiSlsOrder extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getSlsItems()
     {
@@ -125,7 +130,7 @@ class GiiSlsOrder extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getSlsMoneys()
     {
@@ -133,7 +138,7 @@ class GiiSlsOrder extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUserFk()
     {
@@ -141,7 +146,7 @@ class GiiSlsOrder extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getClientFk()
     {

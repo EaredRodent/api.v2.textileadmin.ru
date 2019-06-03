@@ -2,7 +2,11 @@
 
 namespace app\gii;
 
+use app\models\AnxUser;
+use app\modules\v1\models\AmfilesDirectory;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "amfiles_file".
@@ -20,7 +24,7 @@ use Yii;
  * @property AmfilesDirectory $dirFk
  * @property AnxUser $userFk
  */
-class GiiAmfilesFile extends \yii\db\ActiveRecord
+class GiiAmfilesFile extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -65,7 +69,7 @@ class GiiAmfilesFile extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getDirFk()
     {
@@ -73,7 +77,7 @@ class GiiAmfilesFile extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUserFk()
     {

@@ -2,7 +2,12 @@
 
 namespace app\gii;
 
+use app\models\AnxUser;
+use app\modules\v1\models\SlsInvoice;
+use app\modules\v1\models\SlsOrder;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "sls_money".
@@ -24,7 +29,7 @@ use Yii;
  * @property SlsOrder $orderFk
  * @property SlsPayItem $payItemFk
  */
-class GiiSlsMoney extends \yii\db\ActiveRecord
+class GiiSlsMoney extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -74,7 +79,7 @@ class GiiSlsMoney extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUserFk()
     {
@@ -82,7 +87,7 @@ class GiiSlsMoney extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getInvoiceFk()
     {
@@ -90,7 +95,7 @@ class GiiSlsMoney extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getOrderFk()
     {
@@ -98,7 +103,7 @@ class GiiSlsMoney extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getPayItemFk()
     {

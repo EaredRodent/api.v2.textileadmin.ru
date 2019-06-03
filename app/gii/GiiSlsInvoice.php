@@ -2,7 +2,11 @@
 
 namespace app\gii;
 
+use app\models\AnxUser;
+use app\modules\v1\models\SlsMoney;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "sls_invoice".
@@ -26,7 +30,7 @@ use Yii;
  * @property AnxUser $userFk
  * @property SlsMoney[] $slsMoneys
  */
-class GiiSlsInvoice extends \yii\db\ActiveRecord
+class GiiSlsInvoice extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -78,7 +82,7 @@ class GiiSlsInvoice extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUserFk()
     {
@@ -86,7 +90,7 @@ class GiiSlsInvoice extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getSlsMoneys()
     {
