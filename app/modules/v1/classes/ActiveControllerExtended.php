@@ -8,12 +8,15 @@
 
 namespace app\modules\v1\classes;
 
+use app\modules\v1\V1Mod;
+use Exception;
 use Yii;
 use yii\base\InlineAction;
 use yii\filters\AccessControl;
 use yii\filters\auth\HttpBearerAuth;
 use yii\rest\ActiveController;
 use WebSocket\Client;
+use yii\web\BadRequestHttpException;
 use yii\web\HttpException;
 
 class ActiveControllerExtended extends ActiveController
@@ -48,7 +51,7 @@ class ActiveControllerExtended extends ActiveController
     /**
      * @param $action InlineAction
      * @return bool
-     * @throws \yii\web\BadRequestHttpException
+     * @throws BadRequestHttpException
      * @throws HttpException
      */
     public function beforeAction($action)
@@ -88,12 +91,14 @@ class ActiveControllerExtended extends ActiveController
             $timeEnd = microtime(true);
             $timeDiff = $timeEnd - $time;
 
-            if (!empty(Yii::$app->app->cmdTables)) {
+            /** @var V1Mod $module */
+            $module = Yii::$app->getModule('v1');
+            if (!empty($module->cmdTables)) {
                 $wsc = new Client($this->wssUrl);
-                $wsc->send(json_encode(Yii::$app->app->cmdTables));
+                $wsc->send(json_encode($module->cmdTables));
             }
             return $result;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->transaction->rollBack();
             //throw new \Exception('Transaction rolled back. ' . $e->getMessage());
             throw $e;

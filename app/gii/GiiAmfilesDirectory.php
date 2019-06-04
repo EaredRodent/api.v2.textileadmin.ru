@@ -3,9 +3,8 @@
 namespace app\gii;
 
 use app\models\AnxUser;
-use Yii;
+use app\modules\v1\classes\ActiveRecordExtended;
 use yii\db\ActiveQuery;
-use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "amfiles_directory".
@@ -19,7 +18,7 @@ use yii\db\ActiveRecord;
  * @property AnxUser $userFk
  * @property AmfilesFile[] $amfilesFiles
  */
-class GiiAmfilesDirectory extends ActiveRecord
+class GiiAmfilesDirectory extends ActiveRecordExtended
 {
     /**
      * {@inheritdoc}

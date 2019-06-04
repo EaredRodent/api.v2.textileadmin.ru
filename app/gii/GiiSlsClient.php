@@ -3,10 +3,9 @@
 namespace app\gii;
 
 use app\models\AnxUser;
+use app\modules\v1\classes\ActiveRecordExtended;
 use app\modules\v1\models\SlsOrder;
-use Yii;
 use yii\db\ActiveQuery;
-use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "sls_client".
@@ -28,7 +27,7 @@ use yii\db\ActiveRecord;
  * @property AnxUser $managerFk
  * @property SlsOrder[] $slsOrders
  */
-class GiiSlsClient extends ActiveRecord
+class GiiSlsClient extends ActiveRecordExtended
 {
     /**
      * {@inheritdoc}

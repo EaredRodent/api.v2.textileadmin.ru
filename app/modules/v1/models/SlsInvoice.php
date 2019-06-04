@@ -10,6 +10,7 @@ namespace app\modules\v1\models;
 
 
 use app\gii\GiiSlsInvoice;
+use yii\db\ActiveRecord;
 
 class SlsInvoice extends GiiSlsInvoice
 {
@@ -18,4 +19,38 @@ class SlsInvoice extends GiiSlsInvoice
     const stateAccept = 'accept';
     const statePartPay = 'partPay';
     const stateFullPay = 'fullPay';
+
+    public function fields()
+    {
+        return array_merge(parent::fields(), [
+            'userFk'
+        ]);
+    }
+
+    /**
+     * @param $state
+     * @param $userId
+     * @param $sortPos
+     * @return array|ActiveRecord[]|static[]
+     */
+    public static function readSortDown($state, $userId, $sortPos)
+    {
+        return static::find()
+            ->where(['user_fk' => $userId, 'state' => $state])
+            ->andWhere(['>', 'sort', $sortPos])
+            ->all();
+    }
+
+    /**
+     * @param $state
+     * @param $userId
+     * @param $sortPos
+     * @return array|null|ActiveRecord|static
+     */
+    public static function readSortItem($state, $userId, $sortPos)
+    {
+        return self::find()
+            ->where(['user_fk' => $userId, 'state' => $state, 'sort' => $sortPos])
+            ->one();
+    }
 }

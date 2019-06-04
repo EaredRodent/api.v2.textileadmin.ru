@@ -2,7 +2,8 @@
 
 namespace app\gii;
 
-use Yii;
+use app\modules\v1\classes\ActiveRecordExtended;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "ref_fabric_type".
@@ -28,7 +29,7 @@ use Yii;
  * @property RefWeight[] $refWeights
  * @property SpecCurve[] $specCurves
  */
-class GiiRefFabricType extends \yii\db\ActiveRecord
+class GiiRefFabricType extends ActiveRecordExtended
 {
     /**
      * {@inheritdoc}
@@ -79,7 +80,7 @@ class GiiRefFabricType extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getPrStorFabrics()
     {
@@ -87,7 +88,7 @@ class GiiRefFabricType extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getRefArtBlanks()
     {
@@ -95,7 +96,7 @@ class GiiRefFabricType extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getRefWeights()
     {
@@ -103,7 +104,7 @@ class GiiRefFabricType extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getSpecCurves()
     {

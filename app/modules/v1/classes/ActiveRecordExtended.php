@@ -8,6 +8,7 @@
 
 namespace app\modules\v1\classes;
 
+use app\modules\v1\V1Mod;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -16,8 +17,10 @@ class ActiveRecordExtended extends ActiveRecord
 {
 	public function save($runValidation = true, $attributeNames = null)
 	{
+	    /** @var V1Mod $module */
+	    $module = Yii::$app->getModule('v1');
 		if (parent::save()) {
-			Yii::$app->app->cmdTables[] = static::tableName();
+            $module->cmdTables[] = static::tableName();
 			return true;
 		} else {
 			$errStr = '';
@@ -25,30 +28,30 @@ class ActiveRecordExtended extends ActiveRecord
 			foreach ($error as $field => $err) {
 				$errStr = static::tableName() . '.' . $field . ' = ' . $err;
 			}
-			Yii::$app->app->cmdErrors[] = $errStr;
+            $module->cmdErrors[] = $errStr;
 			return false;
 		}
 	}
 
 	public function delete()
 	{
+        /** @var V1Mod $module */
+        $module = Yii::$app->getModule('v1');
 		if (parent::delete()) {
-			Yii::$app->app->cmdTables[] = static::tableName();
+            $module->cmdTables[] = static::tableName();
 		} else {
 			$errStr = '';
 			$error = static::getFirstErrors();
 			foreach ($error as $field => $err) {
 				$errStr = static::tableName() . '.' . $field . ' = ' . $err;
 			}
-			Yii::$app->app->cmdErrors[] = $errStr;
+            $module->cmdErrors[] = $errStr;
 		}
 	}
 
 	public static function readRecord($id)
 	{
-		return static::find()
-			->where(['id' => (int)$id])
-			->one();
+		return static::findOne(['id' => (int)$id]);
 	}
 
 	public static function readRecords($ids = null)

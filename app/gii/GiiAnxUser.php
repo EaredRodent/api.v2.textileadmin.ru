@@ -2,7 +2,8 @@
 
 namespace app\gii;
 
-use Yii;
+use app\modules\v1\classes\ActiveRecordExtended;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "anx_user".
@@ -28,7 +29,7 @@ use Yii;
  * @property SlsOrder[] $slsOrders
  * @property SlsStatPrice[] $slsStatPrices
  */
-class GiiAnxUser extends \yii\db\ActiveRecord
+class GiiAnxUser extends ActiveRecordExtended
 {
     /**
      * {@inheritdoc}
@@ -71,7 +72,7 @@ class GiiAnxUser extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getAmfilesDirectories()
     {
@@ -79,7 +80,7 @@ class GiiAnxUser extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getAmfilesFiles()
     {
@@ -87,7 +88,7 @@ class GiiAnxUser extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getAnxCmdLogs()
     {
@@ -95,7 +96,7 @@ class GiiAnxUser extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getAnxDbLogs()
     {
@@ -103,7 +104,7 @@ class GiiAnxUser extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getPrInventItems()
     {
@@ -111,7 +112,7 @@ class GiiAnxUser extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getPrTsdItems()
     {
@@ -119,7 +120,7 @@ class GiiAnxUser extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getSlsClients()
     {
@@ -127,7 +128,7 @@ class GiiAnxUser extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getSlsInvoices()
     {
@@ -135,7 +136,7 @@ class GiiAnxUser extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getSlsMoneys()
     {
@@ -143,7 +144,7 @@ class GiiAnxUser extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getSlsOrders()
     {
@@ -151,7 +152,7 @@ class GiiAnxUser extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getSlsStatPrices()
     {

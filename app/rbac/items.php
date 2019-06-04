@@ -29,6 +29,9 @@ return [
             'GET /v1/sls-order/get-inwork-orders',
             'GET /v1/sls-order/get-send-orders',
             'GET /v1/sls-order/get-prep-orders',
+            '/files',
+            'POST /v1/sls-invoice/reject',
+            'POST /v1/sls-invoice/sort-up',
         ],
     ],
     'ROLE Moderator' => [
@@ -108,6 +111,21 @@ return [
         'type' => 2,
     ],
     'GET /v1/sls-order/get-prep-orders' => [
+        'type' => 2,
+    ],
+    '/files' => [
+        'type' => 2,
+    ],
+    'POST /v1/amfiles-directory/create' => [
+        'type' => 2,
+    ],
+    'POST /v1/amfiles-file/update' => [
+        'type' => 2,
+    ],
+    'POST /v1/sls-invoice/reject' => [
+        'type' => 2,
+    ],
+    'POST /v1/sls-invoice/sort-up' => [
         'type' => 2,
     ],
 ];

@@ -3,11 +3,10 @@
 namespace app\gii;
 
 use app\models\AnxUser;
+use app\modules\v1\classes\ActiveRecordExtended;
 use app\modules\v1\models\SlsInvoice;
 use app\modules\v1\models\SlsOrder;
-use Yii;
 use yii\db\ActiveQuery;
-use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "sls_money".
@@ -29,7 +28,7 @@ use yii\db\ActiveRecord;
  * @property SlsOrder $orderFk
  * @property SlsPayItem $payItemFk
  */
-class GiiSlsMoney extends ActiveRecord
+class GiiSlsMoney extends ActiveRecordExtended
 {
     /**
      * {@inheritdoc}
