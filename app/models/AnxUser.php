@@ -16,7 +16,7 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
      */
     public static function findIdentity($id)
     {
-        return self::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
     }
 
     /**
@@ -24,7 +24,7 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        return self::findOne(['accesstoken' => $token, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['accesstoken' => $token, 'status' => self::STATUS_ACTIVE]);
     }
 
     /**
@@ -33,10 +33,10 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
      * @param string $username
      * @return static|null
      */
-    public static function findByUsername($username)
-    {
-        return self::findOne(['login' => $username, 'status' => self::STATUS_ACTIVE]);
-    }
+//    public static function findByUsername($username)
+//    {
+//        return static::findOne(['login' => $username, 'status' => self::STATUS_ACTIVE]);
+//    }
 
     /**
      * {@inheritdoc}
@@ -70,9 +70,9 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
      * @param string $password password to validate
      * @return bool if password provided is valid for current user
      */
-    public function validatePassword($password)
-    {
-//        return $this->password === $password;
-        return false;
-    }
+//    public function validatePassword($password)
+//    {
+////        return $this->password === $password;
+//        return false;
+//    }
 }

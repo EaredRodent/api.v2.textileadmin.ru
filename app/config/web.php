@@ -30,6 +30,7 @@ $config = [
         'user' => [
             'identityClass' => 'app\models\AnxUser',
             'enableAutoLogin' => true,
+            'enableSession' => false,
             'loginUrl' => ['/'], // это return $this->goHome();
         ],
         'errorHandler' => [
