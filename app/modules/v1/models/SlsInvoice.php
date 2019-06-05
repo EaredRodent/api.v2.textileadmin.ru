@@ -31,11 +31,11 @@ class SlsInvoice extends GiiSlsInvoice
      * @param $state
      * @param $userId
      * @param $sortPos
-     * @return array|ActiveRecord[]|static[]
+     * @return array|ActiveRecord[]|self[]
      */
-    public static function readSortDown($state, $userId, $sortPos)
+    public static function getSortDown($state, $userId, $sortPos)
     {
-        return static::find()
+        return self::find()
             ->where(['user_fk' => $userId, 'state' => $state])
             ->andWhere(['>', 'sort', $sortPos])
             ->all();
@@ -45,12 +45,36 @@ class SlsInvoice extends GiiSlsInvoice
      * @param $state
      * @param $userId
      * @param $sortPos
-     * @return array|null|ActiveRecord|static
+     * @return array|ActiveRecord|self
      */
-    public static function readSortItem($state, $userId, $sortPos)
+    public static function getSortItem($state, $userId, $sortPos)
     {
         return self::find()
             ->where(['user_fk' => $userId, 'state' => $state, 'sort' => $sortPos])
             ->one();
+    }
+
+    /**
+     * Кол-во ожидающих акцептования счетов для определенного юзера
+     * @param $userId
+     * @return int|string
+     */
+    public static function waitInvoicesCount($userId)
+    {
+        return self::find()
+            ->where(['user_fk' => $userId, 'state' => self::stateWait])
+            ->count();
+    }
+
+    /**
+     * Кол-во ожидающих акцептования счетов для определенного юзера
+     * @param $userId
+     * @return int|string
+     */
+    public static function rejectInvoicesCount($userId)
+    {
+        return self::find()
+            ->where(['user_fk' => $userId, 'state' => self::stateReject])
+            ->count();
     }
 }

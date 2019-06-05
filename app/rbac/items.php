@@ -32,6 +32,7 @@ return [
             '/files',
             'POST /v1/sls-invoice/reject',
             'POST /v1/sls-invoice/sort-up',
+            'POST /v1/sls-invoice/return',
         ],
     ],
     'ROLE Moderator' => [
@@ -126,6 +127,9 @@ return [
         'type' => 2,
     ],
     'POST /v1/sls-invoice/sort-up' => [
+        'type' => 2,
+    ],
+    'POST /v1/sls-invoice/return' => [
         'type' => 2,
     ],
 ];

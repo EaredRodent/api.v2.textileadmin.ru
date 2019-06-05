@@ -49,12 +49,12 @@ class ActiveRecordExtended extends ActiveRecord
 		}
 	}
 
-	public static function readRecord($id)
+	public static function get($id)
 	{
 		return static::findOne(['id' => (int)$id]);
 	}
 
-	public static function readRecords($ids = null)
+	public static function getAll($ids = null)
 	{
 		return static::find()
 			->filterWhere(['id' => $ids])

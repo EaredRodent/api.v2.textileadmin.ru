@@ -68,19 +68,14 @@ class SlsInvoiceController extends ActiveControllerExtended
 
     public function actionReject($id)
     {
-        $invoice = $this->modelClass::readRecord($id);
+        $invoice = $this->modelClass::get($id);
         $userId = $invoice->user_fk;
 
         $prevSort = $invoice->sort;
 
         // Новая позиция в конце отклоненных платежей
 
-        $newSort = $this->modelClass::find()
-                ->where([
-                    'user_fk' => $userId,
-                    'state' => $this->modelClass::stateReject
-                ])
-                ->count() + 1;
+        $newSort = $this->modelClass::rejectInvoicesCount($userId) + 1;
 
         $invoice->state = $this->modelClass::stateReject;
         $invoice->sort = $newSort;
@@ -88,7 +83,7 @@ class SlsInvoiceController extends ActiveControllerExtended
 
         // Сдвиг всех ожидающих платежей вверх
 
-        $waitInvoices = $this->modelClass::readSortDown($this->modelClass::stateWait, $userId, $prevSort);
+        $waitInvoices = $this->modelClass::getSortDown($this->modelClass::stateWait, $userId, $prevSort);
         foreach ($waitInvoices as $waitInvoice) {
             $waitInvoice->sort--;
             $waitInvoice->save();
@@ -96,7 +91,7 @@ class SlsInvoiceController extends ActiveControllerExtended
     }
 
     public function actionSortUp($id) {
-        $invoice = $this->modelClass::readRecord($id);
+        $invoice = $this->modelClass::get($id);
 
         $userId = $invoice->user_fk;
         $state = $invoice->state;
@@ -105,13 +100,42 @@ class SlsInvoiceController extends ActiveControllerExtended
         $newSort = $prevSort - 1;
 
         if ($prevSort > 1) {
-            $upperInvoice = $this->modelClass::readSortItem($state, $userId, $newSort);
+            $upperInvoice = $this->modelClass::getSortItem($state, $userId, $newSort);
             $upperInvoice->sort = $prevSort;
             $upperInvoice->save();
 
             $invoice->sort = $newSort;
             $invoice->save();
         }
+    }
+
+    public function actionReturn($id)
+    {
+        $invoice = $this->modelClass::get($id);
+
+        if ($invoice->summ_pay > 0) {
+            // Убрать в частично оплаченные
+            $invoice->state = $this->modelClass::statePartPay;
+            $invoice->save();
+        } else {
+            // Убрать в подготавливаемые
+            $userId = $invoice->user_fk;
+            $sort = $this->modelClass::waitInvoicesCount($userId) + 1;
+            $prevSort = $invoice->sort;
+
+            $invoice->state = $this->modelClass::stateWait;
+            $invoice->sort = $sort;
+            $invoice->save();
+
+            // Закрыть "дырку"
+            $acceptInvoices = $this->modelClass::getSortDown($this->modelClass::stateAccept, $userId, $prevSort);
+            foreach ($acceptInvoices as $acceptInvoice) {
+                $acceptInvoice->sort--;
+                $acceptInvoice->save();
+            }
+        }
+
+
     }
 
 }
