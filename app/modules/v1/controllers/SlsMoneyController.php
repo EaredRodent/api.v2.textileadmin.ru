@@ -23,7 +23,7 @@ class SlsMoneyController extends ActiveControllerExtended
         return $actions;
     }
 
-    function actionOutPays($month = null)
+    function actionGetOut($month = null)
     {
         if (!$month) {
             $month = date('Y-m');
@@ -32,7 +32,7 @@ class SlsMoneyController extends ActiveControllerExtended
         return $resp;
     }
 
-    function actionIncomPays($month = null, $clientId = null)
+    function actionGetIncom($month = null, $clientId = null)
     {
         if (!$month) {
             $month = date('Y-m');

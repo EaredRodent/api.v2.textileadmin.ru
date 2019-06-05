@@ -16,7 +16,7 @@ class SlsOrderController extends ActiveControllerExtended
     /** @var SlsOrder $modelClass */
     public $modelClass = 'app\modules\v1\models\SlsOrder';
 
-    public function actionGetPrepOrders()
+    public function actionGetPrep()
     {
         return $this->modelClass::find()
             ->with('clientFk')
@@ -25,7 +25,7 @@ class SlsOrderController extends ActiveControllerExtended
             ->all();
     }
 
-    public function actionGetInworkOrders()
+    public function actionGetInwork()
     {
         return $this->modelClass::find()
             ->with('clientFk')
@@ -41,7 +41,7 @@ class SlsOrderController extends ActiveControllerExtended
             ->all();
     }
 
-    public function actionGetSendOrders($month = null, $clientId = null)
+    public function actionGetSend($month = null, $clientId = null)
     {
         $month = ($month == null) ? date("Y-m") : $month;
 

@@ -21,18 +21,19 @@ return [
             '/management/reg-pays',
             '/base/roles',
             'GET /v1/sls-client/get-for-filters',
-            'GET /v1/sls-invoice/accept',
-            'GET /v1/sls-invoice/part-pay',
-            'GET /v1/sls-invoice/get-wait-invoices',
-            'GET /v1/sls-money/out-pays',
-            'GET /v1/sls-money/incom-pays',
-            'GET /v1/sls-order/get-inwork-orders',
-            'GET /v1/sls-order/get-send-orders',
-            'GET /v1/sls-order/get-prep-orders',
+            'GET /v1/sls-invoice/get-accept',
+            'GET /v1/sls-invoice/get-part-pay',
+            'GET /v1/sls-invoice/get-wait',
+            'GET /v1/sls-money/get-out',
+            'GET /v1/sls-money/get-incom',
+            'GET /v1/sls-order/get-inwork',
+            'GET /v1/sls-order/get-send',
+            'GET /v1/sls-order/get-prep',
             '/files',
             'POST /v1/sls-invoice/reject',
             'POST /v1/sls-invoice/sort-up',
             'POST /v1/sls-invoice/return',
+            'POST /v1/sls-invoice/accept',
         ],
     ],
     'ROLE Moderator' => [
@@ -90,28 +91,28 @@ return [
     'GET /v1/sls-client/get-for-filters' => [
         'type' => 2,
     ],
-    'GET /v1/sls-invoice/accept' => [
+    'GET /v1/sls-invoice/get-accept' => [
         'type' => 2,
     ],
-    'GET /v1/sls-invoice/part-pay' => [
+    'GET /v1/sls-invoice/get-part-pay' => [
         'type' => 2,
     ],
-    'GET /v1/sls-invoice/get-wait-invoices' => [
+    'GET /v1/sls-invoice/get-wait' => [
         'type' => 2,
     ],
-    'GET /v1/sls-money/out-pays' => [
+    'GET /v1/sls-money/get-out' => [
         'type' => 2,
     ],
-    'GET /v1/sls-money/incom-pays' => [
+    'GET /v1/sls-money/get-incom' => [
         'type' => 2,
     ],
-    'GET /v1/sls-order/get-inwork-orders' => [
+    'GET /v1/sls-order/get-inwork' => [
         'type' => 2,
     ],
-    'GET /v1/sls-order/get-send-orders' => [
+    'GET /v1/sls-order/get-send' => [
         'type' => 2,
     ],
-    'GET /v1/sls-order/get-prep-orders' => [
+    'GET /v1/sls-order/get-prep' => [
         'type' => 2,
     ],
     '/files' => [
@@ -130,6 +131,9 @@ return [
         'type' => 2,
     ],
     'POST /v1/sls-invoice/return' => [
+        'type' => 2,
+    ],
+    'POST /v1/sls-invoice/accept' => [
         'type' => 2,
     ],
 ];

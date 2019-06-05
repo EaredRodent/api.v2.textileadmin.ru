@@ -21,7 +21,7 @@ class SlsInvoiceController extends ActiveControllerExtended
      * /v1/sls-invoice/accept
      * @return array|ActiveRecord
      */
-    public function actionAccept()
+    public function actionGetAccept()
     {
         return $this->modelClass::find()
             ->where(['state' => $this->modelClass::stateAccept])
@@ -33,7 +33,7 @@ class SlsInvoiceController extends ActiveControllerExtended
      * /v1/sls-invoice/part-pay
      * @return array|ActiveRecord[]
      */
-    public function actionPartPay()
+    public function actionGetPartPay()
     {
         return $this->modelClass::find()
             ->where(['state' => $this->modelClass::statePartPay])
@@ -41,7 +41,7 @@ class SlsInvoiceController extends ActiveControllerExtended
             ->all();
     }
 
-    public function actionGetWaitInvoices()
+    public function actionGetWait()
     {
         $resp = [];
         $dfdgs = [
@@ -134,8 +134,32 @@ class SlsInvoiceController extends ActiveControllerExtended
                 $acceptInvoice->save();
             }
         }
+    }
 
+    public function actionAccept($id, $cur_pay, $comment = '')
+    {
+        // Позиция в сортировке
+        $newSort = $this->modelClass::acceptInvoicesCount() + 1;
 
+        $invoice = $this->modelClass::get($id);
+
+        $prevSort = $invoice->sort;
+        $userId = $invoice->user_fk;
+
+        $invoice->state = $this->modelClass::stateAccept;
+        $invoice->sort = $newSort;
+        $invoice->cur_pay = $cur_pay;
+        $invoice->comment = $comment;
+        $invoice->save();
+
+        if ($invoice->summ_pay == 0) {
+            // Закрыть "дырку" если из подготавливаемых
+            $waitInvoices = $this->modelClass::getSortDown($this->modelClass::stateWait, $userId, $prevSort);
+            foreach ($waitInvoices as $waitInvoice) {
+                $waitInvoice->sort = $waitInvoice->sort - 1;
+                $waitInvoice->save();
+            }
+        }
     }
 
 }

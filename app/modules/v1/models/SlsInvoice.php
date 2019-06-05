@@ -20,6 +20,9 @@ class SlsInvoice extends GiiSlsInvoice
     const statePartPay = 'partPay';
     const stateFullPay = 'fullPay';
 
+    /**
+     * @return array|false
+     */
     public function fields()
     {
         return array_merge(parent::fields(), [
@@ -45,7 +48,7 @@ class SlsInvoice extends GiiSlsInvoice
      * @param $state
      * @param $userId
      * @param $sortPos
-     * @return array|ActiveRecord|self
+     * @return array|ActiveRecord|null|self
      */
     public static function getSortItem($state, $userId, $sortPos)
     {
@@ -55,7 +58,6 @@ class SlsInvoice extends GiiSlsInvoice
     }
 
     /**
-     * Кол-во ожидающих акцептования счетов для определенного юзера
      * @param $userId
      * @return int|string
      */
@@ -67,7 +69,6 @@ class SlsInvoice extends GiiSlsInvoice
     }
 
     /**
-     * Кол-во ожидающих акцептования счетов для определенного юзера
      * @param $userId
      * @return int|string
      */
@@ -75,6 +76,16 @@ class SlsInvoice extends GiiSlsInvoice
     {
         return self::find()
             ->where(['user_fk' => $userId, 'state' => self::stateReject])
+            ->count();
+    }
+
+    /**
+     * @return int|string
+     */
+    public static function acceptInvoicesCount()
+    {
+        return self::find()
+            ->where(['state' => SlsInvoice::stateAccept])
             ->count();
     }
 }

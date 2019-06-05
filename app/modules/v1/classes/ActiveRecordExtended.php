@@ -15,49 +15,63 @@ use yii\db\ActiveRecord;
 
 class ActiveRecordExtended extends ActiveRecord
 {
-	public function save($runValidation = true, $attributeNames = null)
-	{
-	    /** @var V1Mod $module */
-	    $module = Yii::$app->getModule('v1');
-		if (parent::save()) {
-            $module->cmdTables[] = static::tableName();
-			return true;
-		} else {
-			$errStr = '';
-			$error = static::getFirstErrors();
-			foreach ($error as $field => $err) {
-				$errStr = static::tableName() . '.' . $field . ' = ' . $err;
-			}
-            $module->cmdErrors[] = $errStr;
-			return false;
-		}
-	}
+    /**
+     * Исправление типа String на Number для отдаваемого JSON
+     */
+    public function afterFind()
+    {
+        parent::afterFind();
+        foreach ($this->attributes() as $attribute) {
+            if (is_numeric($this[$attribute]) && is_string($this[$attribute])) {
+                $this[$attribute] = (float)$this[$attribute];
+            }
+        }
+    }
 
-	public function delete()
-	{
+
+    public function save($runValidation = true, $attributeNames = null)
+    {
         /** @var V1Mod $module */
         $module = Yii::$app->getModule('v1');
-		if (parent::delete()) {
+        if (parent::save()) {
             $module->cmdTables[] = static::tableName();
-		} else {
-			$errStr = '';
-			$error = static::getFirstErrors();
-			foreach ($error as $field => $err) {
-				$errStr = static::tableName() . '.' . $field . ' = ' . $err;
-			}
+            return true;
+        } else {
+            $errStr = '';
+            $error = static::getFirstErrors();
+            foreach ($error as $field => $err) {
+                $errStr = static::tableName() . '.' . $field . ' = ' . $err;
+            }
             $module->cmdErrors[] = $errStr;
-		}
-	}
+            return false;
+        }
+    }
 
-	public static function get($id)
-	{
-		return static::findOne(['id' => (int)$id]);
-	}
+    public function delete()
+    {
+        /** @var V1Mod $module */
+        $module = Yii::$app->getModule('v1');
+        if (parent::delete()) {
+            $module->cmdTables[] = static::tableName();
+        } else {
+            $errStr = '';
+            $error = static::getFirstErrors();
+            foreach ($error as $field => $err) {
+                $errStr = static::tableName() . '.' . $field . ' = ' . $err;
+            }
+            $module->cmdErrors[] = $errStr;
+        }
+    }
 
-	public static function getAll($ids = null)
-	{
-		return static::find()
-			->filterWhere(['id' => $ids])
-			->all();
-	}
+    public static function get($id)
+    {
+        return static::findOne(['id' => (int)$id]);
+    }
+
+    public static function getAll($ids = null)
+    {
+        return static::find()
+            ->filterWhere(['id' => $ids])
+            ->all();
+    }
 }
