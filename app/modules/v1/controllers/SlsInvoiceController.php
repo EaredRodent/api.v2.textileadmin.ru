@@ -18,27 +18,36 @@ class SlsInvoiceController extends ActiveControllerExtended
     public $modelClass = 'app\modules\v1\models\SlsInvoice';
 
     /**
-     * /v1/sls-invoice/accept
-     * @return array|ActiveRecord
+     * @return array|ActiveRecord|self[]
      */
     public function actionGetAccept()
     {
-        return $this->modelClass::find()
-            ->where(['state' => $this->modelClass::stateAccept])
-            ->orderBy('sort')
-            ->all();
+        return $this->modelClass::getAccept();
     }
 
     /**
-     * /v1/sls-invoice/part-pay
-     * @return array|ActiveRecord[]
+     * @return array|ActiveRecord[]|self[]
      */
     public function actionGetPartPay()
     {
-        return $this->modelClass::find()
-            ->where(['state' => $this->modelClass::statePartPay])
-            ->orderBy('sort')
-            ->all();
+        return $this->modelClass::getPartPay();
+    }
+
+    /**
+     * @return array|ActiveRecord[]|self[]
+     */
+    public function actionGetPartPayWithStateAccept()
+    {
+        $invoices = $this->modelClass::getAccept();
+
+        $result = [];
+        foreach ($invoices as $invoice) {
+            if (bccomp(bcadd($invoice->summ_pay, $invoice->cur_pay), $invoice->summ) < 0) {
+                $result[] = $invoice;
+            }
+        }
+
+        return $result;
     }
 
     public function actionGetWait()
@@ -90,7 +99,8 @@ class SlsInvoiceController extends ActiveControllerExtended
         }
     }
 
-    public function actionSortUp($id) {
+    public function actionSortUp($id)
+    {
         $invoice = $this->modelClass::get($id);
 
         $userId = $invoice->user_fk;

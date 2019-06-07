@@ -31,6 +31,28 @@ class SlsInvoice extends GiiSlsInvoice
     }
 
     /**
+     * @return array|ActiveRecord[]|self[]
+     */
+    public static function getAccept()
+    {
+        return self::find()
+            ->where(['state' => self::stateAccept])
+            ->orderBy('sort')
+            ->all();
+    }
+
+    /**
+     * @return array|ActiveRecord[]|self[]
+     */
+    public static function getPartPay()
+    {
+        return self::find()
+            ->where(['state' => self::statePartPay])
+            ->orderBy('sort')
+            ->all();
+    }
+
+    /**
      * @param $state
      * @param $userId
      * @param $sortPos

@@ -15,20 +15,6 @@ use yii\db\ActiveRecord;
 
 class ActiveRecordExtended extends ActiveRecord
 {
-    /**
-     * Исправление типа String на Number для отдаваемого JSON
-     */
-    public function afterFind()
-    {
-        parent::afterFind();
-        foreach ($this->attributes() as $attribute) {
-            if (is_numeric($this[$attribute]) && is_string($this[$attribute])) {
-                $this[$attribute] = (float)$this[$attribute];
-            }
-        }
-    }
-
-
     public function save($runValidation = true, $attributeNames = null)
     {
         /** @var V1Mod $module */

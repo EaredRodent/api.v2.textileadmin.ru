@@ -60,6 +60,8 @@ class ActiveControllerExtended extends ActiveController
         if (!parent::beforeAction($action)) {
             return false;
         }
+        bcscale(6);
+
         Yii::$container->set('yii\data\Pagination', ['pageSizeLimit' => 1000, 'pageSize' => 1000]);
         Yii::$app->response->headers->set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Cookie, Authorization');
         Yii::$app->response->headers->set('Access-Control-Allow-Credentials', 'true');
