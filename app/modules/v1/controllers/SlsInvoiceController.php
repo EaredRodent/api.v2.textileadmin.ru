@@ -172,4 +172,9 @@ class SlsInvoiceController extends ActiveControllerExtended
         }
     }
 
+    public function actionTestThis($fetch) {
+        $lol = '100x::' . $fetch;
+        return $lol;
+    }
+
 }

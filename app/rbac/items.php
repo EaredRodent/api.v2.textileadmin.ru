@@ -35,6 +35,7 @@ return [
             'POST /v1/sls-invoice/return',
             'POST /v1/sls-invoice/accept',
             'GET /v1/sls-invoice/get-part-pay-with-state-accept',
+            'POST /v1/sls-money/money-out',
         ],
     ],
     'ROLE Moderator' => [
@@ -138,6 +139,9 @@ return [
         'type' => 2,
     ],
     'GET /v1/sls-invoice/get-part-pay-with-state-accept' => [
+        'type' => 2,
+    ],
+    'POST /v1/sls-money/money-out' => [
         'type' => 2,
     ],
 ];

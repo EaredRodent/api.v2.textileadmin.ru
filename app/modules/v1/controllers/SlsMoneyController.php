@@ -10,6 +10,15 @@ namespace app\modules\v1\controllers;
 
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\SlsMoney;
+use Symfony\Component\Yaml\Inline;
+use Yii;
+use yii\base\InlineAction;
+use yii\base\InvalidRouteException;
+use yii\base\Module;
+use yii\console\Exception;
+use yii\rbac\Permission;
+use yii\rest\Action;
+use yii\rest\Controller;
 
 class SlsMoneyController extends ActiveControllerExtended
 {
@@ -23,7 +32,7 @@ class SlsMoneyController extends ActiveControllerExtended
         return $actions;
     }
 
-    function actionGetOut($month = null)
+    public function actionGetOut($month = null)
     {
         if (!$month) {
             $month = date('Y-m');
@@ -32,7 +41,7 @@ class SlsMoneyController extends ActiveControllerExtended
         return $resp;
     }
 
-    function actionGetIncom($month = null, $clientId = null)
+    public function actionGetIncom($month = null, $clientId = null)
     {
         if (!$month) {
             $month = date('Y-m');
@@ -52,6 +61,14 @@ class SlsMoneyController extends ActiveControllerExtended
             ->andFilterWhere(['sls_order.client_fk' => $clientId])
             ->orderBy('ts_incom')
             ->all();
+
+    }
+
+    public function actionMoneyOut()
+    {
+        $dfsdg = Yii::$app->authManager->getRolesByUser(Yii::$app->getUser()->getId());
+        Yii::$app->authManager->addChild(array_keys($dfsdg)[0], new Permission('v1/sls-invoice/test-this'));
+        Yii::$app->runAction('v1/sls-invoice/test-this', ['fetch' => 'real?']);
 
     }
 
