@@ -9,21 +9,15 @@
 namespace app\modules\v1\controllers;
 
 use app\modules\v1\classes\ActiveControllerExtended;
-use app\modules\v1\models\SlsMoney;
-use Symfony\Component\Yaml\Inline;
+use app\modules\v1\models\sls\SlsInvoice;
+use app\modules\v1\models\sls\SlsMoney;
 use Yii;
-use yii\base\InlineAction;
-use yii\base\InvalidRouteException;
-use yii\base\Module;
-use yii\console\Exception;
-use yii\rbac\Permission;
-use yii\rest\Action;
-use yii\rest\Controller;
+use yii\web\HttpException;
 
 class SlsMoneyController extends ActiveControllerExtended
 {
     /** @var SlsMoney $modelClass */
-    public $modelClass = 'app\modules\v1\models\SlsMoney';
+    public $modelClass = 'app\modules\v1\models\sls\SlsMoney';
 
     public function actions()
     {
@@ -37,7 +31,7 @@ class SlsMoneyController extends ActiveControllerExtended
         if (!$month) {
             $month = date('Y-m');
         }
-        $resp = $this->modelClass::readOutMoney($month);
+        $resp = SlsMoney::getOutMoney($month);
         return $resp;
     }
 
@@ -52,12 +46,12 @@ class SlsMoneyController extends ActiveControllerExtended
         $dateStartSql = date('Y-m-d 00:00:00', strtotime($dateStart));
         $dateEndSql = date('Y-m-d 23:59:59', strtotime($dateEnd));
 
-        return $this->modelClass::find()
+        return SlsMoney::find()
             ->joinWith('orderFk')
             ->with('orderFk.clientFk')
             ->where(['>=', 'ts_incom', $dateStartSql])
             ->andWhere(['<=', 'ts_incom', $dateEndSql])
-            ->andWhere(['direct' => $this->modelClass::directIn])
+            ->andWhere(['direct' => SlsMoney::directIn])
             ->andFilterWhere(['sls_order.client_fk' => $clientId])
             ->orderBy('ts_incom')
             ->all();
@@ -66,10 +60,59 @@ class SlsMoneyController extends ActiveControllerExtended
 
     public function actionMoneyOut()
     {
-        $dfsdg = Yii::$app->authManager->getRolesByUser(Yii::$app->getUser()->getId());
-        Yii::$app->authManager->addChild(array_keys($dfsdg)[0], new Permission('v1/sls-invoice/test-this'));
-        Yii::$app->runAction('v1/sls-invoice/test-this', ['fetch' => 'real?']);
+        $model = new SlsMoney();
+        $post = Yii::$app->request->post();
+        $model->invoice_fk = $post['id'];
+        $model->summ = $post['cur_pay'];
+        $model->ts_incom = date('Y-m-d 12:00:00', strtotime($post['ts_incom']));
+        $model->pay_item_fk = $post['pay_item_fk'];
+        $model->comment = isset($post['comment']) ? $post['comment'] : '';
+        $model->user_fk = Yii::$app->user->getId();
+        $model->direct = SlsMoney::directOut;
+        $model->type = SlsMoney::typeBank;
+        $model->save();
 
+        // Сумма оплаты счета
+        $invoice = SlsInvoice::get($model->invoice_fk);
+        $invoice->summ_pay = bcadd($invoice->summ_pay, $model->summ);
+
+        $dsgdg = bccomp($invoice->summ_pay, $invoice->summ);
+        if ($dsgdg > 0) {
+            throw new HttpException(400, 'Оплачено больше чем сумма счета');
+        }
+
+        // Счет оплачен полностью
+        $dsgdsgdsgdg = bccomp($invoice->summ, $invoice->summ_pay);
+        if ($dsgdsgdsgdg === 0) {
+            $invoice->state = SlsInvoice::stateFullPay;
+            $sortPos = SlsInvoice::getCount(SlsInvoice::stateFullPay) + 1;
+            $invoice->sort = $sortPos;
+            // todo удалить дырки
+        }
+
+        // Счет оплачен частично
+        $dddddsaaa = bccomp($invoice->summ_pay, $invoice->summ);
+        if ($dddddsaaa < 0) {
+            $invoice->state = SlsInvoice::statePartPay;
+            $sortPos = SlsInvoice::getCount(SlsInvoice::statePartPay) + 1;
+            $invoice->sort = $sortPos;
+            // todo удалить дырки
+        }
+
+        $invoice->save();
+    }
+
+    /**
+     * TODO
+     */
+    public function actionGetUsers()
+    {
+        $sql = '
+        SELECT DISTINCT anx_user.name
+        FROM sls_money JOIN sls_invoice JOIN anx_user
+        ON sls_money.invoice_fk = sls_invoice.id AND anx_user.id = sls_invoice.user_fk
+        ';
+        return SlsMoney::findBySql($sql)->all();
     }
 
 }

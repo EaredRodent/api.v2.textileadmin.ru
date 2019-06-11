@@ -4,8 +4,9 @@ namespace app\gii;
 
 use app\models\AnxUser;
 use app\modules\v1\classes\ActiveRecordExtended;
-use app\modules\v1\models\SlsInvoice;
-use app\modules\v1\models\SlsOrder;
+use app\modules\v1\models\sls\SlsInvoice;
+use app\modules\v1\models\sls\SlsOrder;
+use app\modules\v1\models\sls\SlsPayItem;
 use yii\db\ActiveQuery;
 
 /**

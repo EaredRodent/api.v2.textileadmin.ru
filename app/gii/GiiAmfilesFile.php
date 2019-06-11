@@ -4,7 +4,7 @@ namespace app\gii;
 
 use app\models\AnxUser;
 use app\modules\v1\classes\ActiveRecordExtended;
-use app\modules\v1\models\AmfilesDirectory;
+use app\modules\v1\models\amfiles\AmfilesDirectory;
 use yii\db\ActiveQuery;
 
 /**

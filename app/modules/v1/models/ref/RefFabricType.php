@@ -6,7 +6,7 @@
  * Time: 14:00
  */
 
-namespace app\modules\v1\models;
+namespace app\modules\v1\models\ref;
 
 use app\gii\GiiRefFabricType;
 

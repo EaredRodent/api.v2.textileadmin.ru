@@ -36,6 +36,10 @@ return [
             'POST /v1/sls-invoice/accept',
             'GET /v1/sls-invoice/get-part-pay-with-state-accept',
             'POST /v1/sls-money/money-out',
+            'GET /v1/sls-pay-item/get-out',
+            'GET /v1/sls-pay-item/get-in',
+            'GET /v1/sls-currency/get-last',
+            '/management/pays',
         ],
     ],
     'ROLE Moderator' => [
@@ -142,6 +146,18 @@ return [
         'type' => 2,
     ],
     'POST /v1/sls-money/money-out' => [
+        'type' => 2,
+    ],
+    'GET /v1/sls-pay-item/get-out' => [
+        'type' => 2,
+    ],
+    'GET /v1/sls-pay-item/get-in' => [
+        'type' => 2,
+    ],
+    'GET /v1/sls-currency/get-last' => [
+        'type' => 2,
+    ],
+    '/management/pays' => [
         'type' => 2,
     ],
 ];

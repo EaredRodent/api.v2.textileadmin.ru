@@ -9,33 +9,33 @@
 namespace app\modules\v1\controllers;
 
 use app\modules\v1\classes\ActiveControllerExtended;
-use app\modules\v1\models\SlsOrder;
+use app\modules\v1\models\sls\SlsOrder;
 
 class SlsOrderController extends ActiveControllerExtended
 {
     /** @var SlsOrder $modelClass */
-    public $modelClass = 'app\modules\v1\models\SlsOrder';
+    public $modelClass = 'app\modules\v1\models\sls\SlsOrder';
 
     public function actionGetPrep()
     {
-        return $this->modelClass::find()
+        return SlsOrder::find()
             ->with('clientFk')
-            ->where(['status' => $this->modelClass::s1_prep])
+            ->where(['status' => SlsOrder::s1_prep])
             ->orderBy('ts_create')
             ->all();
     }
 
     public function actionGetInwork()
     {
-        return $this->modelClass::find()
+        return SlsOrder::find()
             ->with('clientFk')
             ->where(['status' => [
-                $this->modelClass::s1_wait_assembl,
-                $this->modelClass::s5_assembl,
-                $this->modelClass::s2_wait,
-                $this->modelClass::s3_accept,
-                $this->modelClass::s4_reject,
-                $this->modelClass::s6_allow,
+                SlsOrder::s1_wait_assembl,
+                SlsOrder::s5_assembl,
+                SlsOrder::s2_wait,
+                SlsOrder::s3_accept,
+                SlsOrder::s4_reject,
+                SlsOrder::s6_allow,
             ]])
             ->orderBy('ts_create')
             ->all();
@@ -52,7 +52,7 @@ class SlsOrderController extends ActiveControllerExtended
 
         return SlsOrder::find()
             ->with('clientFk')
-            ->where(['status' => $this->modelClass::s7_send])
+            ->where(['status' => SlsOrder::s7_send])
             ->andWhere(['>=', 'ts_send', $dateStartSql])
             ->andWhere(['<=', 'ts_send', $dateEndSql])
             ->andWhere(['flag_return' => 0])

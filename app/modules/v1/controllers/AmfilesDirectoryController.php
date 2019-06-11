@@ -10,13 +10,13 @@ namespace app\modules\v1\controllers;
 
 
 use app\modules\v1\classes\ActiveControllerExtended;
-use app\modules\v1\models\AmfilesDirectory;
+use app\modules\v1\models\amfiles\AmfilesDirectory;
 use Yii;
 
 class AmfilesDirectoryController extends ActiveControllerExtended
 {
     /** @var AmfilesDirectory $modelClass */
-	public $modelClass = 'app\modules\v1\models\AmfilesDirectory';
+	public $modelClass = 'app\modules\v1\models\Amfiles\AmfilesDirectory';
 
 	public function actions()
 	{
@@ -28,7 +28,7 @@ class AmfilesDirectoryController extends ActiveControllerExtended
 	public function actionCreate()
 	{
 		$name = Yii::$app->request->post('name');
-		$dir = new $this->modelClass();
+		$dir = new AmfilesDirectory();
 		$dir->name = $name;
 		$dir->user_fk = Yii::$app->user->id;
 		$dir->type = 'typeDir';

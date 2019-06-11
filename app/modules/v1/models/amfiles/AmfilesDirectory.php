@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\v1\models;
+namespace app\modules\v1\models\amfiles;
 
 
 use app\gii\GiiAmfilesDirectory;

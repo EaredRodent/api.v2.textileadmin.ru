@@ -6,7 +6,7 @@
  * Time: 18:24
  */
 
-namespace app\modules\v1\models;
+namespace app\modules\v1\models\sls;
 
 
 use app\gii\GiiSlsClient;

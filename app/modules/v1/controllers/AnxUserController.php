@@ -27,7 +27,7 @@ class AnxUserController extends ActiveControllerExtended
 
     function actionIndex()
     {
-        $recs = $this->modelClass::find()
+        $recs = AnxUser::find()
             ->where('accesstoken IS NOT NULL')
             ->all();
         return $recs;
@@ -39,7 +39,7 @@ class AnxUserController extends ActiveControllerExtended
         $password = Yii::$app->request->post('password');
 
         /** @var $user AnxUser */
-        $user = $this->modelClass::find()
+        $user = AnxUser::find()
             ->where(['login' => $login])
             ->one();
 

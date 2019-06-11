@@ -10,7 +10,7 @@ namespace app\modules\v1\controllers;
 
 
 use app\modules\v1\classes\ActiveControllerExtended;
-use app\modules\v1\models\AmfilesFile;
+use app\modules\v1\models\amfiles\AmfilesFile;
 use Yii;
 
 /**
@@ -20,7 +20,7 @@ use Yii;
 class AmfilesFileController extends ActiveControllerExtended
 {
     /** @var AmfilesFile $modelClass */
-	public $modelClass = 'app\modules\v1\models\AmfilesFile';
+	public $modelClass = 'app\modules\v1\models\amfiles\AmfilesFile';
 
 	public function actions()
 	{
@@ -34,7 +34,7 @@ class AmfilesFileController extends ActiveControllerExtended
 		$id = Yii::$app->request->post('id');
 		$isShared = Yii::$app->request->post('is_shared');
 		$name = Yii::$app->request->post('name');
-		$file = $this->modelClass::findOne(['id' => $id]);
+		$file = AmfilesFile::findOne(['id' => $id]);
 		$file->name = $name;
 		if ($isShared) {
 			$nonce = 0;

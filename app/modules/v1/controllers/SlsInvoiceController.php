@@ -9,20 +9,20 @@
 namespace app\modules\v1\controllers;
 
 use app\modules\v1\classes\ActiveControllerExtended;
-use app\modules\v1\models\SlsInvoice;
+use app\modules\v1\models\sls\SlsInvoice;
 use yii\db\ActiveRecord;
 
 class SlsInvoiceController extends ActiveControllerExtended
 {
     /** @var SlsInvoice $modelClass */
-    public $modelClass = 'app\modules\v1\models\SlsInvoice';
+    public $modelClass = 'app\modules\v1\models\sls\SlsInvoice';
 
     /**
      * @return array|ActiveRecord|self[]
      */
     public function actionGetAccept()
     {
-        return $this->modelClass::getAccept();
+        return SlsInvoice::getAccept();
     }
 
     /**
@@ -30,7 +30,7 @@ class SlsInvoiceController extends ActiveControllerExtended
      */
     public function actionGetPartPay()
     {
-        return $this->modelClass::getPartPay();
+        return SlsInvoice::getPartPay();
     }
 
     /**
@@ -38,7 +38,7 @@ class SlsInvoiceController extends ActiveControllerExtended
      */
     public function actionGetPartPayWithStateAccept()
     {
-        $invoices = $this->modelClass::getAccept();
+        $invoices = SlsInvoice::getAccept();
 
         $result = [];
         foreach ($invoices as $invoice) {
@@ -66,8 +66,8 @@ class SlsInvoiceController extends ActiveControllerExtended
         foreach ($dfdgs as $key => $name) {
 
             $elm['name'] = $name;
-            $elm['items'] = $this->modelClass::find()
-                ->where(['user_fk' => $key, 'state' => $this->modelClass::stateWait])
+            $elm['items'] = SlsInvoice::find()
+                ->where(['user_fk' => $key, 'state' => SlsInvoice::stateWait])
                 ->orderBy('sort')
                 ->all();
             $resp[] = $elm;
@@ -77,22 +77,22 @@ class SlsInvoiceController extends ActiveControllerExtended
 
     public function actionReject($id)
     {
-        $invoice = $this->modelClass::get($id);
+        $invoice = SlsInvoice::get($id);
         $userId = $invoice->user_fk;
 
         $prevSort = $invoice->sort;
 
         // Новая позиция в конце отклоненных платежей
 
-        $newSort = $this->modelClass::rejectInvoicesCount($userId) + 1;
+        $newSort = SlsInvoice::getCount(SlsInvoice::stateReject, $userId) + 1;
 
-        $invoice->state = $this->modelClass::stateReject;
+        $invoice->state = SlsInvoice::stateReject;
         $invoice->sort = $newSort;
         $invoice->save();
 
         // Сдвиг всех ожидающих платежей вверх
 
-        $waitInvoices = $this->modelClass::getSortDown($this->modelClass::stateWait, $userId, $prevSort);
+        $waitInvoices = SlsInvoice::getSortDown(SlsInvoice::stateWait, $userId, $prevSort);
         foreach ($waitInvoices as $waitInvoice) {
             $waitInvoice->sort--;
             $waitInvoice->save();
@@ -101,7 +101,7 @@ class SlsInvoiceController extends ActiveControllerExtended
 
     public function actionSortUp($id)
     {
-        $invoice = $this->modelClass::get($id);
+        $invoice = SlsInvoice::get($id);
 
         $userId = $invoice->user_fk;
         $state = $invoice->state;
@@ -110,7 +110,7 @@ class SlsInvoiceController extends ActiveControllerExtended
         $newSort = $prevSort - 1;
 
         if ($prevSort > 1) {
-            $upperInvoice = $this->modelClass::getSortItem($state, $userId, $newSort);
+            $upperInvoice = SlsInvoice::getSortItem($state, $userId, $newSort);
             $upperInvoice->sort = $prevSort;
             $upperInvoice->save();
 
@@ -121,24 +121,24 @@ class SlsInvoiceController extends ActiveControllerExtended
 
     public function actionReturn($id)
     {
-        $invoice = $this->modelClass::get($id);
+        $invoice = SlsInvoice::get($id);
 
         if ($invoice->summ_pay > 0) {
             // Убрать в частично оплаченные
-            $invoice->state = $this->modelClass::statePartPay;
+            $invoice->state = SlsInvoice::statePartPay;
             $invoice->save();
         } else {
             // Убрать в подготавливаемые
             $userId = $invoice->user_fk;
-            $sort = $this->modelClass::waitInvoicesCount($userId) + 1;
+            $sort = SlsInvoice::getCount(SlsInvoice::stateWait, $userId) + 1;
             $prevSort = $invoice->sort;
 
-            $invoice->state = $this->modelClass::stateWait;
+            $invoice->state = SlsInvoice::stateWait;
             $invoice->sort = $sort;
             $invoice->save();
 
             // Закрыть "дырку"
-            $acceptInvoices = $this->modelClass::getSortDown($this->modelClass::stateAccept, $userId, $prevSort);
+            $acceptInvoices = SlsInvoice::getSortDown(SlsInvoice::stateAccept, $userId, $prevSort);
             foreach ($acceptInvoices as $acceptInvoice) {
                 $acceptInvoice->sort--;
                 $acceptInvoice->save();
@@ -149,14 +149,14 @@ class SlsInvoiceController extends ActiveControllerExtended
     public function actionAccept($id, $cur_pay, $comment = '')
     {
         // Позиция в сортировке
-        $newSort = $this->modelClass::acceptInvoicesCount() + 1;
+        $newSort = SlsInvoice::getCount(SlsInvoice::stateAccept) + 1;
 
-        $invoice = $this->modelClass::get($id);
+        $invoice = SlsInvoice::get($id);
 
         $prevSort = $invoice->sort;
         $userId = $invoice->user_fk;
 
-        $invoice->state = $this->modelClass::stateAccept;
+        $invoice->state = SlsInvoice::stateAccept;
         $invoice->sort = $newSort;
         $invoice->cur_pay = $cur_pay;
         $invoice->comment = $comment;
@@ -164,17 +164,11 @@ class SlsInvoiceController extends ActiveControllerExtended
 
         if ($invoice->summ_pay == 0) {
             // Закрыть "дырку" если из подготавливаемых
-            $waitInvoices = $this->modelClass::getSortDown($this->modelClass::stateWait, $userId, $prevSort);
+            $waitInvoices = SlsInvoice::getSortDown(SlsInvoice::stateWait, $userId, $prevSort);
             foreach ($waitInvoices as $waitInvoice) {
                 $waitInvoice->sort = $waitInvoice->sort - 1;
                 $waitInvoice->save();
             }
         }
     }
-
-    public function actionTestThis($fetch) {
-        $lol = '100x::' . $fetch;
-        return $lol;
-    }
-
 }

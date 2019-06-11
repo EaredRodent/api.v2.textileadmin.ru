@@ -9,17 +9,17 @@
 namespace app\modules\v1\controllers;
 
 use app\modules\v1\classes\ActiveControllerExtended;
-use app\modules\v1\models\SlsClient;
+use app\modules\v1\models\sls\SlsClient;
 
 
 class SlsClientController extends ActiveControllerExtended
 {
     /** @var SlsClient $modelClass */
-	public $modelClass = 'app\modules\v1\models\SlsClient';
+	public $modelClass = 'app\modules\v1\models\sls\SlsClient';
 
 	public function actionGetForFilters()
 	{
-		return $this->modelClass::find()
+		return SlsClient::find()
 			->orderBy('short_name')
 			->all();
 	}

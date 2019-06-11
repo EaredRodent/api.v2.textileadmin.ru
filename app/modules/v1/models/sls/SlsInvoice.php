@@ -6,7 +6,7 @@
  * Time: 18:24
  */
 
-namespace app\modules\v1\models;
+namespace app\modules\v1\models\sls;
 
 
 use app\gii\GiiSlsInvoice;
@@ -80,34 +80,15 @@ class SlsInvoice extends GiiSlsInvoice
     }
 
     /**
-     * @param $userId
+     * @param $state
+     * @param int $userId
      * @return int|string
      */
-    public static function waitInvoicesCount($userId)
+    public static function getCount($state, $userId = null)
     {
         return self::find()
-            ->where(['user_fk' => $userId, 'state' => self::stateWait])
-            ->count();
-    }
-
-    /**
-     * @param $userId
-     * @return int|string
-     */
-    public static function rejectInvoicesCount($userId)
-    {
-        return self::find()
-            ->where(['user_fk' => $userId, 'state' => self::stateReject])
-            ->count();
-    }
-
-    /**
-     * @return int|string
-     */
-    public static function acceptInvoicesCount()
-    {
-        return self::find()
-            ->where(['state' => SlsInvoice::stateAccept])
+            ->where(['state' => $state])
+            ->andFilterWhere(['user_fk' => $userId])
             ->count();
     }
 }

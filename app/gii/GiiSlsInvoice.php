@@ -4,7 +4,7 @@ namespace app\gii;
 
 use app\models\AnxUser;
 use app\modules\v1\classes\ActiveRecordExtended;
-use app\modules\v1\models\SlsMoney;
+use app\modules\v1\models\sls\SlsMoney;
 use yii\db\ActiveQuery;
 
 /**
