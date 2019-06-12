@@ -62,7 +62,7 @@ class ActiveControllerExtended extends ActiveController
         }
         bcscale(6);
 
-        Yii::$container->set('yii\data\Pagination', ['pageSizeLimit' => 1000, 'pageSize' => 1000]);
+        Yii::$container->set('yii\data\Pagination', ['pageSizeLimit' => 100000, 'pageSize' => 100000]);
         Yii::$app->response->headers->set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Cookie, Authorization');
         Yii::$app->response->headers->set('Access-Control-Allow-Credentials', 'true');
         Yii::$app->response->headers->set('Access-Control-Allow-Origin', '*');

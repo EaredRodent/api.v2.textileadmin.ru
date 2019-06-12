@@ -21,6 +21,7 @@ class SlsMoney extends GiiSlsMoney
     public function fields()
     {
         return array_merge(parent::fields(), [
+            'userFk',
             'orderFk',
             'invoiceFk'
         ]);

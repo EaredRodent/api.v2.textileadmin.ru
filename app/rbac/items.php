@@ -40,6 +40,7 @@ return [
             'GET /v1/sls-pay-item/get-in',
             'GET /v1/sls-currency/get-last',
             '/management/pays',
+            'GET /v1/sls-money/get-users',
         ],
     ],
     'ROLE Moderator' => [
@@ -158,6 +159,9 @@ return [
         'type' => 2,
     ],
     '/management/pays' => [
+        'type' => 2,
+    ],
+    'GET /v1/sls-money/get-users' => [
         'type' => 2,
     ],
 ];

@@ -8,6 +8,7 @@
 
 namespace app\modules\v1\controllers;
 
+use app\models\AnxUser;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\sls\SlsInvoice;
 use app\modules\v1\models\sls\SlsMoney;
@@ -26,12 +27,12 @@ class SlsMoneyController extends ActiveControllerExtended
         return $actions;
     }
 
-    public function actionGetOut($month = null)
+    public function actionGetOut($month = null, $userId = null, $divId = null)
     {
         if (!$month) {
             $month = date('Y-m');
         }
-        $resp = SlsMoney::getOutMoney($month);
+        $resp = SlsMoney::getOutMoney($month, $userId, $divId);
         return $resp;
     }
 
@@ -108,11 +109,11 @@ class SlsMoneyController extends ActiveControllerExtended
     public function actionGetUsers()
     {
         $sql = '
-        SELECT DISTINCT anx_user.name
+        SELECT DISTINCT anx_user.name, anx_user.id
         FROM sls_money JOIN sls_invoice JOIN anx_user
         ON sls_money.invoice_fk = sls_invoice.id AND anx_user.id = sls_invoice.user_fk
         ';
-        return SlsMoney::findBySql($sql)->all();
+        return AnxUser::findBySql($sql)->all();
     }
 
 }
