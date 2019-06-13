@@ -59,6 +59,19 @@ class SlsMoneyController extends ActiveControllerExtended
 
     }
 
+    /**
+     * TODO
+     */
+    public function actionGetUsers()
+    {
+        $sql = '
+        SELECT DISTINCT anx_user.name, anx_user.id
+        FROM sls_money JOIN sls_invoice JOIN anx_user
+        ON sls_money.invoice_fk = sls_invoice.id AND anx_user.id = sls_invoice.user_fk
+        ';
+        return AnxUser::findBySql($sql)->all();
+    }
+
     public function actionMoneyOut()
     {
         $model = new SlsMoney();
@@ -103,17 +116,13 @@ class SlsMoneyController extends ActiveControllerExtended
         $invoice->save();
     }
 
-    /**
-     * TODO
-     */
-    public function actionGetUsers()
+    public function actionEditPay()
     {
-        $sql = '
-        SELECT DISTINCT anx_user.name, anx_user.id
-        FROM sls_money JOIN sls_invoice JOIN anx_user
-        ON sls_money.invoice_fk = sls_invoice.id AND anx_user.id = sls_invoice.user_fk
-        ';
-        return AnxUser::findBySql($sql)->all();
+        $post = Yii::$app->request->post();
+        $model = SlsMoney::get($post['id']);
+        $model->comment = $post['comment'];
+        $model->pay_item_fk = $post['pay_item_fk'];
+        $model->ts_incom = $post['ts_incom'];
+        $model->save();
     }
-
 }

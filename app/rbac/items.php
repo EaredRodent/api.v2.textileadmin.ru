@@ -41,6 +41,7 @@ return [
             'GET /v1/sls-currency/get-last',
             '/management/pays',
             'GET /v1/sls-money/get-users',
+            'POST /v1/sls-money/edit-pay',
         ],
     ],
     'ROLE Moderator' => [
@@ -162,6 +163,9 @@ return [
         'type' => 2,
     ],
     'GET /v1/sls-money/get-users' => [
+        'type' => 2,
+    ],
+    'POST /v1/sls-money/edit-pay' => [
         'type' => 2,
     ],
 ];
