@@ -10,6 +10,7 @@ namespace app\modules\v1\models\sls;
 
 
 use app\gii\GiiSlsOrder;
+use yii\db\ActiveRecord;
 
 class SlsOrder extends GiiSlsOrder
 {
@@ -24,10 +25,29 @@ class SlsOrder extends GiiSlsOrder
     const s6_allow = 's6_allow';
     const s7_send = 's7_send';
 
+    const payBank = 'bank';
+    const payCash = 'cash';
+
     public function fields()
     {
         return array_merge(parent::fields(), [
             'clientFk'
         ]);
+    }
+
+    /**
+     * @param null $dateStart
+     * @param null $dateEnd
+     * @param null $payType
+     * @return array|ActiveRecord[]|self[]
+     */
+    public static function getForReport($dateStart = null, $dateEnd = null, $payType = null)
+    {
+        return self::find()
+            ->where(['!=', 'status', self::s0_del])
+            ->filterWhere(['pay_type' => $payType])
+            ->andFilterWhere(['>=', $payType === self::payBank ? 'ts_doc' : 'ts_assembl', $dateStart])
+            ->andFilterWhere(['<=', $payType === self::payBank ? 'ts_doc' : 'ts_assembl', $dateEnd])
+            ->all();
     }
 }

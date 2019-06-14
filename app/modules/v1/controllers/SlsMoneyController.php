@@ -10,8 +10,10 @@ namespace app\modules\v1\controllers;
 
 use app\models\AnxUser;
 use app\modules\v1\classes\ActiveControllerExtended;
+use app\modules\v1\models\sls\SlsClient;
 use app\modules\v1\models\sls\SlsInvoice;
 use app\modules\v1\models\sls\SlsMoney;
+use app\modules\v1\models\sls\SlsOrder;
 use Yii;
 use yii\web\HttpException;
 
@@ -124,5 +126,49 @@ class SlsMoneyController extends ActiveControllerExtended
         $model->pay_item_fk = $post['pay_item_fk'];
         $model->ts_incom = $post['ts_incom'];
         $model->save();
+    }
+
+    public function actionGetReport($dateStart = null, $dateEnd = null, $payType = null)
+    {
+        $dateMinimal = date('Y-m-d', 0);
+        if (!$dateStart) {
+            $dateStart = $dateMinimal;
+        }
+        if (!$dateEnd) {
+            $dateEnd = date('Y-m-d');
+        }
+
+        /** @var SlsClient[] $clients */
+        $clients = SlsClient::get(2); //->orderBy('short_name')->all();
+
+        $ordersBeforeDateStart = SlsOrder::getForReport($dateMinimal, $dateStart, $payType);
+        $moneyBeforeDateStart = SlsMoney::getForReport($dateMinimal, $dateStart, $payType);
+
+        $result = [];
+
+        foreach ($clients as $client) {
+            $ordersSumBefore = 0;
+            $moneySumBefore = 0;
+
+            foreach ($ordersBeforeDateStart as $o) {
+                if ($client->id === $o->client_fk) {
+                    $ordersSumBefore += $o->summ_order;
+                }
+            }
+
+            foreach ($moneyBeforeDateStart as $m) {
+                if ($client->id === $m->orderFk->client_fk) {
+                    $moneySumBefore += $m->summ;
+                }
+            }
+
+            $result[] = [
+                'client' => $client->short_name,
+                'ordersSumBefore' => $ordersSumBefore,
+                'moneySumBefore' => $moneySumBefore
+            ];
+        }
+
+        return $result;
     }
 }

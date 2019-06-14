@@ -10,12 +10,13 @@ namespace app\modules\v1\models\sls;
 
 
 use app\gii\GiiSlsMoney;
+use yii\db\ActiveRecord;
 
 class SlsMoney extends GiiSlsMoney
 {
     const typeBank = 'bank';
     const typeCash = 'cash';
-    const directIn  = 'in';
+    const directIn = 'in';
     const directOut = 'out';
 
     public function fields()
@@ -49,6 +50,25 @@ class SlsMoney extends GiiSlsMoney
             ->andFilterWhere(['sls_invoice.user_fk' => $userId])
             ->andFilterWhere(['pay_item_fk' => $divId])
             ->orderBy('ts_incom')
+            ->all();
+    }
+
+    /**
+     * @param null $dateStart
+     * @param null $dateEnd
+     * @param null $payType
+     * @return array|ActiveRecord[]|self[]
+     */
+    public static function getForReport($dateStart = null, $dateEnd = null, $payType = null)
+    {
+        return self::find()
+            ->where(['>', 'order_fk', 0])
+            ->andWhere(['direct' => SlsMoney::directIn])
+            ->andFilterWhere(['>=', 'ts_incom', $dateStart])
+            ->andFilterWhere(['<=', 'ts_incom', $dateEnd])
+            ->andFilterWhere(['sls_order.pay_type' => $payType])
+            ->with('orderFk')
+            ->joinWith('orderFk')
             ->all();
     }
 }

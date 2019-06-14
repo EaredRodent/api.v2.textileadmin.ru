@@ -54,10 +54,8 @@ class ActiveRecordExtended extends ActiveRecord
         return static::findOne(['id' => (int)$id]);
     }
 
-    public static function getAll($ids = null)
+    public static function getAll()
     {
-        return static::find()
-            ->filterWhere(['id' => $ids])
-            ->all();
+        return static::find()->all();
     }
 }
