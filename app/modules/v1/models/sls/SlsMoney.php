@@ -54,18 +54,18 @@ class SlsMoney extends GiiSlsMoney
     }
 
     /**
-     * @param null $dateStart
-     * @param null $dateEnd
      * @param null $payType
+     * @param null $dateStartInclusive
+     * @param null $dateEnd
      * @return array|ActiveRecord[]|self[]
      */
-    public static function getForReport($dateStart = null, $dateEnd = null, $payType = null)
+    public static function getForReport($payType = null, $dateStartInclusive = null, $dateEnd = null)
     {
         return self::find()
             ->where(['>', 'order_fk', 0])
             ->andWhere(['direct' => SlsMoney::directIn])
-            ->andFilterWhere(['>=', 'ts_incom', $dateStart])
-            ->andFilterWhere(['<=', 'ts_incom', $dateEnd])
+            ->andFilterWhere(['>=', 'ts_incom', $dateStartInclusive])
+            ->andFilterWhere(['<', 'ts_incom', $dateEnd])
             ->andFilterWhere(['sls_order.pay_type' => $payType])
             ->with('orderFk')
             ->joinWith('orderFk')

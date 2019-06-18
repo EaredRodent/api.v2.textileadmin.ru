@@ -36,18 +36,36 @@ class SlsOrder extends GiiSlsOrder
     }
 
     /**
-     * @param null $dateStart
+     * @param null $dateStartInclusive
      * @param null $dateEnd
      * @param null $payType
      * @return array|ActiveRecord[]|self[]
      */
-    public static function getForReport($dateStart = null, $dateEnd = null, $payType = null)
+    public static function getForReport($payType = null, $dateStartInclusive = null, $dateEnd = null)
     {
-        return self::find()
-            ->where(['!=', 'status', self::s0_del])
-            ->filterWhere(['pay_type' => $payType])
-            ->andFilterWhere(['>=', $payType === self::payBank ? 'ts_doc' : 'ts_assembl', $dateStart])
-            ->andFilterWhere(['<=', $payType === self::payBank ? 'ts_doc' : 'ts_assembl', $dateEnd])
-            ->all();
+        /**
+         * @param $payType
+         * @param $dateStartInclusive
+         * @param $dateEnd
+         * @return array|ActiveRecord[]|self[]
+         */
+        $filterOrders = function ($payType, $dateStartInclusive, $dateEnd)
+        {
+            return SlsOrder::find()
+                ->andFilterWhere(['=', 'pay_type', $payType])
+                ->andFilterWhere(['!=', 'status', SlsOrder::s0_del])
+                ->andFilterWhere(['>=', $payType === SlsOrder::payBank ? 'ts_doc' : 'ts_assembl', $dateStartInclusive])
+                ->andFilterWhere(['<', $payType === SlsOrder::payBank ? 'ts_doc' : 'ts_assembl', $dateEnd])
+                ->all();
+        };
+
+        $result = [];
+        if ($payType) {
+            $result = $filterOrders($payType, $dateStartInclusive, $dateEnd);
+        } else {
+            $result = $filterOrders(self::payBank, $dateStartInclusive, $dateEnd);
+            $result = array_merge($result, $filterOrders(self::payCash, $dateStartInclusive, $dateEnd));
+        }
+        return $result;
     }
 }

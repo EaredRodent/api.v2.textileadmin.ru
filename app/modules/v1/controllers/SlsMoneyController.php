@@ -128,44 +128,72 @@ class SlsMoneyController extends ActiveControllerExtended
         $model->save();
     }
 
-    public function actionGetReport($dateStart = null, $dateEnd = null, $payType = null)
+    public function actionGetReport($dateStartInclusive = null, $dateEnd = null, $payType = null)
     {
         $dateMinimal = date('Y-m-d', 0);
-        if (!$dateStart) {
-            $dateStart = $dateMinimal;
+        if (!$dateStartInclusive) {
+            $dateStartInclusive = $dateMinimal;
         }
         if (!$dateEnd) {
             $dateEnd = date('Y-m-d');
         }
+        $dateEnd = date('Y-m-d', strtotime($dateEnd) + (60 * 60 * 24));
 
         /** @var SlsClient[] $clients */
-        $clients = SlsClient::get(2); //->orderBy('short_name')->all();
+        $clients = SlsClient::find()->orderBy('short_name')->all();
 
-        $ordersBeforeDateStart = SlsOrder::getForReport($dateMinimal, $dateStart, $payType);
-        $moneyBeforeDateStart = SlsMoney::getForReport($dateMinimal, $dateStart, $payType);
+        // До $dateStart
+
+        $ordersBefore = SlsOrder::getForReport($payType, null, $dateStartInclusive);
+        $moneyBefore = SlsMoney::getForReport($payType, null, $dateStartInclusive);
+
+        // Между $dateStart и $dateEnd
+
+        $ordersBetween = SlsOrder::getForReport($payType, $dateStartInclusive, $dateEnd);
+        $moneyBetween = SlsMoney::getForReport($payType, $dateStartInclusive, $dateEnd);
 
         $result = [];
 
-        foreach ($clients as $client) {
-            $ordersSumBefore = 0;
-            $moneySumBefore = 0;
+        bcscale(2);
 
-            foreach ($ordersBeforeDateStart as $o) {
+        foreach ($clients as $client) {
+            $ordersSumBefore = '0';
+            $moneySumBefore = '0';
+
+            foreach ($ordersBefore as $o) {
                 if ($client->id === $o->client_fk) {
-                    $ordersSumBefore += $o->summ_order;
+                    $ordersSumBefore = bcadd($ordersSumBefore, $o->summ_order);
                 }
             }
 
-            foreach ($moneyBeforeDateStart as $m) {
+            foreach ($moneyBefore as $m) {
                 if ($client->id === $m->orderFk->client_fk) {
-                    $moneySumBefore += $m->summ;
+                    $moneySumBefore = bcadd($moneySumBefore, $m->summ);
+                }
+            }
+
+            $ordersSumBetween = '0';
+            $moneySumBetween = '0';
+
+            foreach ($ordersBetween as $o) {
+                if ($client->id === $o->client_fk) {
+                    $ordersSumBetween = bcadd($ordersSumBetween, $o->summ_order);
+                }
+            }
+
+            foreach ($moneyBetween as $m) {
+                if ($client->id === $m->orderFk->client_fk) {
+                    $moneySumBetween = bcadd($moneySumBetween, $m->summ);
                 }
             }
 
             $result[] = [
-                'client' => $client->short_name,
+                'clientId' => $client->id,
+                'shortName' => $client->short_name,
                 'ordersSumBefore' => $ordersSumBefore,
-                'moneySumBefore' => $moneySumBefore
+                'moneySumBefore' => $moneySumBefore,
+                'ordersSumBetween' => $ordersSumBetween,
+                'moneySumBetween' => $moneySumBetween,
             ];
         }
 
