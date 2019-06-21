@@ -60,8 +60,14 @@ return [
         'children' => [
             'POST /v1/anx-user/login',
             'GET /v1/anx-user/bootstrap',
+            'GET /v1/anx-user/index',
         ],
     ],
+
+    'GET /v1/anx-user/index' => [
+        'type' => 2,
+    ],
+
     'POST /v1/anx-user/login' => [
         'type' => 2,
     ],
