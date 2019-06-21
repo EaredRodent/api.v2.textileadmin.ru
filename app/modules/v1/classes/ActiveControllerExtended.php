@@ -26,7 +26,6 @@ class ActiveControllerExtended extends ActiveController
 
     public function behaviors()
     {
-        $dsdg = 10;
         $behaviors = parent::behaviors();
         $behaviors['authenticator'] = [
             'class' => HttpBearerAuth::className(),

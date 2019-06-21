@@ -12,6 +12,7 @@ use app\models\AnxUser;
 use app\modules\v1\classes\ActiveControllerExtended;
 use Yii;
 use yii\web\HttpException;
+use yii\web\ServerErrorHttpException;
 
 class AnxUserController extends ActiveControllerExtended
 {
@@ -44,7 +45,7 @@ class AnxUserController extends ActiveControllerExtended
             ->one();
 
         if ($user) {
-            if (Yii::$app->security->validatePassword($password, $user->hash)) {
+            if (YII_ENV_DEV || Yii::$app->security->validatePassword($password, $user->hash)) {
                 return ['accesstoken' => $user->accesstoken];
             } else {
                 throw new HttpException(404, "Неверный пароль");
@@ -56,6 +57,7 @@ class AnxUserController extends ActiveControllerExtended
 
     function actionBootstrap()
     {
+        /** @var $user AnxUser */
         $am = Yii::$app->getAuthManager();
         $user = Yii::$app->getUser()->getIdentity();
         $roles = $am->getAssignments($user->getId());
@@ -65,7 +67,6 @@ class AnxUserController extends ActiveControllerExtended
         $role = array_keys($roles)[0];
 
         $permissions = array_keys($am->getPermissionsByUser($user->getId()));
-
 
         return [
             'id' => $user->id,
