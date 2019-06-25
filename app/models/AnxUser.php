@@ -3,6 +3,7 @@
 namespace app\models;
 
 use app\gii\GiiAnxUser;
+use Yii;
 
 class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
 {
@@ -75,4 +76,20 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
 ////        return $this->password === $password;
 //        return false;
 //    }
+
+    /**
+     * @return array
+     * @throws \yii\db\Exception
+     */
+    public static function getAssignments()
+    {
+        $resp = [];
+        $usersRecs = Yii::$app->db
+            ->createCommand('SELECT id, role FROM anx_user WHERE accesstoken IS NOT NULL')
+            ->queryAll();
+        foreach ($usersRecs as $rec) {
+            $resp[$rec['id']] = [$rec['role']];
+        }
+        return $resp;
+    }
 }

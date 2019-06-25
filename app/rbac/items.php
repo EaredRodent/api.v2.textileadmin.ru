@@ -1,15 +1,18 @@
 <?php
 return [
-    'ROLE Admin' => [
+
+    'roleGuest' => [
         'type' => 1,
         'children' => [
-            'ROLE Moderator',
+            'POST /v1/anx-user/login',
+            'GET /v1/anx-user/bootstrap',
+            'GET /v1/anx-user/index',
         ],
     ],
-    'ROLE Master' => [
+
+    'roleMaster' => [
         'type' => 1,
         'children' => [
-            'ROLE Admin',
             'GET /v1/auth-item/browse-roles',
             'POST /v1/auth-item/create-role',
             'POST /v1/auth-item/create-permission',
@@ -44,23 +47,6 @@ return [
             'POST /v1/sls-money/edit-pay',
             'GET /v1/sls-money/get-report',
             '/management/report',
-        ],
-    ],
-    'ROLE Moderator' => [
-        'type' => 1,
-        'children' => [
-            'ROLE User',
-        ],
-    ],
-    'ROLE User' => [
-        'type' => 1,
-    ],
-    'ROLE Guest' => [
-        'type' => 1,
-        'children' => [
-            'POST /v1/anx-user/login',
-            'GET /v1/anx-user/bootstrap',
-            'GET /v1/anx-user/index',
         ],
     ],
 

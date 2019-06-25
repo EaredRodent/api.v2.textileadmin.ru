@@ -55,7 +55,7 @@ $config = [
         'db' => $db,
         'authManager' => [
             'class' => 'yii\rbac\PhpManager',
-            'defaultRoles' => ['ROLE Guest'],
+            'defaultRoles' => ['roleGuest'],
         ],
         'urlManager' => [
             'enablePrettyUrl' => true,

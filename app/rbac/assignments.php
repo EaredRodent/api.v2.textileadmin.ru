@@ -1,6 +1,6 @@
 <?php
-return [
-    36 => [
-        'ROLE Master',
-    ],
-];
+
+$users = \app\models\AnxUser::getAssignments();
+
+return $users;
+
