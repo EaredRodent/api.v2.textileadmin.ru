@@ -17,6 +17,11 @@ class SlsClientController extends ActiveControllerExtended
     /** @var SlsClient $modelClass */
 	public $modelClass = 'app\modules\v1\models\sls\SlsClient';
 
+    /**
+     * Вернуть список клиентов ссортировкой по short_name
+     */
+	const getClientForFilter = 'GET /v1/sls-client/get-for-filters';
+
 	public function actionGetForFilters()
 	{
 		return SlsClient::find()

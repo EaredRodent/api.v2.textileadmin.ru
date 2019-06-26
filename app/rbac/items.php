@@ -1,6 +1,5 @@
 <?php
 return [
-
     'roleGuest' => [
         'type' => 1,
         'children' => [
@@ -9,7 +8,6 @@ return [
             'GET /v1/anx-user/index',
         ],
     ],
-
     'roleMaster' => [
         'type' => 1,
         'children' => [
@@ -21,7 +19,7 @@ return [
             'POST /v1/auth-item/extend-permission-by-permission',
             'POST /v1/auth-item/revoke-child',
             'POST /v1/auth-item/remove',
-            '/management/reg-pays',
+            'pageRegPays',
             '/base/roles',
             'GET /v1/sls-client/get-for-filters',
             'GET /v1/sls-invoice/get-accept',
@@ -49,11 +47,9 @@ return [
             '/management/report',
         ],
     ],
-
     'GET /v1/anx-user/index' => [
         'type' => 2,
     ],
-
     'POST /v1/anx-user/login' => [
         'type' => 2,
     ],
@@ -84,7 +80,7 @@ return [
     'POST /v1/auth-item/remove' => [
         'type' => 2,
     ],
-    '/management/reg-pays' => [
+    'pageRegPays' => [
         'type' => 2,
     ],
     '/base/roles' => [

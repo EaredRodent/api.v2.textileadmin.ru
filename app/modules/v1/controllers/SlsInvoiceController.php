@@ -75,6 +75,12 @@ class SlsInvoiceController extends ActiveControllerExtended
         return $resp;
     }
 
+    const postReject = 'POST /v1/sls-invoice/reject';
+
+    /**
+     * Отклонить счет
+     * @param $id
+     */
     public function actionReject($id)
     {
         $invoice = SlsInvoice::get($id);

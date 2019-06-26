@@ -15,7 +15,9 @@ $this->title = 'My Yii Application';
     </div>
 
     <div class="body-content">
-
+        <div class="row">
+            <pre><?php echo str_replace('\/', '/', json_encode(\app\rbac\Permissions::getYiiAuthItemsArray(), JSON_PRETTY_PRINT)) ?></pre>
+        </div>
         <div class="row">
             <div class="col-lg-4">
                 <h2>Heading</h2>

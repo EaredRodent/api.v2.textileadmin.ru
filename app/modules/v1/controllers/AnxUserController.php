@@ -26,13 +26,24 @@ class AnxUserController extends ActiveControllerExtended
         return $actions;
     }
 
+    /**
+     * Получить список всех юзеров, у которые есть accesstoken
+     */
+    const getUsers = 'GET /v1/anx-user/index';
+
     function actionIndex()
     {
-        $recs = AnxUser::find()
+        return AnxUser::find()
             ->where('accesstoken IS NOT NULL')
             ->all();
-        return $recs;
     }
+
+    /**
+     * Попытка логина
+     * $login - описание параметра
+     * $password - описание параметра
+     */
+    const postLogin = "POST /v1/anx-user/login";
 
     function actionLogin()
     {
@@ -55,6 +66,11 @@ class AnxUserController extends ActiveControllerExtended
         }
     }
 
+    /**
+     * Вернуть данные юзера и его роли в случае успешного логина
+     */
+    const getBootstrap = "GET /v1/anx-user/bootstrap";
+
     function actionBootstrap()
     {
         /** @var $user AnxUser */
@@ -76,6 +92,22 @@ class AnxUserController extends ActiveControllerExtended
             'accesstoken' => $user->accesstoken
         ];
     }
+
+    const postCreateUser = 'POST /v1/anx-user/create-user';
+
+    /**
+     * Создать нового пользователя
+     * @param $login
+     * @param $password
+     * @param $name
+     * @param $role
+     * @return bool
+     */
+    function actionCreateUser($login, $password, $name, $role)
+    {
+        return true;
+    }
+
 
 
     function actionSendInvoiceUsers()
