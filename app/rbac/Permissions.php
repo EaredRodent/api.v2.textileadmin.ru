@@ -5,6 +5,7 @@ namespace app\rbac;
 
 
 use app\modules\v1\controllers\AnxUserController;
+use app\modules\v1\controllers\BaseController;
 use app\modules\v1\controllers\SlsClientController;
 use app\modules\v1\controllers\SlsInvoiceController;
 use app\modules\v1\controllers\SlsMoneyController;
@@ -29,8 +30,12 @@ class Permissions
             AnxUserController::getUsers,
         ],
         self::roleMaster => [
-            AnxUserController::postCreateUser,
+            self::pageTestApi,
             self::roleEdush,
+            self::taskMaster,
+            ///
+            AnxUserController::postCreateUser,
+
         ],
         self::roleEdush => [
             self::taskRegPays,
@@ -40,28 +45,31 @@ class Permissions
     /// Pages
 
     const pageRegPays = 'pageRegPays';
+    const pageTestApi = 'pageTestApi';
 
     const pages = [
-        self::pageRegPays => 'Реестры платежей'
+        self::pageRegPays => 'Реестры платежей',
+        self::pageTestApi => 'Тестирование API проекта',
     ];
 
 
     /// Tasks
 
     const taskRegPays = 'taskRegPays';
+    const taskMaster = 'taskMaster';
 
     const tasks = [
         self::taskRegPays => [
             self::pageRegPays,
             SlsClientController::getGetForFilters,
-            SlsInvoiceController::getGetAccept,
-            SlsInvoiceController::getGetPartPay,
-            SlsInvoiceController::getGetWait,
-            SlsInvoiceController::getGetPartPayWithStateAccept,
-            SlsInvoiceController::postReject,
-            SlsInvoiceController::postSortUp,
-            SlsInvoiceController::postReturn,
-            SlsInvoiceController::postAccept,
+            SlsInvoiceController::actionGetAccept,
+            SlsInvoiceController::actionGetPartPay,
+            SlsInvoiceController::actionGetWait,
+            SlsInvoiceController::actionGetPartPayWithStateAccept,
+            SlsInvoiceController::actionReject,
+            SlsInvoiceController::actionSortUp,
+            SlsInvoiceController::actionReturn,
+            SlsInvoiceController::actionAccept,
             SlsMoneyController::getGetOut,
             SlsMoneyController::getGetIncom,
             SlsMoneyController::getGetUsers,
@@ -73,6 +81,9 @@ class Permissions
             SlsOrderController::getGetPrep,
             SlsPayItemController::getGetOut,
             SlsPayItemController::getGetIn,
+        ],
+        self::taskMaster => [
+            BaseController::actionGetControllers,
         ],
 
     ];
