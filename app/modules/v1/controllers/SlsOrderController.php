@@ -16,6 +16,8 @@ class SlsOrderController extends ActiveControllerExtended
     /** @var SlsOrder $modelClass */
     public $modelClass = 'app\modules\v1\models\sls\SlsOrder';
 
+    const getGetPrep = 'GET /v1/sls-order/get-prep';
+
     public function actionGetPrep()
     {
         return SlsOrder::find()
@@ -24,6 +26,8 @@ class SlsOrderController extends ActiveControllerExtended
             ->orderBy('ts_create')
             ->all();
     }
+
+    const getGetInwork = 'GET /v1/sls-order/get-inwork';
 
     public function actionGetInwork()
     {
@@ -40,6 +44,8 @@ class SlsOrderController extends ActiveControllerExtended
             ->orderBy('ts_create')
             ->all();
     }
+
+    const getGetSend = 'GET /v1/sls-order/get-send';
 
     public function actionGetSend($month = null, $clientId = null)
     {

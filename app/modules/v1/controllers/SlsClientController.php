@@ -20,7 +20,8 @@ class SlsClientController extends ActiveControllerExtended
     /**
      * Вернуть список клиентов ссортировкой по short_name
      */
-	const getClientForFilter = 'GET /v1/sls-client/get-for-filters';
+
+	const getGetForFilters = 'GET /v1/sls-client/get-for-filters';
 
 	public function actionGetForFilters()
 	{

@@ -17,10 +17,14 @@ class SlsPayItemController extends ActiveControllerExtended
     /** @var SlsPayItem $modelClass */
     public $modelClass = 'app\modules\v1\models\sls\SlsPayItem';
 
+    const getGetOut = 'GET /v1/sls-pay-item/get-out';
+
     public function actionGetOut()
     {
         return SlsPayItem::getOut();
     }
+
+    const getGetIn = 'GET /v1/sls-pay-item/get-in';
 
     public function actionGetIn()
     {

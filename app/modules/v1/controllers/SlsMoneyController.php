@@ -29,6 +29,8 @@ class SlsMoneyController extends ActiveControllerExtended
         return $actions;
     }
 
+    const getGetOut = 'GET /v1/sls-money/get-out';
+
     public function actionGetOut($month = null, $userId = null, $divId = null)
     {
         if (!$month) {
@@ -37,6 +39,8 @@ class SlsMoneyController extends ActiveControllerExtended
         $resp = SlsMoney::getOutMoney($month, $userId, $divId);
         return $resp;
     }
+
+    const getGetIncom = 'GET /v1/sls-money/get-incom';
 
     public function actionGetIncom($month = null, $clientId = null)
     {
@@ -61,6 +65,8 @@ class SlsMoneyController extends ActiveControllerExtended
 
     }
 
+    const getGetUsers = 'GET /v1/sls-money/get-users';
+
     /**
      * TODO
      */
@@ -73,6 +79,8 @@ class SlsMoneyController extends ActiveControllerExtended
         ';
         return AnxUser::findBySql($sql)->all();
     }
+
+    const postMoneyOut = 'POST /v1/sls-money/money-out';
 
     public function actionMoneyOut()
     {
@@ -118,6 +126,8 @@ class SlsMoneyController extends ActiveControllerExtended
         $invoice->save();
     }
 
+    const postEditPay = 'POST /v1/sls-money/edit-pay';
+
     public function actionEditPay()
     {
         $post = Yii::$app->request->post();
@@ -127,6 +137,8 @@ class SlsMoneyController extends ActiveControllerExtended
         $model->ts_incom = $post['ts_incom'];
         $model->save();
     }
+
+    const getGetReport = 'GET /v1/sls-money/get-report';
 
     public function actionGetReport($dateStartInclusive = null, $dateEnd = null, $payType = null)
     {

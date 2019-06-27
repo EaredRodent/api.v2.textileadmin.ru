@@ -7,7 +7,11 @@ namespace app\rbac;
 use app\modules\v1\controllers\AnxUserController;
 use app\modules\v1\controllers\SlsClientController;
 use app\modules\v1\controllers\SlsInvoiceController;
+use app\modules\v1\controllers\SlsMoneyController;
+use app\modules\v1\controllers\SlsOrderController;
+use app\modules\v1\controllers\SlsPayItemController;
 use app\modules\v1\models\sls\SlsInvoice;
+use app\modules\v1\models\sls\SlsMoney;
 
 class Permissions
 {
@@ -35,11 +39,9 @@ class Permissions
 
     /// Pages
 
-    const pageFirmBalance = 'pageFirmBalance';
     const pageRegPays = 'pageRegPays';
 
     const pages = [
-        self::pageFirmBalance => 'Баланс предприятия',
         self::pageRegPays => 'Реестры платежей'
     ];
 
@@ -49,11 +51,28 @@ class Permissions
     const taskRegPays = 'taskRegPays';
 
     const tasks = [
-
         self::taskRegPays => [
             self::pageRegPays,
+            SlsClientController::getGetForFilters,
+            SlsInvoiceController::getGetAccept,
+            SlsInvoiceController::getGetPartPay,
+            SlsInvoiceController::getGetWait,
+            SlsInvoiceController::getGetPartPayWithStateAccept,
             SlsInvoiceController::postReject,
-            SlsClientController::getClientForFilter,
+            SlsInvoiceController::postSortUp,
+            SlsInvoiceController::postReturn,
+            SlsInvoiceController::postAccept,
+            SlsMoneyController::getGetOut,
+            SlsMoneyController::getGetIncom,
+            SlsMoneyController::getGetUsers,
+            SlsMoneyController::getGetReport,
+            SlsMoneyController::postEditPay,
+            SlsMoneyController::postMoneyOut,
+            SlsOrderController::getGetInwork,
+            SlsOrderController::getGetSend,
+            SlsOrderController::getGetPrep,
+            SlsPayItemController::getGetOut,
+            SlsPayItemController::getGetIn,
         ],
 
     ];

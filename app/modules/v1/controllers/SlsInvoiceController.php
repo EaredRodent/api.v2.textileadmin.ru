@@ -17,6 +17,7 @@ class SlsInvoiceController extends ActiveControllerExtended
     /** @var SlsInvoice $modelClass */
     public $modelClass = 'app\modules\v1\models\sls\SlsInvoice';
 
+    const getGetAccept = 'GET /v1/sls-invoice/get-accept';
     /**
      * @return array|ActiveRecord|self[]
      */
@@ -25,6 +26,8 @@ class SlsInvoiceController extends ActiveControllerExtended
         return SlsInvoice::getAccept();
     }
 
+    const getGetPartPay = 'GET /v1/sls-invoice/get-part-pay';
+
     /**
      * @return array|ActiveRecord[]|self[]
      */
@@ -32,6 +35,8 @@ class SlsInvoiceController extends ActiveControllerExtended
     {
         return SlsInvoice::getPartPay();
     }
+
+    const getGetPartPayWithStateAccept = 'GET /v1/sls-invoice/get-part-pay-with-state-accept';
 
     /**
      * @return array|ActiveRecord[]|self[]
@@ -49,6 +54,8 @@ class SlsInvoiceController extends ActiveControllerExtended
 
         return $result;
     }
+
+    const getGetWait = 'GET /v1/sls-invoice/get-wait';
 
     public function actionGetWait()
     {
@@ -105,6 +112,8 @@ class SlsInvoiceController extends ActiveControllerExtended
         }
     }
 
+    const postSortUp = 'POST /v1/sls-invoice/sort-up';
+
     public function actionSortUp($id)
     {
         $invoice = SlsInvoice::get($id);
@@ -124,6 +133,8 @@ class SlsInvoiceController extends ActiveControllerExtended
             $invoice->save();
         }
     }
+
+    const postReturn = 'POST /v1/sls-invoice/return';
 
     public function actionReturn($id)
     {
@@ -151,6 +162,8 @@ class SlsInvoiceController extends ActiveControllerExtended
             }
         }
     }
+
+    const postAccept = 'POST /v1/sls-invoice/accept';
 
     public function actionAccept($id, $cur_pay, $comment = '')
     {
