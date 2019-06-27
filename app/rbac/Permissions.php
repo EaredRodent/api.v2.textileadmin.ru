@@ -20,7 +20,9 @@ class Permissions
 
     const roles = [
         self::roleGuest => [
-            self::taskGuest,
+            AnxUserController::postLogin,
+            AnxUserController::getBootstrap,
+            AnxUserController::getUsers,
         ],
         self::roleMaster => [
             AnxUserController::postCreateUser,
@@ -44,16 +46,9 @@ class Permissions
 
     /// Tasks
 
-    const taskGuest = 'taskGuest';
     const taskRegPays = 'taskRegPays';
 
     const tasks = [
-
-        self::taskGuest => [
-            AnxUserController::postLogin,
-            AnxUserController::getBootstrap,
-            AnxUserController::getUsers,
-        ],
 
         self::taskRegPays => [
             self::pageRegPays,
