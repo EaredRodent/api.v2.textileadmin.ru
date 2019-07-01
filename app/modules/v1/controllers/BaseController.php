@@ -9,6 +9,7 @@
 namespace app\modules\v1\controllers;
 
 use app\modules\v1\classes\ActiveControllerExtended;
+use app\modules\v1\classes\BaseClassTemp;
 use app\modules\v1\models\sls\SlsClient;
 use ReflectionClass;
 use Yii;
@@ -23,23 +24,7 @@ class BaseController extends ActiveControllerExtended
 
     public function actionGetControllers()
     {
-        $path = Yii::getAlias('@app/modules/v1/controllers/*.php');
-        $files = glob($path);
-
-
-        $listControllers = [];
-        foreach ($files as $file) {
-            $listControllers[] = basename($file);
-        }
-
-        $className = 'app\modules\v1\controllers\SlsInvoiceController';
-        $m = get_class_methods($className);
-        // $m = get_class_vars($className);
-
-        $refl = new ReflectionClass($className);
-        $list = $refl->getConstants();
-
-        return $list;
+       return BaseClassTemp::getApi2();
     }
 
 }

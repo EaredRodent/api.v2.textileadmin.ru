@@ -14,6 +14,10 @@ use Yii;
 use yii\web\HttpException;
 use yii\web\ServerErrorHttpException;
 
+/**
+ * Class AnxUserController
+ * @package app\modules\v1\controllers
+ */
 class AnxUserController extends ActiveControllerExtended
 {
     /** @var AnxUser $modelClass */
@@ -26,11 +30,12 @@ class AnxUserController extends ActiveControllerExtended
         return $actions;
     }
 
+    const actionIndex = 'GET /v1/anx-user/index';
+
     /**
      * Получить список всех юзеров, у которые есть accesstoken
+     * @return AnxUser[]
      */
-    const getUsers = 'GET /v1/anx-user/index';
-
     function actionIndex()
     {
         return AnxUser::find()

@@ -11,6 +11,15 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
     const STATUS_ACTIVE = 1;
     const STATUS_WAIT = 2;
 
+    public function fields()
+    {
+        $fields = parent::fields();
+
+        // удаляем небезопасные поля
+        unset($fields['auth_key'], $fields['accesstoken'], $fields['hash']);
+
+        return $fields;
+    }
 
     /**
      * {@inheritdoc}

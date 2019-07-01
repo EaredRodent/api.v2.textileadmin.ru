@@ -27,7 +27,7 @@ class Permissions
         self::roleGuest => [
             AnxUserController::postLogin,
             AnxUserController::getBootstrap,
-            AnxUserController::getUsers,
+            AnxUserController::actionIndex,
         ],
         self::roleMaster => [
             self::pageTestApi,

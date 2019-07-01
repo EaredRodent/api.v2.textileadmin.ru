@@ -2,6 +2,8 @@
 
 /* @var $this yii\web\View */
 
+use app\modules\v1\classes\BaseClassTemp;
+
 $this->title = 'My Yii Application';
 
 
@@ -12,18 +14,21 @@ $constants = $refl->getConstants();
 $actions = $refl->getMethods();
 
 
+$api = BaseClassTemp::getApi2();
+$apiJson = str_replace('\/', '/', json_encode($api, JSON_PRETTY_PRINT + JSON_UNESCAPED_UNICODE))
 
 ?>
 <div class="site-index">
     <div class="body-content">
 
-        <div class="row">
-            <?php var_dump($actions) ?>
-        </div>
 
         <div class="row">
-            <pre><?php echo str_replace('\/', '/', json_encode(\app\rbac\Permissions::getYiiAuthItemsArray(), JSON_PRETTY_PRINT)) ?></pre>
+            <pre><?=Yii::$app->security->generateRandomString(16)?></pre>
+            <pre><?php echo $apiJson ?></pre>
         </div>
 
+<!--        <div class="row">-->
+<!--            --><?php //var_dump($actions) ?>
+<!--        </div>-->
     </div>
 </div>
