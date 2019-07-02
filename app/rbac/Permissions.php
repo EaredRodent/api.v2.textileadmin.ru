@@ -61,7 +61,7 @@ class Permissions
     const tasks = [
         self::taskRegPays => [
             self::pageRegPays,
-            SlsClientController::getGetForFilters,
+            SlsClientController::actionGetForFilters,
             SlsInvoiceController::actionGetAccept,
             SlsInvoiceController::actionGetPartPay,
             SlsInvoiceController::actionGetWait,
