@@ -44,17 +44,23 @@ class AnxUserController extends ActiveControllerExtended
     }
 
     /**
-     * Попытка логина
+     *
      * $login - описание параметра
      * $password - описание параметра
      */
-    const postLogin = "POST /v1/anx-user/login";
+    const actionLogin = "POST /v1/anx-user/login";
 
+    /**
+     * Попытка логина
+     * @param $login string
+     * @param $password string
+     * @return array
+     * @throws HttpException
+     */
     function actionLogin()
     {
         $login = Yii::$app->request->post('login');
         $password = Yii::$app->request->post('password');
-
         /** @var $user AnxUser */
         $user = AnxUser::find()
             ->where(['login' => $login])

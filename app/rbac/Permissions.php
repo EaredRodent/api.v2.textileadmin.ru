@@ -25,7 +25,7 @@ class Permissions
 
     const roles = [
         self::roleGuest => [
-            AnxUserController::postLogin,
+            AnxUserController::actionLogin,
             AnxUserController::getBootstrap,
             AnxUserController::actionIndex,
         ],
