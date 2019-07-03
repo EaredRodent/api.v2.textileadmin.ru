@@ -114,6 +114,9 @@ class SlsInvoiceController extends ActiveControllerExtended
 
     const actionSortUp = 'POST /v1/sls-invoice/sort-up';
 
+    /**
+     * @param $id
+     */
     public function actionSortUp($id)
     {
         $invoice = SlsInvoice::get($id);
@@ -136,6 +139,9 @@ class SlsInvoiceController extends ActiveControllerExtended
 
     const actionReturn = 'POST /v1/sls-invoice/return';
 
+    /**
+     * @param $id
+     */
     public function actionReturn($id)
     {
         $invoice = SlsInvoice::get($id);
@@ -165,6 +171,11 @@ class SlsInvoiceController extends ActiveControllerExtended
 
     const actionAccept = 'POST /v1/sls-invoice/accept';
 
+    /**
+     * @param $id
+     * @param $cur_pay
+     * @param string $comment
+     */
     public function actionAccept($id, $cur_pay, $comment = '')
     {
         // Позиция в сортировке

@@ -82,15 +82,22 @@ class SlsMoneyController extends ActiveControllerExtended
 
     const postMoneyOut = 'POST /v1/sls-money/money-out';
 
-    public function actionMoneyOut()
+    /**
+     * @param $id
+     * @param $cur_pay
+     * @param $ts_incom
+     * @param $pay_item_fk
+     * @param string $comment
+     * @throws HttpException
+     */
+    public function actionMoneyOut($id, $cur_pay, $ts_incom, $pay_item_fk, $comment = '')
     {
         $model = new SlsMoney();
-        $post = Yii::$app->request->post();
-        $model->invoice_fk = $post['id'];
-        $model->summ = $post['cur_pay'];
-        $model->ts_incom = date('Y-m-d 12:00:00', strtotime($post['ts_incom']));
-        $model->pay_item_fk = $post['pay_item_fk'];
-        $model->comment = isset($post['comment']) ? $post['comment'] : '';
+        $model->invoice_fk = $id;
+        $model->summ = $cur_pay;
+        $model->ts_incom = date('Y-m-d 12:00:00', strtotime($ts_incom));
+        $model->pay_item_fk = $pay_item_fk;
+        $model->comment = $comment;
         $model->user_fk = Yii::$app->user->getId();
         $model->direct = SlsMoney::directOut;
         $model->type = SlsMoney::typeBank;
@@ -106,8 +113,7 @@ class SlsMoneyController extends ActiveControllerExtended
         }
 
         // Счет оплачен полностью
-        $dsgdsgdsgdg = bccomp($invoice->summ, $invoice->summ_pay);
-        if ($dsgdsgdsgdg === 0) {
+        if (bccomp($invoice->summ, $invoice->summ_pay) === 0) {
             $invoice->state = SlsInvoice::stateFullPay;
             $sortPos = SlsInvoice::getCount(SlsInvoice::stateFullPay) + 1;
             $invoice->sort = $sortPos;
@@ -115,8 +121,7 @@ class SlsMoneyController extends ActiveControllerExtended
         }
 
         // Счет оплачен частично
-        $dddddsaaa = bccomp($invoice->summ_pay, $invoice->summ);
-        if ($dddddsaaa < 0) {
+        if (bccomp($invoice->summ_pay, $invoice->summ) < 0) {
             $invoice->state = SlsInvoice::statePartPay;
             $sortPos = SlsInvoice::getCount(SlsInvoice::statePartPay) + 1;
             $invoice->sort = $sortPos;
@@ -128,13 +133,18 @@ class SlsMoneyController extends ActiveControllerExtended
 
     const postEditPay = 'POST /v1/sls-money/edit-pay';
 
-    public function actionEditPay()
+    /**
+     * @param $id
+     * @param $comment
+     * @param $pay_item_fk
+     * @param $ts_incom
+     */
+    public function actionEditPay($id, $comment, $pay_item_fk, $ts_incom)
     {
-        $post = Yii::$app->request->post();
-        $model = SlsMoney::get($post['id']);
-        $model->comment = $post['comment'];
-        $model->pay_item_fk = $post['pay_item_fk'];
-        $model->ts_incom = $post['ts_incom'];
+        $model = SlsMoney::get($id);
+        $model->comment = $comment;
+        $model->pay_item_fk = $pay_item_fk;
+        $model->ts_incom = $ts_incom;
         $model->save();
     }
 

@@ -57,10 +57,8 @@ class AnxUserController extends ActiveControllerExtended
      * @return array
      * @throws HttpException
      */
-    function actionLogin()
+    function actionLogin($login, $password)
     {
-        $login = Yii::$app->request->post('login');
-        $password = Yii::$app->request->post('password');
         /** @var $user AnxUser */
         $user = AnxUser::find()
             ->where(['login' => $login])
@@ -75,6 +73,7 @@ class AnxUserController extends ActiveControllerExtended
         } else {
             throw new HttpException(404, "Пользователь не зарегистрирован");
         }
+
     }
 
     /**
@@ -118,7 +117,6 @@ class AnxUserController extends ActiveControllerExtended
     {
         return true;
     }
-
 
 
     function actionSendInvoiceUsers()

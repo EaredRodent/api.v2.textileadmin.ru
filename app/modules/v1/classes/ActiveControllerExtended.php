@@ -12,6 +12,7 @@ use app\modules\v1\V1Mod;
 use Exception;
 use Yii;
 use yii\base\InlineAction;
+use yii\base\InvalidConfigException;
 use yii\filters\AccessControl;
 use yii\filters\auth\HttpBearerAuth;
 use yii\rest\ActiveController;
@@ -85,13 +86,15 @@ class ActiveControllerExtended extends ActiveController
     {
         $this->transaction = Yii::$app->db->beginTransaction();
         try {
-            $time = microtime(true);
+            $params = $this->mergeWithPostParams($params);
+
             $result = parent::runAction($id, $params);
             $this->transaction->commit();
-            $timeEnd = microtime(true);
-            $timeDiff = $timeEnd - $time;
 
-            /** @var V1Mod $module */
+            /**
+             * Отправка измененных таблиц по WebSocket
+             * @var V1Mod $module
+             */
             $module = Yii::$app->getModule('v1');
             if (!empty($module->cmdTables)) {
                 $wsc = new Client($this->wssUrl);
@@ -104,5 +107,16 @@ class ActiveControllerExtended extends ActiveController
             throw $e;
 
         }
+    }
+
+    /**
+     * @param $getParams array
+     * @return array
+     * @throws InvalidConfigException
+     */
+    private function mergeWithPostParams($getParams)
+    {
+        return array_merge($getParams,
+            Yii::$app->request->getBodyParams());
     }
 }
