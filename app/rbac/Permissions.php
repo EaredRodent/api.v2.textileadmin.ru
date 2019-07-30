@@ -35,6 +35,7 @@ class Permissions
             self::taskMaster,
             ///
             AnxUserController::postCreateUser,
+            BaseController::actionPostTestData,
 
         ],
         self::roleEdush => [

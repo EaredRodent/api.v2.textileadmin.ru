@@ -79,6 +79,12 @@ class ActiveControllerExtended extends ActiveController
     public function afterAction($action, $result)
     {
 
+//        $result = [
+//            'type' => 'ok',
+//            'data' => $result,
+//            'error' => null,
+//        ];
+
         return parent::afterAction($action, $result);
     }
 
