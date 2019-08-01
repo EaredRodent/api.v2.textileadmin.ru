@@ -17,13 +17,16 @@ use app\modules\v1\models\sls\SlsMoney;
 class Permissions
 {
 
+    ///
     /// Roles
+    ///
 
     const roleGuest = 'roleGuest';
     const roleMaster = 'roleMaster';
     const roleEdush = 'roleEdush';
 
     const roles = [
+
         self::roleGuest => [
             AnxUserController::actionLogin,
             AnxUserController::getBootstrap,
@@ -39,13 +42,17 @@ class Permissions
 
         ],
         self::roleEdush => [
-            self::taskRegPays,
+            self::taskRegPaysPageAccess,
+            self::taskRegPaysInvoiceManage,
         ],
     ];
 
+    ///
     /// Pages
+    ///
 
     const pageRegPays = 'pageRegPays';
+
     const pageTestApi = 'pageTestApi';
 
     const pages = [
@@ -54,35 +61,61 @@ class Permissions
     ];
 
 
+    ///
     /// Tasks
+    ///
 
-    const taskRegPays = 'taskRegPays';
+    /**
+     * Разрешения для разработчиков
+     */
     const taskMaster = 'taskMaster';
 
+    /**
+     * Чтение страницы "реестр платежей"
+     */
+    const taskRegPaysPageAccess = 'taskRegPaysRead';
+
+    /**
+     * Управление счетами на странице "реестр платежей"
+     */
+    const taskRegPaysInvoiceManage = 'taskRegPaysInvoiceManage';
+
+
     const tasks = [
-        self::taskRegPays => [
+
+        self::taskRegPaysPageAccess => [
             self::pageRegPays,
+
             SlsClientController::actionGetForFilters,
             SlsInvoiceController::actionGetAccept,
             SlsInvoiceController::actionGetPartPay,
             SlsInvoiceController::actionGetWait,
             SlsInvoiceController::actionGetPartPayWithStateAccept,
-            SlsInvoiceController::actionReject,
-            SlsInvoiceController::actionSortUp,
-            SlsInvoiceController::actionReturn,
-            SlsInvoiceController::actionAccept,
+
             SlsMoneyController::getGetOut,
             SlsMoneyController::getGetIncom,
             SlsMoneyController::getGetUsers,
             SlsMoneyController::getGetReport,
-            SlsMoneyController::postEditPay,
-            SlsMoneyController::postMoneyOut,
+            SlsMoneyController::actionGetBankBalance,
+
             SlsOrderController::getGetInwork,
             SlsOrderController::getGetSend,
             SlsOrderController::getGetPrep,
+
             SlsPayItemController::getGetOut,
             SlsPayItemController::getGetIn,
         ],
+
+        self::taskRegPaysInvoiceManage => [
+            SlsInvoiceController::actionReject,
+            SlsInvoiceController::actionSortUp,
+            SlsInvoiceController::actionReturn,
+            SlsInvoiceController::actionAccept,
+
+            SlsMoneyController::postEditPay,
+            SlsMoneyController::postMoneyOut,
+        ],
+
         self::taskMaster => [
             BaseController::actionGetControllers,
         ],

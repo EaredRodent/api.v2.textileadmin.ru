@@ -221,4 +221,22 @@ class SlsMoneyController extends ActiveControllerExtended
 
         return $result;
     }
+
+
+    const actionGetBankBalance = 'GET /v1/sls-money/get-bank-balance';
+
+    /**
+     * Вернуть остатки на счете (БЕЗНАЛ) на текущий момент
+     */
+    public function actionGetBankBalance()
+    {
+        /** @var $rec SlsMoney */
+        $rec = SlsMoney::find()
+            ->select('sum(summ) AS summ')
+            ->where(['type' => SlsMoney::typeBank])
+            ->groupBy('type')
+            ->one();
+
+        return ['balance' => $rec->summ];
+    }
 }
