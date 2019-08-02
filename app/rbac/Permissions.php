@@ -93,7 +93,7 @@ class Permissions
             SlsInvoiceController::actionGetPartPayWithStateAccept,
 
             SlsMoneyController::getGetOut,
-            SlsMoneyController::getGetIncom,
+            SlsMoneyController::actionGetIncom,
             SlsMoneyController::getGetUsers,
             SlsMoneyController::getGetReport,
             SlsMoneyController::actionGetBankBalance,

@@ -25,7 +25,8 @@ class SlsMoney extends GiiSlsMoney
             'userFk',
             'orderFk',
             'invoiceFk',
-            'payItemFk'
+            'payItemFk',
+            'preorderFk',
         ]);
     }
 

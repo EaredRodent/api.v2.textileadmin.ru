@@ -40,8 +40,14 @@ class SlsMoneyController extends ActiveControllerExtended
         return $resp;
     }
 
-    const getGetIncom = 'GET /v1/sls-money/get-incom';
+    const actionGetIncom = 'GET /v1/sls-money/get-incom';
 
+    /**
+     * Получить все записи приходе денег с фильтром месяц/клиент
+     * @param null $month - формат YYYY-MM
+     * @param null $clientId
+     * @return array|\yii\db\ActiveRecord[]
+     */
     public function actionGetIncom($month = null, $clientId = null)
     {
         if (!$month) {
