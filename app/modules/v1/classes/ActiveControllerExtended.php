@@ -57,16 +57,19 @@ class ActiveControllerExtended extends ActiveController
      */
     public function beforeAction($action)
     {
-//        СНАЧАЛА ВЫЗВАТЬ РОДИТЕЛЬСКИЙ BEFORE ACTION, ИНАЧЕ АУТЕНТИФИКАЦИЯ НЕ ПРОЙДЕТ И РЕЗУЛЬТАТОМ ПРОВЕРКИ ПРАВ БУДЕТ ЧУЩШЬ!!!
+        // СНАЧАЛА ВЫЗВАТЬ РОДИТЕЛЬСКИЙ BEFORE ACTION, ИНАЧЕ АУТЕНТИФИКАЦИЯ НЕ ПРОЙДЕТ
+        // И РЕЗУЛЬТАТОМ ПРОВЕРКИ ПРАВ БУДЕТ ЧУЩШЬ!!!
         if (!parent::beforeAction($action)) {
             return false;
         }
+
         bcscale(6);
 
         Yii::$container->set('yii\data\Pagination', ['pageSizeLimit' => 100000, 'pageSize' => 100000]);
         Yii::$app->response->headers->set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Cookie, Authorization');
         Yii::$app->response->headers->set('Access-Control-Allow-Credentials', 'true');
         Yii::$app->response->headers->set('Access-Control-Allow-Origin', '*');
+        Yii::$app->response->headers->set('Access-Control-Expose-Headers', 'Log-Dbcount, Log-Dbtime, Log-Apptime, Log-Appmemory');
 
         $permission = Yii::$app->getRequest()->getMethod() . ' /' . $this->action->getUniqueId();
         if (!Yii::$app->getUser()->can($permission) && $this->action->id !== 'options') {
@@ -79,13 +82,26 @@ class ActiveControllerExtended extends ActiveController
     public function afterAction($action, $result)
     {
 
-//        $result = [
-//            'type' => 'ok',
-//            'data' => $result,
-//            'error' => null,
-//        ];
+        $result = parent::afterAction($action, $result);
 
-        return parent::afterAction($action, $result);
+        // your custom code here
+
+        $logger = Yii::getLogger();
+
+        $dbCountQuery = $logger->getDbProfiling()[0];
+        $dbTime = round($logger->getDbProfiling()[1], 3);
+        $appTime = round($logger->elapsedTime, 3);
+        $appMemory = number_format(memory_get_peak_usage(), 0, '', ' ');
+
+        $headers = Yii::$app->response->headers;
+
+        $headers->add('Log-Dbcount', $dbCountQuery);
+        $headers->add('Log-Dbtime', $dbTime);
+        $headers->add('Log-Apptime', $appTime);
+        $headers->add('Log-Appmemory', $appMemory);
+
+
+        return $result;
     }
 
     public function runAction($id, $params = [])

@@ -26,7 +26,8 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
      */
     public static function findIdentity($id)
     {
-        return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
+        //return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
+        return false;
     }
 
     /**

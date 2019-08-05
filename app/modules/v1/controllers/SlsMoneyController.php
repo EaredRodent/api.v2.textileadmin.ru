@@ -61,7 +61,8 @@ class SlsMoneyController extends ActiveControllerExtended
 
         return SlsMoney::find()
             ->joinWith('orderFk')
-            ->with('orderFk.clientFk')
+            //->with('orderFk.clientFk')
+            //->with('preorderFk.clientFk')
             ->where(['>=', 'ts_incom', $dateStartSql])
             ->andWhere(['<=', 'ts_incom', $dateEndSql])
             ->andWhere(['direct' => SlsMoney::directIn])

@@ -12,6 +12,7 @@ use app\models\AnxUser;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\classes\BaseClassTemp;
 use app\modules\v1\models\sls\SlsClient;
+use app\modules\v1\models\sls\SlsMoney;
 use ReflectionClass;
 use Yii;
 use yii\web\HttpException;
