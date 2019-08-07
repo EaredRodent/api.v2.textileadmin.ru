@@ -111,13 +111,17 @@ class ActiveControllerExtended extends ActiveController
             $params = $this->mergeWithPostParams($params);
 
             $result = parent::runAction($id, $params);
-            $this->transaction->commit();
 
-            /**
-             * Отправка измененных таблиц по WebSocket
-             * @var V1Mod $module
-             */
+            /** @var V1Mod $module */
             $module = Yii::$app->getModule('v1');
+            $errors = $module->cmdErrors;
+            if (empty($errors)) {
+                $this->transaction->commit();
+            } else {
+                throw new \Exception("{$module->cmdErrors[0]}");
+            }
+
+            // Отправка измененных таблиц по WebSocket
             if (!empty($module->cmdTables)) {
                 $wsc = new Client($this->wssUrl);
                 $wsc->send(json_encode($module->cmdTables));
@@ -125,9 +129,7 @@ class ActiveControllerExtended extends ActiveController
             return $result;
         } catch (Exception $e) {
             $this->transaction->rollBack();
-            //throw new \Exception('Transaction rolled back. ' . $e->getMessage());
             throw $e;
-
         }
     }
 

@@ -8,9 +8,12 @@
 
 namespace app\modules\v1\controllers;
 
+use app\gii\GiiSlsInvoice;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\sls\SlsInvoice;
+use Yii;
 use yii\db\ActiveRecord;
+use yii\web\HttpException;
 
 class SlsInvoiceController extends ActiveControllerExtended
 {
@@ -18,6 +21,7 @@ class SlsInvoiceController extends ActiveControllerExtended
     public $modelClass = 'app\modules\v1\models\sls\SlsInvoice';
 
     const actionGetAccept = 'GET /v1/sls-invoice/get-accept';
+
     /**
      * @return array|ActiveRecord|self[]
      */
@@ -91,51 +95,62 @@ class SlsInvoiceController extends ActiveControllerExtended
     public function actionReject($id)
     {
         $invoice = SlsInvoice::get($id);
-        $userId = $invoice->user_fk;
 
+        $userId = $invoice->user_fk;
         $prevSort = $invoice->sort;
 
         // Новая позиция в конце отклоненных платежей
-
-        $newSort = SlsInvoice::getCount(SlsInvoice::stateReject, $userId) + 1;
-
+        // (позиция сортировки не нужна, сортировать будем по дате отклонения)
+        //$newSort = SlsInvoice::calcCount(SlsInvoice::stateReject, $userId) + 1;
         $invoice->state = SlsInvoice::stateReject;
-        $invoice->sort = $newSort;
+        //$invoice->sort = $newSort;
+        $invoice->sort = null;
+        $invoice->ts_reject = date('Y-m-d H:i:s');
         $invoice->save();
 
         // Сдвиг всех ожидающих платежей вверх
-
-        $waitInvoices = SlsInvoice::getSortDown(SlsInvoice::stateWait, $userId, $prevSort);
+        $waitInvoices = SlsInvoice::readSortDown(SlsInvoice::stateWait, $userId, $prevSort);
         foreach ($waitInvoices as $waitInvoice) {
             $waitInvoice->sort--;
             $waitInvoice->save();
         }
     }
 
+
     const actionSortUp = 'POST /v1/sls-invoice/sort-up';
 
     /**
+     * Поднять счет на позицию вверх
      * @param $id
+     * @throws HttpException
      */
     public function actionSortUp($id)
     {
         $invoice = SlsInvoice::get($id);
 
         $userId = $invoice->user_fk;
+
+        if (Yii::$app->user->getId() !== $userId) {
+            throw new HttpException(200, 'Не трогай чужой документ');
+        }
+
         $state = $invoice->state;
 
         $prevSort = $invoice->sort;
         $newSort = $prevSort - 1;
 
         if ($prevSort > 1) {
-            $upperInvoice = SlsInvoice::getSortItem($state, $userId, $newSort);
+            $upperInvoice = SlsInvoice::readSortItem($state, $userId, $newSort);
             $upperInvoice->sort = $prevSort;
             $upperInvoice->save();
 
             $invoice->sort = $newSort;
             $invoice->save();
+        } else {
+            throw new HttpException(200, 'Счет уже первый в очереди');
         }
     }
+
 
     const actionReturn = 'POST /v1/sls-invoice/return';
 
@@ -153,7 +168,7 @@ class SlsInvoiceController extends ActiveControllerExtended
         } else {
             // Убрать в подготавливаемые
             $userId = $invoice->user_fk;
-            $sort = SlsInvoice::getCount(SlsInvoice::stateWait, $userId) + 1;
+            $sort = SlsInvoice::calcCount(SlsInvoice::stateWait, $userId) + 1;
             $prevSort = $invoice->sort;
 
             $invoice->state = SlsInvoice::stateWait;
@@ -161,13 +176,14 @@ class SlsInvoiceController extends ActiveControllerExtended
             $invoice->save();
 
             // Закрыть "дырку"
-            $acceptInvoices = SlsInvoice::getSortDown(SlsInvoice::stateAccept, $userId, $prevSort);
+            $acceptInvoices = SlsInvoice::readSortDown(SlsInvoice::stateAccept, $userId, $prevSort);
             foreach ($acceptInvoices as $acceptInvoice) {
                 $acceptInvoice->sort--;
                 $acceptInvoice->save();
             }
         }
     }
+
 
     const actionAccept = 'POST /v1/sls-invoice/accept';
 
@@ -179,7 +195,7 @@ class SlsInvoiceController extends ActiveControllerExtended
     public function actionAccept($id, $cur_pay, $comment = '')
     {
         // Позиция в сортировке
-        $newSort = SlsInvoice::getCount(SlsInvoice::stateAccept) + 1;
+        $newSort = SlsInvoice::calcCount(SlsInvoice::stateAccept) + 1;
 
         $invoice = SlsInvoice::get($id);
 
@@ -194,11 +210,26 @@ class SlsInvoiceController extends ActiveControllerExtended
 
         if ($invoice->summ_pay == 0) {
             // Закрыть "дырку" если из подготавливаемых
-            $waitInvoices = SlsInvoice::getSortDown(SlsInvoice::stateWait, $userId, $prevSort);
+            $waitInvoices = SlsInvoice::readSortDown(SlsInvoice::stateWait, $userId, $prevSort);
             foreach ($waitInvoices as $waitInvoice) {
                 $waitInvoice->sort = $waitInvoice->sort - 1;
                 $waitInvoice->save();
             }
         }
     }
+
+
+    const actionGetRejectInvoices = 'GET /v1/sls-invoice/get-reject-invoices';
+
+    /**
+     * Вернуть список отклоненных счетов
+     */
+    public function actionGetRejectInvoices()
+    {
+        return SlsInvoice::find()
+            ->where(['state' => SlsInvoice::stateReject])
+            ->orderBy('ts_reject, id')
+            ->all();
+    }
+
 }

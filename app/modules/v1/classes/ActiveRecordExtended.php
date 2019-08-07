@@ -11,6 +11,7 @@ namespace app\modules\v1\classes;
 use app\modules\v1\V1Mod;
 use Yii;
 use yii\db\ActiveRecord;
+use yii\web\HttpException;
 
 
 class ActiveRecordExtended extends ActiveRecord
@@ -23,13 +24,17 @@ class ActiveRecordExtended extends ActiveRecord
             $module->cmdTables[] = static::tableName();
             return true;
         } else {
-            $errStr = '';
-            $error = static::getFirstErrors();
-            foreach ($error as $field => $err) {
-                $errStr = static::tableName() . '.' . $field . ' = ' . $err;
-            }
-            $module->cmdErrors[] = $errStr;
-            return false;
+
+            $errorStr = json_encode(static::getFirstErrors(), JSON_UNESCAPED_UNICODE);
+            throw new HttpException(500, $errorStr);
+
+//            $errStr = '';
+//            $error = static::getFirstErrors();
+//            foreach ($error as $field => $err) {
+//                $errStr = static::tableName() . '.' . $field . ' = ' . $err;
+//            }
+//            $module->cmdErrors[] = $errStr;
+//            return false;
         }
     }
 
@@ -48,6 +53,7 @@ class ActiveRecordExtended extends ActiveRecord
             $module->cmdErrors[] = $errStr;
         }
     }
+
 
     public static function get($id)
     {

@@ -71,7 +71,7 @@ class Permissions
     const taskMaster = 'taskMaster';
 
     /**
-     * Чтение страницы "реестр платежей"
+     * Чтение страницы "реестр платежей" и подстраницы "отклоненные счета"
      */
     const taskRegPaysPageAccess = 'taskRegPaysRead';
 
@@ -91,6 +91,7 @@ class Permissions
             SlsInvoiceController::actionGetPartPay,
             SlsInvoiceController::actionGetWait,
             SlsInvoiceController::actionGetPartPayWithStateAccept,
+            SlsInvoiceController::actionGetRejectInvoices,
 
             SlsMoneyController::getGetOut,
             SlsMoneyController::actionGetIncom,

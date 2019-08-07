@@ -122,7 +122,7 @@ class SlsMoneyController extends ActiveControllerExtended
         // Счет оплачен полностью
         if (bccomp($invoice->summ, $invoice->summ_pay) === 0) {
             $invoice->state = SlsInvoice::stateFullPay;
-            $sortPos = SlsInvoice::getCount(SlsInvoice::stateFullPay) + 1;
+            $sortPos = SlsInvoice::calcCount(SlsInvoice::stateFullPay) + 1;
             $invoice->sort = $sortPos;
             // todo удалить дырки
         }
@@ -130,7 +130,7 @@ class SlsMoneyController extends ActiveControllerExtended
         // Счет оплачен частично
         if (bccomp($invoice->summ_pay, $invoice->summ) < 0) {
             $invoice->state = SlsInvoice::statePartPay;
-            $sortPos = SlsInvoice::getCount(SlsInvoice::statePartPay) + 1;
+            $sortPos = SlsInvoice::calcCount(SlsInvoice::statePartPay) + 1;
             $invoice->sort = $sortPos;
             // todo удалить дырки
         }

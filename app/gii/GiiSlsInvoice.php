@@ -6,6 +6,7 @@ use app\models\AnxUser;
 use app\modules\v1\classes\ActiveRecordExtended;
 use app\modules\v1\models\sls\SlsMoney;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "sls_invoice".
@@ -25,6 +26,7 @@ use yii\db\ActiveQuery;
  * @property string $forex валюта. если пусто - значит рубли
  * @property string $forex_summ
  * @property string $forex_summ_pay
+ * @property string $ts_reject
  *
  * @property AnxUser $userFk
  * @property SlsMoney[] $slsMoneys
@@ -45,7 +47,7 @@ class GiiSlsInvoice extends ActiveRecordExtended
     public function rules()
     {
         return [
-            [['ts_create', 'ts_pay'], 'safe'],
+            [['ts_create', 'ts_pay', 'ts_reject'], 'safe'],
             [['user_fk', 'state', 'title', 'summ', 'sort'], 'required'],
             [['user_fk', 'sort', 'email_id'], 'integer'],
             [['state', 'forex'], 'string'],
@@ -77,11 +79,12 @@ class GiiSlsInvoice extends ActiveRecordExtended
             'forex' => 'Forex',
             'forex_summ' => 'Forex Summ',
             'forex_summ_pay' => 'Forex Summ Pay',
+            'ts_reject' => 'Ts Reject',
         ];
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
      */
     public function getUserFk()
     {
@@ -89,7 +92,7 @@ class GiiSlsInvoice extends ActiveRecordExtended
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
      */
     public function getSlsMoneys()
     {

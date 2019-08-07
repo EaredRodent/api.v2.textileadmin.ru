@@ -58,7 +58,7 @@ class SlsInvoice extends GiiSlsInvoice
      * @param $sortPos
      * @return array|ActiveRecord[]|self[]
      */
-    public static function getSortDown($state, $userId, $sortPos)
+    public static function readSortDown($state, $userId, $sortPos)
     {
         return self::find()
             ->where(['user_fk' => $userId, 'state' => $state])
@@ -72,7 +72,7 @@ class SlsInvoice extends GiiSlsInvoice
      * @param $sortPos
      * @return array|ActiveRecord|null|self
      */
-    public static function getSortItem($state, $userId, $sortPos)
+    public static function readSortItem($state, $userId, $sortPos)
     {
         return self::find()
             ->where(['user_fk' => $userId, 'state' => $state, 'sort' => $sortPos])
@@ -84,7 +84,7 @@ class SlsInvoice extends GiiSlsInvoice
      * @param int $userId
      * @return int|string
      */
-    public static function getCount($state, $userId = null)
+    public static function calcCount($state, $userId = null)
     {
         return self::find()
             ->where(['state' => $state])
