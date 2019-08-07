@@ -112,14 +112,16 @@ class ActiveControllerExtended extends ActiveController
 
             $result = parent::runAction($id, $params);
 
+            $this->transaction->commit();
+
             /** @var V1Mod $module */
-            $module = Yii::$app->getModule('v1');
-            $errors = $module->cmdErrors;
-            if (empty($errors)) {
-                $this->transaction->commit();
-            } else {
-                throw new \Exception("{$module->cmdErrors[0]}");
-            }
+//            $module = Yii::$app->getModule('v1');
+//            $errors = $module->cmdErrors;
+//            if (empty($errors)) {
+//                $this->transaction->commit();
+//            } else {
+//                throw new \Exception("{$module->cmdErrors[0]}");
+//            }
 
             // Отправка измененных таблиц по WebSocket
             if (!empty($module->cmdTables)) {

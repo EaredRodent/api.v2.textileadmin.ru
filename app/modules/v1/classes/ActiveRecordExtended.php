@@ -45,12 +45,15 @@ class ActiveRecordExtended extends ActiveRecord
         if (parent::delete()) {
             $module->cmdTables[] = static::tableName();
         } else {
-            $errStr = '';
-            $error = static::getFirstErrors();
-            foreach ($error as $field => $err) {
-                $errStr = static::tableName() . '.' . $field . ' = ' . $err;
-            }
-            $module->cmdErrors[] = $errStr;
+            $errorStr = json_encode(static::getFirstErrors(), JSON_UNESCAPED_UNICODE);
+            throw new HttpException(500, $errorStr);
+
+//            $errStr = '';
+//            $error = static::getFirstErrors();
+//            foreach ($error as $field => $err) {
+//                $errStr = static::tableName() . '.' . $field . ' = ' . $err;
+//            }
+//            $module->cmdErrors[] = $errStr;
         }
     }
 
