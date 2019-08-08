@@ -124,6 +124,8 @@ class ActiveControllerExtended extends ActiveController
 //            }
 
             // Отправка измененных таблиц по WebSocket
+            /** @var V1Mod $module */
+            $module = Yii::$app->getModule('v1');
             if (!empty($module->cmdTables)) {
                 $wsc = new Client($this->wssUrl);
                 $wsc->send(json_encode($module->cmdTables));
