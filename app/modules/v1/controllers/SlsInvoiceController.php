@@ -104,7 +104,7 @@ class SlsInvoiceController extends ActiveControllerExtended
         //$newSort = SlsInvoice::calcCount(SlsInvoice::stateReject, $userId) + 1;
         $invoice->state = SlsInvoice::stateReject;
         //$invoice->sort = $newSort;
-        $invoice->sort = null;
+        $invoice->sort = 0;
         $invoice->ts_reject = date('Y-m-d H:i:s');
         $invoice->save();
 
