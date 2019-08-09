@@ -6,7 +6,6 @@ use app\models\AnxUser;
 use app\modules\v1\classes\ActiveRecordExtended;
 use app\modules\v1\models\sls\SlsMoney;
 use yii\db\ActiveQuery;
-use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "sls_invoice".
@@ -84,7 +83,7 @@ class GiiSlsInvoice extends ActiveRecordExtended
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUserFk()
     {
@@ -92,7 +91,7 @@ class GiiSlsInvoice extends ActiveRecordExtended
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getSlsMoneys()
     {

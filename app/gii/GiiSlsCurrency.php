@@ -2,8 +2,7 @@
 
 namespace app\gii;
 
-use Yii;
-use yii\db\ActiveRecord;
+use app\modules\v1\classes\ActiveRecordExtended;
 
 /**
  * This is the model class for table "sls_currency".
@@ -14,7 +13,7 @@ use yii\db\ActiveRecord;
  * @property string $value
  * @property string $unit
  */
-class GiiSlsCurrency extends ActiveRecord
+class GiiSlsCurrency extends ActiveRecordExtended
 {
     /**
      * {@inheritdoc}

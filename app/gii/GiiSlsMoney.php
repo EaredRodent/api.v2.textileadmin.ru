@@ -35,7 +35,7 @@ use yii\db\ActiveQuery;
  * @property SlsPayItem $payItemFk
  * @property SlsPreorder $preorderFk
  */
-class GiiSlsMoney extends \yii\db\ActiveRecord
+class GiiSlsMoney extends ActiveRecordExtended
 {
     /**
      * {@inheritdoc}
@@ -89,7 +89,7 @@ class GiiSlsMoney extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUserFk()
     {
@@ -97,7 +97,7 @@ class GiiSlsMoney extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getClientFk()
     {
@@ -105,7 +105,7 @@ class GiiSlsMoney extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getInvoiceFk()
     {
@@ -113,7 +113,7 @@ class GiiSlsMoney extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getOrderFk()
     {
@@ -121,7 +121,7 @@ class GiiSlsMoney extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getPayItemFk()
     {
@@ -129,7 +129,7 @@ class GiiSlsMoney extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getPreorderFk()
     {

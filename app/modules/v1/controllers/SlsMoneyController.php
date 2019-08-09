@@ -15,6 +15,7 @@ use app\modules\v1\models\sls\SlsInvoice;
 use app\modules\v1\models\sls\SlsMoney;
 use app\modules\v1\models\sls\SlsOrder;
 use Yii;
+use yii\db\ActiveRecord;
 use yii\web\HttpException;
 
 class SlsMoneyController extends ActiveControllerExtended
@@ -33,9 +34,9 @@ class SlsMoneyController extends ActiveControllerExtended
 
     public function actionGetOut($month = null, $userId = null, $divId = null)
     {
-        if (!$month) {
-            $month = date('Y-m');
-        }
+//        if (!$month) {
+//            $month = date('Y-m');
+//        }
         $resp = SlsMoney::getOutMoney($month, $userId, $divId);
         return $resp;
     }
@@ -46,7 +47,7 @@ class SlsMoneyController extends ActiveControllerExtended
      * Получить все записи приходе денег с фильтром месяц/клиент
      * @param null $month - формат YYYY-MM
      * @param null $clientId
-     * @return array|\yii\db\ActiveRecord[]
+     * @return array|ActiveRecord[]
      */
     public function actionGetIncom($month = null, $clientId = null)
     {

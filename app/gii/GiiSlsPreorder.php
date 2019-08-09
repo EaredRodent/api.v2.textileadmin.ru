@@ -2,8 +2,9 @@
 
 namespace app\gii;
 
+use app\modules\v1\classes\ActiveRecordExtended;
 use app\modules\v1\models\sls\SlsClient;
-use Yii;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "sls_preorder".
@@ -32,7 +33,7 @@ use Yii;
  * @property SlsPreorderItem[] $slsPreorderItems
  * @property SlsPreorderReserv[] $slsPreorderReservs
  */
-class GiiSlsPreorder extends \yii\db\ActiveRecord
+class GiiSlsPreorder extends ActiveRecordExtended
 {
     /**
      * {@inheritdoc}
@@ -83,7 +84,7 @@ class GiiSlsPreorder extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getSlsMoneys()
     {
@@ -91,7 +92,7 @@ class GiiSlsPreorder extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getSlsOrders()
     {
@@ -99,7 +100,7 @@ class GiiSlsPreorder extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUserFk()
     {
@@ -107,7 +108,7 @@ class GiiSlsPreorder extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getClientFk()
     {
@@ -115,7 +116,7 @@ class GiiSlsPreorder extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getSlsPreorderItems()
     {
@@ -123,7 +124,7 @@ class GiiSlsPreorder extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getSlsPreorderReservs()
     {
