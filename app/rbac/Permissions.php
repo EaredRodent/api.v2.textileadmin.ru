@@ -130,6 +130,7 @@ class Permissions
 
         self::taskRegPaysInvoiceManage => [
             SlsInvoiceController::actionReject,
+            SlsInvoiceController::actionRejectUndo,
             SlsInvoiceController::actionSortUp,
             SlsInvoiceController::actionReturn,
             SlsInvoiceController::actionAccept,

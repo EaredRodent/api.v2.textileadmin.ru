@@ -91,6 +91,7 @@ class SlsInvoiceController extends ActiveControllerExtended
     /**
      * Отклонить счет
      * @param $id
+     * @throws HttpException
      */
     public function actionReject($id)
     {
@@ -114,6 +115,35 @@ class SlsInvoiceController extends ActiveControllerExtended
             $waitInvoice->sort--;
             $waitInvoice->save();
         }
+    }
+
+
+    const actionRejectUndo = 'POST /v1/sls-invoice/reject-undo';
+
+    /**
+     * Отменить отклонение счета
+     * @param $id
+     * @return string
+     * @throws HttpException
+     */
+    public function actionRejectUndo($id)
+    {
+        $invoice = SlsInvoice::get($id);
+
+        if (!$invoice) {
+            throw new HttpException(200, 'Счет не найден');
+        }
+
+        if ($invoice->state !== SlsInvoice::stateReject) {
+            throw new HttpException(200, 'Счет не в статусе отклонен');
+        }
+
+        $invoice->state = SlsInvoice::stateWait;
+        $countInvoices = SlsInvoice::calcCount(SlsInvoice::stateWait, $invoice->user_fk);
+        $invoice->sort = $countInvoices + 1;
+        $invoice->ts_reject = null;
+        $invoice->save();
+        return 'ok';
     }
 
 
