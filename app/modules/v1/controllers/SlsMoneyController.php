@@ -60,13 +60,16 @@ class SlsMoneyController extends ActiveControllerExtended
         $dateEndSql = date('Y-m-d 23:59:59', strtotime($dateEnd));
 
         return SlsMoney::find()
-            ->joinWith('orderFk')
-            //->with('orderFk.clientFk')
-            //->with('preorderFk.clientFk')
-            ->where(['>=', 'ts_incom', $dateStartSql])
-            ->andWhere(['<=', 'ts_incom', $dateEndSql])
-            ->andWhere(['direct' => SlsMoney::directIn])
+            ->joinWith(['orderFk', 'preorderFk'])
+            ->where(['direct' => SlsMoney::directIn])
             ->andFilterWhere(['sls_order.client_fk' => $clientId])
+            ->orFilterWhere(['sls_preorder.client_fk' => $clientId])
+            ->andWhere(['>=', 'ts_incom', $dateStartSql])
+            ->andWhere(['<=', 'ts_incom', $dateEndSql])
+            // фильтруются записи списания с предоплаты
+            ->andWhere('sls_money.summ > 0')
+            // фильтруются записи виртуального поступления денег по заказам созданным из предзаказов
+            ->andWhere(['sls_order.preorder_fk' => null])
             ->orderBy('ts_incom')
             ->all();
 
