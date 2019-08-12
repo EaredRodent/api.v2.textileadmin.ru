@@ -160,9 +160,9 @@ class SlsInvoiceController extends ActiveControllerExtended
 
         $userId = $invoice->user_fk;
 
-        if (Yii::$app->user->getId() !== $userId) {
-            throw new HttpException(200, 'Не трогай чужой документ');
-        }
+//        if (Yii::$app->user->getId() !== $userId) {
+//            throw new HttpException(200, 'Не трогай чужой документ');
+//        }
 
         $state = $invoice->state;
 
