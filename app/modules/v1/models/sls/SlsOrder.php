@@ -25,13 +25,30 @@ class SlsOrder extends GiiSlsOrder
     const s6_allow = 's6_allow';
     const s7_send = 's7_send';
 
+    const statuses = [
+        self::s0_del          => 'Удален',
+        self::s0_preorder     => 'Предзаказ',
+        self::s1_prep         => 'Подготовка',
+        self::s1_wait_assembl => 'На сборке',
+        self::s5_assembl      => 'Собран',
+        self::s2_wait         => 'Акцептование',
+        self::s3_accept       => 'Акцептован',
+        self::s4_reject       => 'Отклонен',
+        self::s6_allow        => 'Разрешен',
+        self::s7_send         => 'Отгружен',
+
+    ];
+
     const payBank = 'bank';
     const payCash = 'cash';
 
     public function fields()
     {
         return array_merge(parent::fields(), [
-            'clientFk'
+            'clientFk',
+            'statusStr' => function () {
+                return self::statuses[$this->status];
+            },
         ]);
     }
 

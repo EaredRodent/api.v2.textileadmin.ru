@@ -131,11 +131,11 @@ class SlsInvoiceController extends ActiveControllerExtended
         $invoice = SlsInvoice::get($id);
 
         if (!$invoice) {
-            throw new HttpException(200, 'Счет не найден');
+            throw new HttpException(200, 'Счет не найден', 200);
         }
 
         if ($invoice->state !== SlsInvoice::stateReject) {
-            throw new HttpException(200, 'Счет не в статусе отклонен');
+            throw new HttpException(200, 'Счет не в статусе отклонен', 200);
         }
 
         $invoice->state = SlsInvoice::stateWait;
@@ -177,7 +177,7 @@ class SlsInvoiceController extends ActiveControllerExtended
             $invoice->sort = $newSort;
             $invoice->save();
         } else {
-            throw new HttpException(200, 'Счет уже первый в очереди');
+            throw new HttpException(200, 'Счет уже первый в очереди', 200);
         }
     }
 
