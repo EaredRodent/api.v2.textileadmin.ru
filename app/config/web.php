@@ -16,6 +16,9 @@ $config = [
             'class' => 'app\modules\v1\V1Mod',
         ],
     ],
+
+    'runtimePath' => dirname(__DIR__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'runtime-web',
+
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation

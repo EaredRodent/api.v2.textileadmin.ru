@@ -13,6 +13,9 @@ $config = [
         '@npm'   => '@vendor/npm-asset',
         '@tests' => '@app/tests',
     ],
+
+    'runtimePath' => dirname(__DIR__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'runtime-console',
+
     'components' => [
         'cache' => [
             'class' => 'yii\caching\FileCache',
