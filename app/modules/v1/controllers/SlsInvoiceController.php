@@ -64,7 +64,7 @@ class SlsInvoiceController extends ActiveControllerExtended
     public function actionGetWait()
     {
         $resp = [];
-        $dfdgs = [
+        $usersList = [
             // АМ
             9 => 'Едуш',
             // ЕИ
@@ -74,7 +74,7 @@ class SlsInvoiceController extends ActiveControllerExtended
             // Алена
             8 => 'Молодцова',
         ];
-        foreach ($dfdgs as $key => $name) {
+        foreach ($usersList as $key => $name) {
 
             $elm['name'] = $name;
             $elm['items'] = SlsInvoice::find()

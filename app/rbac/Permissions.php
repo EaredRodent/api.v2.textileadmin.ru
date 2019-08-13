@@ -6,6 +6,7 @@ namespace app\rbac;
 
 use app\modules\v1\controllers\AnxUserController;
 use app\modules\v1\controllers\BaseController;
+use app\modules\v1\controllers\FilesController;
 use app\modules\v1\controllers\SlsClientController;
 use app\modules\v1\controllers\SlsInvoiceController;
 use app\modules\v1\controllers\SlsMoneyController;
@@ -126,6 +127,8 @@ class Permissions
 
             SlsPayItemController::getGetOut,
             SlsPayItemController::getGetIn,
+
+            FilesController::actionGetInvoiceAttachment,
         ],
 
         self::taskRegPaysInvoiceManage => [

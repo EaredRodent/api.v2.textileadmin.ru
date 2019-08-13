@@ -10,6 +10,8 @@ namespace app\modules\v1\models\sls;
 
 
 use app\gii\GiiSlsInvoice;
+use app\modules\AppMod;
+use Yii;
 use yii\db\ActiveRecord;
 
 class SlsInvoice extends GiiSlsInvoice
@@ -26,7 +28,18 @@ class SlsInvoice extends GiiSlsInvoice
     public function fields()
     {
         return array_merge(parent::fields(), [
-            'userFk'
+            'userFk',
+            'attachment' => function () {
+                $files = [];
+                $pathToFiles = realpath(Yii::getAlias(AppMod::prmPathToSlsMailAttachments));
+                $invoiceId = $this->id;
+                $mask = $pathToFiles . "/{$invoiceId}-*.*";
+                $names = glob($mask);
+                foreach ($names as $path) {
+                    $files[] = \basename($path);
+                }
+                return $files;
+            },
         ]);
     }
 
