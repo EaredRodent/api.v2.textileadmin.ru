@@ -114,6 +114,7 @@ class Permissions
             SlsInvoiceController::actionGetWait,
             SlsInvoiceController::actionGetPartPayWithStateAccept,
             SlsInvoiceController::actionGetRejectInvoices,
+            SlsInvoiceController::actionGetManagers,
 
             SlsMoneyController::getGetOut,
             SlsMoneyController::actionGetIncom,
@@ -127,8 +128,6 @@ class Permissions
 
             SlsPayItemController::getGetOut,
             SlsPayItemController::getGetIn,
-
-            FilesController::actionGetInvoiceAttachment,
         ],
 
         self::taskRegPaysInvoiceManage => [
@@ -137,6 +136,8 @@ class Permissions
             SlsInvoiceController::actionSortUp,
             SlsInvoiceController::actionReturn,
             SlsInvoiceController::actionAccept,
+            SlsInvoiceController::actionCreate,
+            SlsInvoiceController::actionEdit,
 
             SlsMoneyController::postEditPay,
             SlsMoneyController::postMoneyOut,

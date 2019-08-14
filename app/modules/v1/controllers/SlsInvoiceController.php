@@ -9,6 +9,7 @@
 namespace app\modules\v1\controllers;
 
 use app\gii\GiiSlsInvoice;
+use app\modules\AppMod;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\sls\SlsInvoice;
 use Yii;
@@ -262,4 +263,82 @@ class SlsInvoiceController extends ActiveControllerExtended
             ->all();
     }
 
+    const actionGetManagers = 'GET /v1/sls-invoice/get-managers';
+
+    public function actionGetManagers()
+    {
+        return [
+            [
+                'id' => 9,
+                'short_name' => 'Едуш'
+            ],
+            [
+                'id' => 11,
+                'short_name' => 'Кривоносова'
+            ],
+            [
+                'id' => 12,
+                'short_name' => 'Калашников'
+            ],
+            [
+                'id' => 8,
+                'short_name' => 'Молодцова'
+            ]
+        ];
+    }
+
+    const actionCreate = 'GET /v1/sls-invoice/create';
+
+    public function actionCreate($userId, $emailId, $emailSubject)
+    {
+        $sort = SlsInvoice::calcCount(SlsInvoice::stateWait, $userId) + 1;
+
+        // Название и сумму
+        $arr = explode('=', $emailSubject);
+        if (count($arr) >= 2) {
+            $title = trim($arr[0]);
+            $summStr = str_replace(',', '.', $arr[1]);
+            $summStr2 = str_replace(' ', '', $summStr);
+            $summ = (float)trim($summStr2);
+        } else {
+            $title = $emailSubject;
+            $summ = 0;
+        }
+
+        $invoice = new SlsInvoice();
+        $invoice->user_fk = $userId;
+        $invoice->state = SlsInvoice::stateWait;
+        $invoice->title = $title;
+        $invoice->summ = $summ;
+        $invoice->sort = $sort;
+        $invoice->email_id = $emailId;
+        $invoice->ts_pay = null;
+        $invoice->save();
+    }
+
+    const actionEdit = 'GET /v1/sls-invoice/edit';
+
+    public function actionEdit($id, $user_fk)
+    {
+//        $invoice = SlsInvoice::get($id);
+//
+//        // Произошло изменение юзера
+//        if ($invoice->user_fk !== $user_fk) {
+//            // Убрать дырку с предыдущих юзеров
+//            $waitInvoices = SlsInvoice::readSortDown(SlsInvoice::stateWait, $invoice->user_fk, $invoice->sort);
+//            foreach ($waitInvoices as $waitInvoice) {
+//                $waitInvoice->sort = $waitInvoice->sort - 1;
+//                $waitInvoice->cmdSave();
+//            }
+//
+//            // Добавить в конец новых
+//            $newUser = $user_fk;
+//            $newSort = SlsInvoice::calcCount(SlsInvoice::stateWait, $newUser) + 1;
+//            $invoice->sort = $newSort;
+//
+//        }
+//
+//        $invoice->attributes = $FORM;
+//        $invoice->save();
+    }
 }
