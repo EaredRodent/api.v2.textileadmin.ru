@@ -105,7 +105,7 @@ class SlsMoneyController extends ActiveControllerExtended
     {
         $model = new SlsMoney();
         $model->invoice_fk = $id;
-        $model->summ = $cur_pay;
+        $model->summ = $cur_pay * -1;
         $model->ts_incom = date('Y-m-d 12:00:00', strtotime($ts_incom));
         $model->pay_item_fk = $pay_item_fk;
         $model->comment = $comment;
@@ -120,7 +120,7 @@ class SlsMoneyController extends ActiveControllerExtended
 
         $dsgdg = bccomp($invoice->summ_pay, $invoice->summ);
         if ($dsgdg > 0) {
-            throw new HttpException(400, 'Оплачено больше чем сумма счета');
+            throw new HttpException(200, 'Оплачено больше чем сумма счета', 200);
         }
 
         // Счет оплачен полностью
