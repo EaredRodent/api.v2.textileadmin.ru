@@ -9,7 +9,17 @@ use Yii;
 class AppMod
 {
     /**
-     * Место хранения прикрепленных файлов
+     * Прикрепленные файлы для счетов в реестре пладежей
      */
-    const prmPathToSlsMailAttachments = '@app/../../textile/files/mail-doc';
+    const filesInvoiceAttachement = 'filesInvoiceAttachement';
+
+    /**
+     * Файлы счетов коотоые создает отдел продаж
+     */
+    const filesInvoiceSlsDep = 'filesInvoiceSlsDep';
+
+    const filesRout = [
+        self::filesInvoiceAttachement => '@app/../../textile/files/mail-doc',
+        self::filesInvoiceSlsDep => '@app/../../textile/files/sls/invoices',
+    ];
 }

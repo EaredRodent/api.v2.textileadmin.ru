@@ -11,35 +11,47 @@ namespace app\modules\v1\controllers;
 use app\modules\AppMod;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\sls\SlsClient;
+use yii\web\Controller;
 use yii\web\HttpException;
 
 
-class FilesController extends ActiveControllerExtended
+class FilesController extends Controller
 {
-	public $modelClass = '';
-
-	const actionGetInvoiceAttachment = 'GET /v1/files/get-invoice-attachment';
 
     /**
+     * http://api.textileadmin.loc/v1/files/get?key=123&dir=filesInvoiceAttachement&name=1068-01082019molodcova.jpeg
+     * http://api.textileadmin.loc/v1/files/get/123/filesInvoiceAttachement/1068-01082019molodcova.jpeg
+     *
      * Вернуть в браузер файл прикрепленный к счету
-     * @param $fileName
+     * @param $name
      * @return string
      */
-	public function actionGetInvoiceAttachment($fileName)
-	{
+    public function actionGet($key, $dir, $name)
+    {
 
-        $fullPath = \Yii::getAlias(AppMod::prmPathToSlsMailAttachments) . "/{$fileName}";
+        if ($key === "6spdsd4d44fsdaf89034") {
 
-        if (!file_exists($fullPath)) {
-            throw new HttpException(200, 'Файл не найден', 200);
+            if (isset(AppMod::filesRout[$dir])) {
+
+                $fullPath = \Yii::getAlias(AppMod::filesRout[$dir]) . "/{$name}";
+
+                if (!file_exists($fullPath)) {
+                    throw new HttpException(200, 'Файл не найден', 200);
+                } else {
+                    $contentType = mime_content_type($fullPath);
+                    return \Yii::$app->response->sendFile($fullPath, $name, [
+                        'fileSize' => filesize($fullPath),
+                        'mimeType' => $contentType,
+                        'inline' => true,
+                    ]);
+                }
+            } else {
+                throw new HttpException(200, 'Не найдена категория файла', 200);
+            }
         } else {
-            $contentType = mime_content_type($fullPath);
-            return \Yii::$app->response->sendFile($fullPath, $fileName, [
-                'fileSize' => filesize($fullPath),
-                'mimeType' => $contentType,
-                'inline'   => true,
-            ]);
+            throw new HttpException(200, 'Нет доступа', 200);
         }
-	}
+
+    }
 
 }

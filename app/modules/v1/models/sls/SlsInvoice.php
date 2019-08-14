@@ -31,7 +31,8 @@ class SlsInvoice extends GiiSlsInvoice
             'userFk',
             'attachment' => function () {
                 $files = [];
-                $pathToFiles = realpath(Yii::getAlias(AppMod::prmPathToSlsMailAttachments));
+                $alias = AppMod::filesRout[AppMod::filesInvoiceAttachement];
+                $pathToFiles = realpath(Yii::getAlias($alias));
                 $invoiceId = $this->id;
                 $mask = $pathToFiles . "/{$invoiceId}-*.*";
                 $names = glob($mask);
