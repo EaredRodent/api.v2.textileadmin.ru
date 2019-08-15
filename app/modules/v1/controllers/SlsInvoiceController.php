@@ -302,49 +302,53 @@ class SlsInvoiceController extends ActiveControllerExtended
      * @param $title
      * @param $summ
      * @param null $ts_pay
+     * @return array
      * @throws HttpException
      */
     public function actionCreate($user_fk, $title, $summ, $ts_pay = null)
     {
-//        throw new HttpException(200, "Юра не может создавать счет",  200);
-
-        $sort = SlsInvoice::calcCount(SlsInvoice::stateWait, $user_fk) + 1;
-
         $invoice = new SlsInvoice();
+
         $invoice->user_fk = $user_fk;
-        $invoice->state = SlsInvoice::stateWait;
         $invoice->title = $title;
         $invoice->summ = $summ;
-        $invoice->sort = $sort;
         $invoice->ts_pay = $ts_pay;
+
+        $invoice->state = SlsInvoice::stateWait;
+        $invoice->sort = SlsInvoice::calcCount(SlsInvoice::stateWait, $user_fk) + 1;
         $invoice->save();
 
         return ['_result_' => 'success', 'id' => $invoice->id];
     }
 
-    const actionEdit = 'GET /v1/sls-invoice/edit';
+    const actionEdit = 'POST /v1/sls-invoice/edit';
 
-    public function actionEdit($id, $user_fk)
+    public function actionEdit($id, $user_fk, $title, $summ, $ts_pay = null, $cur_pay = null, $summ_pay = null)
     {
-//        $invoice = SlsInvoice::get($id);
-//
-//        // Произошло изменение юзера
-//        if ($invoice->user_fk !== $user_fk) {
-//            // Убрать дырку с предыдущих юзеров
-//            $waitInvoices = SlsInvoice::readSortDown(SlsInvoice::stateWait, $invoice->user_fk, $invoice->sort);
-//            foreach ($waitInvoices as $waitInvoice) {
-//                $waitInvoice->sort = $waitInvoice->sort - 1;
-//                $waitInvoice->cmdSave();
-//            }
-//
-//            // Добавить в конец новых
-//            $newUser = $user_fk;
-//            $newSort = SlsInvoice::calcCount(SlsInvoice::stateWait, $newUser) + 1;
-//            $invoice->sort = $newSort;
-//
-//        }
-//
-//        $invoice->attributes = $FORM;
-//        $invoice->save();
+        $invoice = SlsInvoice::get($id);
+
+        // Произошло изменение юзера
+        if ($user_fk !== $invoice->user_fk) {
+            // Убрать дырку с инвойсов предыдущего юзера
+            $waitInvoices = SlsInvoice::readSortDown(SlsInvoice::stateWait, $invoice->user_fk, $invoice->sort);
+            foreach ($waitInvoices as $waitInvoice) {
+                $waitInvoice->sort = $waitInvoice->sort - 1;
+                $waitInvoice->save();
+            }
+
+            // Добавить в конец новых
+            $invoice->sort = SlsInvoice::calcCount(SlsInvoice::stateWait, $user_fk) + 1;
+
+        }
+
+        $invoice->user_fk = $user_fk;
+        $invoice->title = $title;
+        $invoice->summ = $summ;
+        $invoice->ts_pay = $ts_pay;
+        $invoice->cur_pay = $cur_pay;
+        $invoice->summ_pay = $summ_pay;
+        $invoice->save();
+
+        return ['_result_' => 'success', 'id' => $invoice->id];
     }
 }
