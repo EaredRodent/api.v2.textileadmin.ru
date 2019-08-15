@@ -138,6 +138,9 @@ class Permissions
             SlsInvoiceController::actionAccept,
             SlsInvoiceController::actionCreate,
             SlsInvoiceController::actionEdit,
+            SlsInvoiceController::actionUploadFile,
+            SlsInvoiceController::actionDeleteFile,
+            SlsInvoiceController::actionGetAttachment,
 
             SlsMoneyController::postEditPay,
             SlsMoneyController::postMoneyOut,

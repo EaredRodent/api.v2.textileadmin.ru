@@ -67,7 +67,7 @@ $config = [
 
             'rules' => [
 
-                'v1/files/get/<key:[\w-]+>/<dir:[\w-]+>/<name:[\w-.()]+>' => 'v1/files/get',
+                'v1/files/get/<key:[\w-]+>/<dir:[\w-]+>/<name:[\w-.()\s]+>' => 'v1/files/get',
 
                 'sales/orders/order/<id:\d+>' => 'sales/orders/order',
                 'api/excel-price/<key:[A-Za-z0-9_-]+>' => 'api/excel-price',

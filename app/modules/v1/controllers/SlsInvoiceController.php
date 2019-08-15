@@ -351,4 +351,32 @@ class SlsInvoiceController extends ActiveControllerExtended
 
         return ['_result_' => 'success', 'id' => $invoice->id];
     }
+
+    const actionUploadFile = 'POST /v1/sls-invoice/upload-file';
+
+    public function actionUploadFile($id)
+    {
+        foreach ($_FILES as $file) {
+            move_uploaded_file($file['tmp_name'], Yii::getAlias(AppMod::filesRout[AppMod::filesInvoiceAttachement]) . '/' . $id . '-' . $file['name']);
+        }
+    }
+
+    const actionDeleteFile = 'POST /v1/sls-invoice/delete-file';
+
+    public function actionDeleteFile($fileName)
+    {
+        $filePath = Yii::getAlias(AppMod::filesRout[AppMod::filesInvoiceAttachement]) . '/' . $fileName;
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+    }
+
+    const actionGetAttachment = 'GET /v1/sls-invoice/get-attachment';
+
+    public function actionGetAttachment($id)
+    {
+
+        $attachment = SlsInvoice::findOne(['id' => $id])->toArray(['attachment'])['attachment'];
+        return $attachment;
+    }
 }
