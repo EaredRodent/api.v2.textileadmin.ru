@@ -26,6 +26,7 @@ class Permissions
     const roleGuest = 'roleGuest';
     const roleMaster = 'roleMaster';
     const roleEdush = 'roleEdush';
+    const roleBuhMain = 'roleBuhMain';
 
     const roles = [
 
@@ -48,6 +49,11 @@ class Permissions
             self::taskRegPaysPageAccess,
             self::taskRegPaysInvoiceManage,
         ],
+        self::roleBuhMain => [
+            self::taskRegPaysPageAccess,
+            self::taskRegPaysInvoiceManage,
+        ],
+
     ];
 
     ///

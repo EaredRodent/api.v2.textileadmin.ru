@@ -19,7 +19,7 @@ class CBR
       $client = new Client();
       $response = $client->createRequest()
          ->setMethod('GET')
-         ->setUrl('http://www.cbr.ru/scripts/XML_daily.asp')
+         ->setUrl('http://www.cbr.ru/scripts/XML_daily.asp?date_req=' . date('d.m.Y'))
          ->send();
 
       if ($response->isOk) {

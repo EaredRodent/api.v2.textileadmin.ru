@@ -94,6 +94,7 @@ class SlsMoneyController extends ActiveControllerExtended
     const postMoneyOut = 'POST /v1/sls-money/money-out';
 
     /**
+     *
      * @param $id
      * @param $cur_pay
      * @param $ts_incom
@@ -116,7 +117,7 @@ class SlsMoneyController extends ActiveControllerExtended
 
         // Сумма оплаты счета
         $invoice = SlsInvoice::get($model->invoice_fk);
-        $invoice->summ_pay = bcadd($invoice->summ_pay, $model->summ);
+        $invoice->summ_pay = bcadd($invoice->summ_pay, $cur_pay);
 
         $dsgdg = bccomp($invoice->summ_pay, $invoice->summ);
         if ($dsgdg > 0) {

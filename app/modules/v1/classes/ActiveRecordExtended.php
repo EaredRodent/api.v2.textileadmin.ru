@@ -26,7 +26,7 @@ class ActiveRecordExtended extends ActiveRecord
         } else {
 
             $errorStr = json_encode(static::getFirstErrors(), JSON_UNESCAPED_UNICODE);
-            throw new HttpException(500, $errorStr);
+            throw new HttpException(200, $errorStr, 200);
 
 //            $errStr = '';
 //            $error = static::getFirstErrors();
@@ -46,7 +46,7 @@ class ActiveRecordExtended extends ActiveRecord
             $module->cmdTables[] = static::tableName();
         } else {
             $errorStr = json_encode(static::getFirstErrors(), JSON_UNESCAPED_UNICODE);
-            throw new HttpException(500, $errorStr);
+            throw new HttpException(200, $errorStr, 200);
 
 //            $errStr = '';
 //            $error = static::getFirstErrors();

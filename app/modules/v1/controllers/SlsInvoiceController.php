@@ -349,7 +349,6 @@ class SlsInvoiceController extends ActiveControllerExtended
         $invoice->summ = $summ;
         $invoice->ts_pay = $ts_pay;
         $invoice->cur_pay = $cur_pay;
-        $invoice->summ_pay = $summ_pay;
         $invoice->save();
 
         return ['_result_' => 'success'];

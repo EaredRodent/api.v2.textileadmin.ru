@@ -68,7 +68,7 @@ class GiiSlsInvoice extends ActiveRecordExtended
             'user_fk' => 'User Fk',
             'state' => 'State',
             'title' => 'Title',
-            'summ' => 'Summ',
+            'summ' => 'Сумма счета',
             'cur_pay' => 'Cur Pay',
             'summ_pay' => 'Summ Pay',
             'sort' => 'Sort',

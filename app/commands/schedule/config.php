@@ -12,4 +12,5 @@ use omnilight\scheduling\Schedule;
  */
 $schedule->call(function () {
    (new CBR())->init();
-})->everyMinute();
+})->hourly();
+//})->everyMinute();
