@@ -16,8 +16,9 @@ class SlsCurrencyController extends ActiveControllerExtended
 {
     public $modelClass = 'app\models\SlsCurrency';
 
+    const actionGetLast = 'GET /v1/sls-currency/get-last';
+
     /**
-     * TODO
      * @return array
      */
     public function actionGetLast()
