@@ -8,6 +8,7 @@
 
 namespace app\modules\v1\controllers;
 
+use app\extension\Helper;
 use app\gii\GiiSlsInvoice;
 use app\modules\AppMod;
 use app\modules\v1\classes\ActiveControllerExtended;
@@ -358,8 +359,11 @@ class SlsInvoiceController extends ActiveControllerExtended
 
     public function actionUploadFile($id)
     {
+        $pathToInvoiceAttachement = Yii::getAlias(AppMod::filesRout[AppMod::filesInvoiceAttachement]);
         foreach ($_FILES as $file) {
-            move_uploaded_file($file['tmp_name'], Yii::getAlias(AppMod::filesRout[AppMod::filesInvoiceAttachement]) . '/' . $id . '-' . $file['name']);
+            $translitName = Helper::strTranslitFileName($file['name']);
+            $fileName = $pathToInvoiceAttachement . '/' . $id . '-' . $translitName;
+            move_uploaded_file($file['tmp_name'], $fileName);
         }
     }
 
