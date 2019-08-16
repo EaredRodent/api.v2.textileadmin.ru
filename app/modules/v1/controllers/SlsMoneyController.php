@@ -140,6 +140,8 @@ class SlsMoneyController extends ActiveControllerExtended
         }
 
         $invoice->save();
+
+        return ['_result_' => 'success'];
     }
 
     const postEditPay = 'POST /v1/sls-money/edit-pay';
@@ -157,6 +159,8 @@ class SlsMoneyController extends ActiveControllerExtended
         $model->pay_item_fk = $pay_item_fk;
         $model->ts_incom = $ts_incom;
         $model->save();
+
+        return ['_result_' => 'success'];
     }
 
     const getGetReport = 'GET /v1/sls-money/get-report';

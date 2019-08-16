@@ -254,6 +254,8 @@ class SlsInvoiceController extends ActiveControllerExtended
                 $waitInvoice->save();
             }
         }
+
+        return ['_result_' => 'success'];
     }
 
 
@@ -318,7 +320,7 @@ class SlsInvoiceController extends ActiveControllerExtended
         $invoice->sort = SlsInvoice::calcCount(SlsInvoice::stateWait, $user_fk) + 1;
         $invoice->save();
 
-        return ['_result_' => 'success', 'id' => $invoice->id];
+        return ['_result_' => 'success'];
     }
 
     const actionEdit = 'POST /v1/sls-invoice/edit';
@@ -349,7 +351,7 @@ class SlsInvoiceController extends ActiveControllerExtended
         $invoice->summ_pay = $summ_pay;
         $invoice->save();
 
-        return ['_result_' => 'success', 'id' => $invoice->id];
+        return ['_result_' => 'success'];
     }
 
     const actionUploadFile = 'POST /v1/sls-invoice/upload-file';
