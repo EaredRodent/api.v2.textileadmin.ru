@@ -36,7 +36,6 @@ class Permissions
             AnxUserController::actionIndex,
         ],
         self::roleMaster => [
-            self::taskPaysRead,
             self::pageTestApi,
             self::roleEdush,
             self::taskMaster,
@@ -64,12 +63,9 @@ class Permissions
 
     const pageTestApi = 'pageTestApi';
 
-    const pagePays = 'pagePays';
-
     const pages = [
         self::pageRegPays => 'Реестры платежей',
-        self::pageTestApi => 'Тестирование API проекта',
-        self::pagePays => 'Платежи подробно'
+        self::pageTestApi => 'Тестирование API проекта'
     ];
 
 
@@ -83,7 +79,8 @@ class Permissions
     const taskMaster = 'taskMaster';
 
     /**
-     * Чтение страницы "реестр платежей" и подстраницы "отклоненные счета"
+     * Чтение страницы "реестр платежей"
+     * и подстраниц "отклоненные счета", "исходящие платежи"
      */
     const taskRegPaysPageAccess = 'taskRegPaysRead';
 
@@ -92,25 +89,7 @@ class Permissions
      */
     const taskRegPaysInvoiceManage = 'taskRegPaysInvoiceManage';
 
-    /**
-     * Страница платежей подробная
-     */
-
-    const taskPaysRead = 'taskPaysRead';
-    const taskPaysWrite = 'taskPaysWrite';
-
-
     const tasks = [
-        self::taskPaysRead => [
-            self::pagePays,
-            SlsMoneyController::getGetOut,
-            SlsMoneyController::getGetUsers,
-            SlsPayItemController::getGetOut,
-        ],
-
-        self::taskPaysWrite => [
-
-        ],
 
         self::taskRegPaysPageAccess => [
             self::pageRegPays,
