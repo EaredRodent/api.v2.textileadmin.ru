@@ -17,21 +17,18 @@ class CBR
    public function init()
    {
       $client = new Client();
+      $date = date('d.m.Y');
       $response = $client->createRequest()
          ->setMethod('GET')
-         ->setUrl('http://www.cbr.ru/scripts/XML_daily.asp?date_req=' . date('d.m.Y'))
+         ->setUrl('http://www.cbr.ru/scripts/XML_daily.asp?date_req=' . $date)
          ->send();
 
       if ($response->isOk) {
          $resp = $response->getData();
-         $date = '';
          $currency = [
             'USD' => ['Value' => '', 'Found' => false],
             'EUR' => ['Value' => '', 'Found' => false]
          ];
-
-         $date = $resp['@attributes']['Date'];
-
 
          foreach ($resp['Valute'] as $valute) {
             if (($valute['CharCode'] === 'USD') && (!$currency['USD']['Found'])) {
@@ -48,10 +45,11 @@ class CBR
          }
 
          $date = date("Y-m-d", strtotime($date));
+
          $currency['USD'] = str_replace(',', '.', $currency['USD']);
          $currency['EUR'] = str_replace(',', '.', $currency['EUR']);
 
-         if ($date && $currency['USD']['Found'] && $currency['EUR']['Found']) {
+         if ($currency['USD']['Found'] && $currency['EUR']['Found']) {
             $slsCurrency = new SlsCurrency();
             $slsCurrency->date = $date;
             $slsCurrency->unit = 'USD';
@@ -68,7 +66,7 @@ class CBR
                echo 'CBR->init() Failed. Save model EUR error.';
             }
          } else {
-            echo 'CBR->init() Failed. Bad date/value.';
+            echo 'CBR->init() Failed. Values not found.';
          }
       } else {
          echo 'CBR->init() Failed.';

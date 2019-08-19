@@ -24,20 +24,20 @@ class SlsCurrencyController extends ActiveControllerExtended
     public function actionGetLast()
     {
         $res = [];
+        $date = date('Y.m.d');
+
         $usd = SlsCurrency::find()
             ->where(['unit' => SlsCurrency::USD])
-            ->orderBy(['date' => SORT_DESC])
-            ->limit(1)
-            ->asArray()
+            ->orderBy(['id' => SORT_DESC])
+            ->andWhere(['date' => $date])
             ->one();
         if ($usd) {
             $res[] = $usd;
         }
         $eur = SlsCurrency::find()
             ->where(['unit' => SlsCurrency::EUR])
-            ->orderBy(['date' => SORT_DESC])
-            ->limit(1)
-            ->asArray()
+            ->orderBy(['id' => SORT_DESC])
+            ->andWhere(['date' => $date])
             ->one();
         if ($eur) {
             $res[] = $eur;
