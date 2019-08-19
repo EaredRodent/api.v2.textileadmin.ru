@@ -326,7 +326,7 @@ class SlsInvoiceController extends ActiveControllerExtended
 
     const actionEdit = 'POST /v1/sls-invoice/edit';
 
-    public function actionEdit($id, $user_fk, $title, $summ, $ts_pay = null, $cur_pay = null, $summ_pay = null)
+    public function actionEdit($id, $user_fk, $title, $summ, $ts_pay = null, $cur_pay = null)
     {
         $invoice = SlsInvoice::get($id);
 
