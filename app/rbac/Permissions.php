@@ -7,12 +7,14 @@ namespace app\rbac;
 use app\modules\v1\controllers\AnxUserController;
 use app\modules\v1\controllers\BaseController;
 use app\modules\v1\controllers\FilesController;
+use app\modules\v1\controllers\RefBlankGroupController;
 use app\modules\v1\controllers\SlsClientController;
 use app\modules\v1\controllers\SlsCurrencyController;
 use app\modules\v1\controllers\SlsInvoiceController;
 use app\modules\v1\controllers\SlsMoneyController;
 use app\modules\v1\controllers\SlsOrderController;
 use app\modules\v1\controllers\SlsPayItemController;
+use app\modules\v1\models\ref\RefBlankGroup;
 use app\modules\v1\models\sls\SlsInvoice;
 use app\modules\v1\models\sls\SlsMoney;
 
@@ -40,23 +42,26 @@ class Permissions
             self::pageTestApi,
             self::roleEdush,
             self::taskMaster,
+            self::taskReferenceAccess,
             ///
             AnxUserController::postCreateUser,
             BaseController::actionPostTestData,
-
         ],
         self::roleEdush => [
             self::taskRegPaysPageAccess,
             self::taskRegPaysInvoiceManage,
+            self::taskReferenceAccess,
         ],
         self::roleBuhMain => [
             self::taskRegPaysPageAccess,
             self::taskRegPaysInvoiceManage,
             self::taskBuh,
+            self::taskReferenceAccess,
         ],
         self::roleBuh => [
             self::taskRegPaysPageAccess,
             self::taskBuh,
+            self::taskReferenceAccess,
         ],
 
     ];
@@ -69,9 +74,12 @@ class Permissions
 
     const pageTestApi = 'pageTestApi';
 
+    const pageReference = 'pageReference';
+
     const pages = [
         self::pageRegPays => 'Реестры платежей',
-        self::pageTestApi => 'Тестирование API проекта'
+        self::pageTestApi => 'Тестирование API проекта',
+        self::pageReference => 'Справочник изделий',
     ];
 
 
@@ -99,6 +107,11 @@ class Permissions
      * Задача для роли бухгалтера
      */
     const taskBuh = 'taskBuh';
+
+    /**
+     * Доступ к справочнику на просмотр
+     */
+    const taskReferenceAccess = 'taskReferenceAccess';
 
     const tasks = [
 
@@ -149,6 +162,11 @@ class Permissions
 
         self::taskBuh => [
             SlsMoneyController::postMoneyOut,
+        ],
+
+        self::taskReferenceAccess => [
+            self::pageReference,
+            RefBlankGroupController::actionGet,
         ],
 
 
