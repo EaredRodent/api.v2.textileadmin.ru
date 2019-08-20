@@ -27,6 +27,7 @@ class Permissions
     const roleMaster = 'roleMaster';
     const roleEdush = 'roleEdush';
     const roleBuhMain = 'roleBuhMain';
+    const roleBuh = 'roleBuh';
 
     const roles = [
 
@@ -51,6 +52,11 @@ class Permissions
         self::roleBuhMain => [
             self::taskRegPaysPageAccess,
             self::taskRegPaysInvoiceManage,
+            self::taskBuh,
+        ],
+        self::roleBuh => [
+            self::taskRegPaysPageAccess,
+            self::taskBuh,
         ],
 
     ];
@@ -89,7 +95,16 @@ class Permissions
      */
     const taskRegPaysInvoiceManage = 'taskRegPaysInvoiceManage';
 
+    /**
+     * Задача для роли бухгалтера
+     */
+    const taskBuh = 'taskBuh';
+
     const tasks = [
+
+        self::taskMaster => [
+            BaseController::actionGetControllers,
+        ],
 
         self::taskRegPaysPageAccess => [
             self::pageRegPays,
@@ -129,14 +144,13 @@ class Permissions
             SlsInvoiceController::actionUploadFile,
             SlsInvoiceController::actionDeleteFile,
             SlsInvoiceController::actionGetAttachment,
-
             SlsMoneyController::postEditPay,
+        ],
+
+        self::taskBuh => [
             SlsMoneyController::postMoneyOut,
         ],
 
-        self::taskMaster => [
-            BaseController::actionGetControllers,
-        ],
 
     ];
 
