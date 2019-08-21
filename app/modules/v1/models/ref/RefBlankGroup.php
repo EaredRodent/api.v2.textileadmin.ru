@@ -19,7 +19,7 @@ class RefBlankGroup extends GiiRefBlankGroup
     public function fields()
     {
         return array_merge(parent::fields(), [
-            'refBlankClasses',
+            //'refBlankClasses',
         ]);
     }
 }
