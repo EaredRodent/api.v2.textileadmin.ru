@@ -16,6 +16,7 @@ use Yii;
  * @property string $code
  *
  * @property RefBlankClass[] $refBlankClasses
+ * @property RefBlankClass[] $refBlankClasses2
  */
 class GiiRefBlankGroup extends ActiveRecordExtended
 {
@@ -60,6 +61,17 @@ class GiiRefBlankGroup extends ActiveRecordExtended
      */
     public function getRefBlankClasses()
     {
-        return $this->hasMany(RefBlankClass::className(), ['group_fk' => 'id'])->orderBy('title');
+        // return $this->hasMany(RefBlankClass::className(), ['group_fk' => 'id'])->orderBy('title');
+        return $this->hasMany(RefBlankClass::className(), ['group_fk' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRefBlankClasses2()
+    {
+        return $this->hasMany(RefBlankClass::className(), ['group_fk' => 'id'])
+            ->select(['id', 'title'])
+            ->orderBy('title');
     }
 }

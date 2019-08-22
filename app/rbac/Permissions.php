@@ -172,6 +172,8 @@ class Permissions
         self::taskReferenceAccess => [
             self::pageReference,
             RefBlankGroupController::actionGetSort,
+            RefBlankGroupController::actionGetTree,
+            RefBlankGroupController::actionGetBaseTree,
             RefBlankClassController::actionGetForGroup,
             RefBlankModelController::actionGetForClass,
             RefArtBlankController::actionGetForModel,
