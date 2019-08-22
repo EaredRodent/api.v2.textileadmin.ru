@@ -2,6 +2,7 @@
 
 namespace app\gii;
 
+use app\modules\v1\classes\ActiveRecordExtended;
 use Yii;
 
 /**
@@ -16,7 +17,7 @@ use Yii;
  *
  * @property RefBlankModel[] $refBlankModels
  */
-class GiiRefBlankSex extends \yii\db\ActiveRecord
+class GiiRefBlankSex extends ActiveRecordExtended
 {
     /**
      * {@inheritdoc}

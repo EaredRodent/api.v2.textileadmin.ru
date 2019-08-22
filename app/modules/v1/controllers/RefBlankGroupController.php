@@ -15,13 +15,13 @@ class RefBlankGroupController extends ActiveControllerExtended
 {
     public $modelClass = 'app\modules\v1\models\ref\RefBlankGroup';
 
-    const actionGet = 'GET /v1/ref-blank-group/get';
+    const actionGetSort = 'GET /v1/ref-blank-group/get-sort';
 
     /**
      * Вернуть группы изделий в алфавитном порядке
      * @return array|\yii\db\ActiveRecord[]
      */
-    public function actionGet()
+    public function actionGetSort()
     {
         return RefBlankGroup::find()->orderBy('title')->all();
     }

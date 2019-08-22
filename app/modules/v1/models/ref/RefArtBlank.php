@@ -9,9 +9,9 @@
 namespace app\modules\v1\models\ref;
 
 
-use app\gii\GiiRefBlankClass;
+use app\gii\GiiRefArtBlank;
 
-class RefBlankClass extends GiiRefBlankClass
+class RefArtBlank extends GiiRefArtBlank
 {
 
     /**
@@ -20,8 +20,11 @@ class RefBlankClass extends GiiRefBlankClass
     public function fields()
     {
         return array_merge(parent::fields(), [
-            //'refBlankModels'
+            'art' => function() {
+                return 'OXO-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
+            },
+            'fabricTypeFk',
+            'themeFk',
         ]);
     }
-
 }

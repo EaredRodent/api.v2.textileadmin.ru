@@ -7,14 +7,19 @@ namespace app\rbac;
 use app\modules\v1\controllers\AnxUserController;
 use app\modules\v1\controllers\BaseController;
 use app\modules\v1\controllers\FilesController;
+use app\modules\v1\controllers\RefArtBlankController;
+use app\modules\v1\controllers\RefBlankClassController;
 use app\modules\v1\controllers\RefBlankGroupController;
+use app\modules\v1\controllers\RefBlankModelController;
 use app\modules\v1\controllers\SlsClientController;
 use app\modules\v1\controllers\SlsCurrencyController;
 use app\modules\v1\controllers\SlsInvoiceController;
 use app\modules\v1\controllers\SlsMoneyController;
 use app\modules\v1\controllers\SlsOrderController;
 use app\modules\v1\controllers\SlsPayItemController;
+use app\modules\v1\models\ref\RefBlankClass;
 use app\modules\v1\models\ref\RefBlankGroup;
+use app\modules\v1\models\ref\RefBlankModel;
 use app\modules\v1\models\sls\SlsInvoice;
 use app\modules\v1\models\sls\SlsMoney;
 
@@ -166,7 +171,10 @@ class Permissions
 
         self::taskReferenceAccess => [
             self::pageReference,
-            RefBlankGroupController::actionGet,
+            RefBlankGroupController::actionGetSort,
+            RefBlankClassController::actionGetForGroup,
+            RefBlankModelController::actionGetForClass,
+            RefArtBlankController::actionGetForModel,
         ],
 
 
