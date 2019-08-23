@@ -209,6 +209,7 @@ class RefBlankGroupController extends ActiveControllerExtended
                                 'OXO-' . str_pad($prodItem->id, 4, '0', STR_PAD_LEFT) .
                                 '-' . str_pad($postprodItem->id, 3, '0', STR_PAD_LEFT) .
                                 ' (' . $postprodItem->printFk->title . ')';
+                            $postprod['children'] = [];
                             $_prodChildren[] = $postprod;
                         }
                         $prod['children'] = $_prodChildren;
