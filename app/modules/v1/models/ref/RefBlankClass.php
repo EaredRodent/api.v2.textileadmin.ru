@@ -11,17 +11,42 @@ namespace app\modules\v1\models\ref;
 
 use app\gii\GiiRefBlankClass;
 
+/**
+ * Class RefBlankClass
+ * @property RefBlankModel[] $refBlankModelsTree
+ */
 class RefBlankClass extends GiiRefBlankClass
 {
+
+    static $setFiels = [];
 
     /**
      * @return array|false
      */
     public function fields()
     {
-        return array_merge(parent::fields(), [
-            //'refBlankModels'
-        ]);
+        $fields = [
+            'type' => function () {
+                return 'class';
+            },
+            'children' => 'refBlankModelsTree',
+
+        ];
+
+        $addFields = [];
+        foreach (self::$setFiels as $fItem) {
+            $addFields[$fItem] = $fields[$fItem];
+        }
+
+        return array_merge(parent::fields(), $addFields);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRefBlankModelsTree()
+    {
+        return $this->hasMany(RefBlankModel::className(), ['class_fk' => 'id'])
+            ->orderBy('title');
+    }
 }

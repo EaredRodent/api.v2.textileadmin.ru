@@ -6,6 +6,7 @@ use app\modules\v1\classes\ActiveRecordExtended;
 use app\modules\v1\models\ref\RefBlankModel;
 use app\modules\v1\models\ref\RefBlankTheme;
 use app\modules\v1\models\ref\RefFabricType;
+use app\modules\v1\models\ref\RefProductPrint;
 use Yii;
 
 /**

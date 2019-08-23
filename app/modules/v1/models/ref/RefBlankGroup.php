@@ -11,57 +11,45 @@ namespace app\modules\v1\models\ref;
 
 use app\gii\GiiRefBlankGroup;
 
+
+/**
+ * Class RefBlankGroup
+ * @package app\modules\v1\models\ref
+ *
+ * @property RefBlankClass[] $refBlankClassesTree
+ */
 class RefBlankGroup extends GiiRefBlankGroup
 {
-    static $scen;
+    static $setFiels;
 
     /**
      * @return array|false
      */
     public function fields()
     {
-        //if ($this->scenario === 'azaza') {
-        if (self::$scen === 'azaza') {
+        $fields = [
+            'type' => function () {
+                return 'group';
+            },
+            'children' => 'refBlankClassesTree',
+        ];
 
-            $addFields =  [
-                'type' => function() {
-                    return 'group';
-                },
-                'refBlankClasses2',
-            ];
-
-        } else {
-
-            $addFields =  [
-                'type' => function() {
-                    return 'group';
-                },
-            ];
-
+        $addFields = [];
+        foreach (self::$setFiels as $fItem) {
+            $addFields[$fItem] = $fields[$fItem];
         }
 
-
-        return  array_merge(parent::fields(), $addFields);
+        return array_merge(parent::fields(), $addFields);
     }
 
-    public function extraFields()
-    {
-        return array_merge(parent::extraFields(), [
-            'refBlankClasses',
-        ]);
 
-    }
-
-    public static function readForBaseTree()
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRefBlankClassesTree()
     {
-        self::$scen = 'azaza';
-        return self::find()
-            // ->with('refBlankClasses2')
-            // ->leftJoin('refBlankClasses')
-            // ->joinWith('refBlankClasses')
-            // ->select(['ref_blank_group.id', 'ref_blank_group.title'])
-            ->select(['id', 'title'])
-            ->orderBy('title')
-            ->all();
+        //RefBlankClass::$setFiels = ['type', 'children'];
+        return $this->hasMany(RefBlankClass::className(), ['group_fk' => 'id'])
+            ->orderBy('title');
     }
 }
