@@ -10,6 +10,7 @@ namespace app\modules\v1\models\ref;
 
 
 use app\gii\GiiRefArtBlank;
+use app\modules\AppMod;
 
 class RefArtBlank extends GiiRefArtBlank
 {
@@ -20,9 +21,24 @@ class RefArtBlank extends GiiRefArtBlank
     public function fields()
     {
         return array_merge(parent::fields(), [
-            'art' => function() {
+            'art' => function () {
                 return 'OXO-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
             },
+            'photos' => function () {
+                $resp = [];
+                for ($i = 1; $i <= 4; $i++) {
+                    $fileName = str_pad($this->id, 4, '0', STR_PAD_LEFT) . '_' . $i . '.jpg';
+                    $pathName = realpath(\Yii::getAlias(AppMod::pathProdPhoto) . '/' . $fileName);
+                    //$fName2 = realpath($fName);
+                    if (file_exists($pathName)) {
+                        $resp[] = $pathName;
+                    }
+                    //$modelArt = $prod->modelFk->hArt();
+                    //$fabricArt = $prod->fabricTypeFk->hArt();
+                    //$name = "{$curArt}_{$i}";
+                }
+                return $resp;
+            }
             //'fabricTypeFk',
             //'themeFk',
         ]);

@@ -33,4 +33,21 @@ class RefArtBlankController extends ActiveControllerExtended
             ->all();
     }
 
+
+    const actionGetProps = 'GET /v1/ref-art-blank/get-props';
+
+    /**
+     * Вернуть параметры продукта для отображения в стравочнике
+     * @param $id
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function actionGetProps($id) {
+
+        return RefArtBlank::find()
+            ->where(['id' => $id])
+            ->one();
+    }
+
+
+
 }

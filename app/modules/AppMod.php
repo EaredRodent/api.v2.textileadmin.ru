@@ -22,4 +22,6 @@ class AppMod
         self::filesInvoiceAttachement => '@app/../../textile/files/mail-doc',
         self::filesInvoiceSlsDep => '@app/../../textile/files/sls/invoices',
     ];
+
+    const pathProdPhoto = "@app/../../textile/files/ref/prod";
 }

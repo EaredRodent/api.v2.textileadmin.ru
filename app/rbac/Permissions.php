@@ -177,6 +177,8 @@ class Permissions
             RefBlankClassController::actionGetForGroup,
             RefBlankModelController::actionGetForClass,
             RefArtBlankController::actionGetForModel,
+            ///
+            RefArtBlankController::actionGetProps,
         ],
 
 
