@@ -43,9 +43,22 @@ class RefArtBlankController extends ActiveControllerExtended
      */
     public function actionGetProps($id) {
 
-        return RefArtBlank::find()
+        /** @var $prod RefArtBlank */
+        $prod = RefArtBlank::find()
             ->where(['id' => $id])
             ->one();
+
+        $resp = [];
+
+        // Термобелье комплект: для девочек. РЕГЛАН (Нэко-13 134) Арт:
+        // OXO-0154
+
+        $resp['title'] =
+            $prod->modelFk->classFk->title . ' ' .
+            $prod->modelFk->title . ':' .$prod->modelFk->sexFk->title;
+        $resp['art'] = $prod->hArt();
+
+        return $resp;
     }
 
 

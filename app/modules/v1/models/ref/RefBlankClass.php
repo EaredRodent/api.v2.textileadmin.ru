@@ -47,6 +47,7 @@ class RefBlankClass extends GiiRefBlankClass
     public function getRefBlankModelsTree()
     {
         return $this->hasMany(RefBlankModel::className(), ['class_fk' => 'id'])
-            ->orderBy('title');
+            ->joinWith('sexFk')
+            ->orderBy('ref_blank_sex.code_ru, title');
     }
 }

@@ -38,9 +38,10 @@ class RefArtBlank extends GiiRefArtBlank
                     //$name = "{$curArt}_{$i}";
                 }
                 return $resp;
-            }
+            },
             //'fabricTypeFk',
             //'themeFk',
+            //'modelFk',
         ]);
     }
 
@@ -52,5 +53,11 @@ class RefArtBlank extends GiiRefArtBlank
         return $this->hasMany(RefArtBlank::className(), ['model_fk' => 'id'])
             ->joinWith('themeFk')
             ->orderBy('favric_type_fk, ref_fabric_theme.title');
+    }
+
+    public function hArt()
+    {
+        return 'OXO-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
+
     }
 }
