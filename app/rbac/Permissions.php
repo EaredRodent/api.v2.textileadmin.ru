@@ -174,11 +174,12 @@ class Permissions
             RefBlankGroupController::actionGetSort,
             RefBlankGroupController::actionGetTree,
             RefBlankGroupController::actionGetBaseTree,
-            RefBlankClassController::actionGetForGroup,
             RefBlankModelController::actionGetForClass,
             RefArtBlankController::actionGetForModel,
             ///
             RefArtBlankController::actionGetProps,
+            ///
+            RefBlankClassController::actionGetForGroupSex,
         ],
 
 

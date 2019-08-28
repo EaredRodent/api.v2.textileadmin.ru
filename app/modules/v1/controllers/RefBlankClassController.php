@@ -15,16 +15,23 @@ class RefBlankClassController extends ActiveControllerExtended
 {
     public $modelClass = 'app\modules\v1\models\ref\RefBlankClass';
 
-    const actionGetForGroup = 'GET /v1/ref-blank-class/get-for-group';
+    const actionGetForGroupSex = 'GET /v1/ref-blank-class/get-for-group-sex';
 
     /**
-     * Вернутьсписок найменований для заданной группы
-     * @param $id
+     * Вернуть список наименований для определенных sexId и groupId
+     * @param $sexId
+     * @param $groupId
      * @return array|\yii\db\ActiveRecord[]
      */
-    public function actionGetForGroup($id) {
+    public function actionGetForGroupSex($sexId, $groupId) {
 
-        return RefBlankClass::find()->where(['group_fk' => $id])->orderBy('title')->all();
-    }
+        $resp = RefBlankClass::find()
+            ->joinWith('refBlankModels')
+            ->where(['sex_fk' =>$sexId])
+            ->andWhere(['group_fk' => $groupId])
+            ->orderBy('title')
+            ->all();
+        return $resp;
+      }
 
 }
