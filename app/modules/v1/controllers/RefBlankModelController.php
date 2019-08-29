@@ -23,7 +23,8 @@ class RefBlankModelController extends ActiveControllerExtended
      * @param $id
      * @return array|\yii\db\ActiveRecord[]
      */
-    public function actionGetForClass($id) {
+    public function actionGetForClass($id)
+    {
 
         return RefBlankModel::find()->where(['class_fk' => $id])->orderBy('sex_fk, title')->all();
     }

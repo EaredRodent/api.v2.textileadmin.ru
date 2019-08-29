@@ -26,16 +26,16 @@ class SlsOrder extends GiiSlsOrder
     const s7_send = 's7_send';
 
     const statuses = [
-        self::s0_del          => 'Удален',
-        self::s0_preorder     => 'Предзаказ',
-        self::s1_prep         => 'Подготовка',
+        self::s0_del => 'Удален',
+        self::s0_preorder => 'Предзаказ',
+        self::s1_prep => 'Подготовка',
         self::s1_wait_assembl => 'На сборке',
-        self::s5_assembl      => 'Собран',
-        self::s2_wait         => 'Акцептование',
-        self::s3_accept       => 'Акцептован',
-        self::s4_reject       => 'Отклонен',
-        self::s6_allow        => 'Разрешен',
-        self::s7_send         => 'Отгружен',
+        self::s5_assembl => 'Собран',
+        self::s2_wait => 'Акцептование',
+        self::s3_accept => 'Акцептован',
+        self::s4_reject => 'Отклонен',
+        self::s6_allow => 'Разрешен',
+        self::s7_send => 'Отгружен',
 
     ];
 
@@ -66,8 +66,7 @@ class SlsOrder extends GiiSlsOrder
          * @param $dateEnd
          * @return array|ActiveRecord[]|self[]
          */
-        $filterOrders = function ($payType, $dateStartInclusive, $dateEnd)
-        {
+        $filterOrders = function ($payType, $dateStartInclusive, $dateEnd) {
             return SlsOrder::find()
                 ->andFilterWhere(['=', 'pay_type', $payType])
                 ->andFilterWhere(['!=', 'status', SlsOrder::s0_del])

@@ -24,7 +24,8 @@ class RefArtBlankController extends ActiveControllerExtended
      * @param $id
      * @return array|\yii\db\ActiveRecord[]
      */
-    public function actionGetForModel($id) {
+    public function actionGetForModel($id)
+    {
 
         return RefArtBlank::find()
             ->joinWith('themeFk', false)
@@ -41,7 +42,8 @@ class RefArtBlankController extends ActiveControllerExtended
      * @param $id
      * @return array|\yii\db\ActiveRecord[]
      */
-    public function actionGetProps($id) {
+    public function actionGetProps($id)
+    {
 
         /** @var $prod RefArtBlank */
         $prod = RefArtBlank::find()
@@ -55,7 +57,7 @@ class RefArtBlankController extends ActiveControllerExtended
 
         $resp['title'] =
             $prod->modelFk->classFk->title . ' ' .
-            $prod->modelFk->title . ':' .$prod->modelFk->sexFk->title;
+            $prod->modelFk->title . ':' . $prod->modelFk->sexFk->title;
         $resp['art'] = $prod->hArt();
 
         return $resp;
@@ -63,6 +65,13 @@ class RefArtBlankController extends ActiveControllerExtended
 
     const actionGetByFiltersExp = 'GET /v1/ref-art-blank/get-by-filters-exp';
 
+    /**
+     * Вернуть все артикулы соответствующие фильтрам
+     * @param null $sexIds
+     * @param null $groupIds
+     * @param null $classTags
+     * @return array|\yii\db\ActiveRecord[]
+     */
     public function actionGetByFiltersExp($sexIds = null, $groupIds = null, $classTags = null)
     {
         $sexIds = $sexIds ? explode(',', $sexIds) : [];
@@ -94,5 +103,12 @@ class RefArtBlankController extends ActiveControllerExtended
             ->andfilterWhere(['in', 'ref_blank_group.id', $groupIds])
             ->andFilterWhere(['in', 'ref_blank_class.tag', $classTags])
             ->all();
+    }
+
+    const actionGetAllExp = 'GET /v1/ref-art-blank/get-all-exp';
+
+    public function actionGetAllExp()
+    {
+
     }
 }

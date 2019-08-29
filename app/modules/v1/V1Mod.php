@@ -13,9 +13,9 @@ use yii\base\Module;
 
 class V1Mod extends Module
 {
-	public $layout = false;
-	public $cmdTables = [];
-	public $cmdErrors = [];
+    public $layout = false;
+    public $cmdTables = [];
+    public $cmdErrors = [];
 
 //	static $roles = [
 //		Rbac::roleMaster => [
@@ -26,9 +26,9 @@ class V1Mod extends Module
 //		],
 //	];
 
-	function init()
-	{
-		parent::init();
-		Yii::$app->user->enableSession = false;
-	}
+    function init()
+    {
+        parent::init();
+        Yii::$app->user->enableSession = false;
+    }
 }
