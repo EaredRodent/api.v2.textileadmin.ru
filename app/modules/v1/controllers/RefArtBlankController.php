@@ -65,6 +65,34 @@ class RefArtBlankController extends ActiveControllerExtended
 
     public function actionGetByFiltersExp($sexIds = null, $groupIds = null, $classTags = null)
     {
-        return [];
+        $sexIds = $sexIds ? explode(',', $sexIds) : [];
+        $sexTitles = [];
+
+        if (in_array(1, $sexIds)) {
+            $sexTitles = array_merge($sexTitles,
+                ['Женский', 'Унисекс взрослый']);
+        }
+
+        if (in_array(2, $sexIds)) {
+            $sexTitles = array_merge($sexTitles,
+                ['Мужской', 'Унисекс взрослый']);
+        }
+
+        if (in_array(3, $sexIds)) {
+            $sexTitles = array_merge($sexTitles,
+                ['Для мальчиков', 'Для девочек', 'Унисекс детский']);
+        }
+
+        $groupIds = $groupIds ? explode(',', $groupIds) : [];
+        $classTags = $classTags ? explode(',', $classTags) : [];
+
+        return RefArtBlank::find()
+            ->joinWith('modelFk.sexFk')
+            ->joinWith('modelFk.classFk')
+            ->joinWith('modelFk.classFk.groupFk')
+            ->filterWhere(['in', 'ref_blank_sex.title', $sexTitles])
+            ->andfilterWhere(['in', 'ref_blank_group.id', $groupIds])
+            ->andFilterWhere(['in', 'ref_blank_class.tag', $classTags])
+            ->all();
     }
 }

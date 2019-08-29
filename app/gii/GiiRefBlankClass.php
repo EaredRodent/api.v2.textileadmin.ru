@@ -3,6 +3,7 @@
 namespace app\gii;
 
 use app\modules\v1\classes\ActiveRecordExtended;
+use app\modules\v1\models\ref\RefBlankGroup;
 use app\modules\v1\models\ref\RefBlankModel;
 use Yii;
 
