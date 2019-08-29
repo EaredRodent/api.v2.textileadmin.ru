@@ -96,9 +96,14 @@ class RefArtBlankController extends ActiveControllerExtended
         $classTags = $classTags ? explode(',', $classTags) : [];
 
         return RefArtBlank::find()
+            ->with('modelFk.classFk', 'modelFk.sexFk')
+            ->with('fabricTypeFk', 'themeFk')
+            ->joinWith('fabricTypeFk')
             ->joinWith('modelFk.sexFk')
             ->joinWith('modelFk.classFk')
             ->joinWith('modelFk.classFk.groupFk')
+            //->select('ref_art_blank.id, ref_art_blank.fabric_type_fk, ref_fabric_type.struct')
+            //->select('ref_fabric_type.struct')
             ->filterWhere(['in', 'ref_blank_sex.title', $sexTitles])
             ->andfilterWhere(['in', 'ref_blank_group.id', $groupIds])
             ->andFilterWhere(['in', 'ref_blank_class.tag', $classTags])

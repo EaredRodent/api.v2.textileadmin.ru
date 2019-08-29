@@ -68,6 +68,7 @@ $config = [
 
             'rules' => [
 
+                'v1/files/public/<dir:[\w-]+>/<name:[\w-.()\s]+>' => 'v1/files/public',
                 'v1/files/get/<key:[\w-]+>/<dir:[\w-]+>/<name:[\w-.()\s]+>' => 'v1/files/get',
 
                 'sales/orders/order/<id:\d+>' => 'sales/orders/order',

@@ -21,27 +21,43 @@ class RefArtBlank extends GiiRefArtBlank
     public function fields()
     {
         return array_merge(parent::fields(), [
+            'titleStr' => function () {
+                return $this->modelFk->classFk->title . ':' . $this->modelFk->sexFk->code_ru . ' ' .
+                    $this->modelFk->title;
+            },
             'art' => function () {
                 return 'OXO-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
             },
             'photos' => function () {
-                $resp = [];
+                $resp['large'] = [];
+                $resp['small'] = [];
+
+                $path = realpath(\Yii::getAlias(AppMod::filesRout[AppMod::filesImageBaseProds]));
+
                 for ($i = 1; $i <= 4; $i++) {
+
+                    // todo быдлокод
+
                     $fileName = str_pad($this->id, 4, '0', STR_PAD_LEFT) . '_' . $i . '.jpg';
-                    $pathName = realpath(\Yii::getAlias(AppMod::pathProdPhoto) . '/' . $fileName);
-                    //$fName2 = realpath($fName);
-                    if (file_exists($pathName)) {
-                        $resp[] = $pathName;
+                    $fullPath = $path . '/' . $fileName;
+                    if (file_exists($fullPath)) {
+                        $resp['large'][] = AppMod::domain .
+                            '/v1/files/public/' . AppMod::filesImageBaseProds . '/' . $fileName;
                     }
-                    //$modelArt = $prod->modelFk->hArt();
-                    //$fabricArt = $prod->fabricTypeFk->hArt();
-                    //$name = "{$curArt}_{$i}";
+
+                    $fileNameSmall = str_pad($this->id, 4, '0', STR_PAD_LEFT) . '_' . $i . '.sm.jpg';
+                    $fullPathSmall = $path . '/' . $fileName;
+                    if (file_exists($fullPathSmall)) {
+                        $resp['small'][] = AppMod::domain .
+                            '/v1/files/public/' . AppMod::filesImageBaseProds . '/' . $fileNameSmall;
+                    }
+
                 }
                 return $resp;
             },
-            //'fabricTypeFk',
-            //'themeFk',
-            //'modelFk',
+            'fabricTypeFk',
+            'themeFk',
+            'modelFk',
         ]);
     }
 
