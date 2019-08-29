@@ -181,6 +181,8 @@ class Permissions
             ///
             RefBlankClassController::actionGetForGroupSex,
             RefBlankClassController::actionGetClassesExp,
+            RefArtBlankController::actionGetByFiltersExp,
+
         ],
 
 

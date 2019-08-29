@@ -61,6 +61,10 @@ class RefArtBlankController extends ActiveControllerExtended
         return $resp;
     }
 
+    const actionGetByFiltersExp = 'GET /v1/ref-art-blank/get-by-filters-exp';
 
-
+    public function actionGetByFiltersExp($sexIds = null, $groupIds = null, $classTags = null)
+    {
+        return [];
+    }
 }
