@@ -180,6 +180,7 @@ class Permissions
             RefArtBlankController::actionGetProps,
             ///
             RefBlankClassController::actionGetForGroupSex,
+            RefBlankClassController::actionGetClassesExp,
         ],
 
 

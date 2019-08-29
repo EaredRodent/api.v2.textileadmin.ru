@@ -17,6 +17,7 @@ use Yii;
  * @property string $title_en
  * @property string $code
  * @property string $kids_unisex
+ * @property string $tag
  *
  * @property RefBlankGroup $groupFk
  * @property RefBlankModel[] $refBlankModels
@@ -41,7 +42,7 @@ class GiiRefBlankClass extends ActiveRecordExtended
             [['group_fk', 'title', 'code'], 'required'],
             [['group_fk'], 'integer'],
             [['kids_unisex'], 'string'],
-            [['title', 'title_client', 'title_en'], 'string', 'max' => 45],
+            [['title', 'title_client', 'title_en', 'tag'], 'string', 'max' => 45],
             [['code'], 'string', 'max' => 2],
             [['code'], 'unique'],
             [['group_fk'], 'exist', 'skipOnError' => true, 'targetClass' => RefBlankGroup::className(), 'targetAttribute' => ['group_fk' => 'id']],
@@ -62,6 +63,7 @@ class GiiRefBlankClass extends ActiveRecordExtended
             'title_en' => 'Title En',
             'code' => 'Code',
             'kids_unisex' => 'Kids Unisex',
+            'tag' => 'tag',
         ];
     }
 

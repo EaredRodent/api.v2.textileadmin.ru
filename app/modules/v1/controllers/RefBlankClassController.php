@@ -23,15 +23,31 @@ class RefBlankClassController extends ActiveControllerExtended
      * @param $groupId
      * @return array|\yii\db\ActiveRecord[]
      */
-    public function actionGetForGroupSex($sexId, $groupId) {
+    public function actionGetForGroupSex($sexId, $groupId)
+    {
 
         $resp = RefBlankClass::find()
             ->joinWith('refBlankModels')
-            ->where(['sex_fk' =>$sexId])
+            ->where(['sex_fk' => $sexId])
             ->andWhere(['group_fk' => $groupId])
             ->orderBy('title')
             ->all();
         return $resp;
-      }
+    }
+
+    const actionGetClassesExp = 'GET /v1/ref-blank-class/get-classes-exp';
+
+    /**
+     * Список наименований
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function actionGetClassesExp()
+    {
+        $resp = RefBlankClass::find()
+            ->orderBy('title')
+            ->groupBy('tag')
+            ->all();
+        return $resp;
+    }
 
 }
