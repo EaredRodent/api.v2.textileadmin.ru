@@ -54,6 +54,16 @@ $config = [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
                 ],
+//                [
+//                    'class' => 'yii\log\FileTarget',
+//                    'logFile' => '@runtime/logs/profile.log',
+//                    'logVars' => [],
+//                    'levels' => ['profile'],
+//                    'categories' => ['yii\db\Command::query'],
+//                    'prefix' => function($message) {
+//                        return '';
+//                    }
+//                ]
             ],
         ],
         'db' => $db,
@@ -96,6 +106,23 @@ $config = [
             ],
         ],
     ],
+
+    'on afterRequest' => function($event) {
+        //...
+        $logger = Yii::getLogger();
+
+        $dbCountQuery = $logger->getDbProfiling()[0];
+        $dbTime = round($logger->getDbProfiling()[1], 3);
+        $appTime = round($logger->elapsedTime, 3);
+        $appMemory = number_format(memory_get_peak_usage(), 0, '', ' ');
+
+        $headers = Yii::$app->response->headers;
+
+        $headers->add('Log-Dbcount', $dbCountQuery);
+        $headers->add('Log-Dbtime', $dbTime);
+        $headers->add('Log-Apptime', $appTime);
+        $headers->add('Log-Appmemory', $appMemory);
+    },
     'params' => $params,
 ];
 

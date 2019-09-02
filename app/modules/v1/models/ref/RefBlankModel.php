@@ -18,7 +18,7 @@ class RefBlankModel extends GiiRefBlankModel
     public function fields()
     {
         return array_merge(parent::fields(), [
-            //'sexFk'
+            'sexFk'
         ]);
     }
 

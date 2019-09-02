@@ -12,6 +12,7 @@ use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefBlankClass;
 use app\modules\v1\models\ref\RefBlankModel;
+use app\modules\v1\models\ref\RefProdPrint;
 
 class RefArtBlankController extends ActiveControllerExtended
 {
@@ -95,10 +96,10 @@ class RefArtBlankController extends ActiveControllerExtended
         $groupIds = $groupIds ? explode(',', $groupIds) : [];
         $classTags = $classTags ? explode(',', $classTags) : [];
 
-        return RefArtBlank::find()
-            ->with('modelFk.classFk', 'modelFk.sexFk')
-            ->with('fabricTypeFk', 'themeFk')
-            ->joinWith('fabricTypeFk')
+        $resp = RefArtBlank::find()
+            //->with('modelFk.classFk', 'modelFk.sexFk')
+            //->with('fabricTypeFk', 'themeFk')
+            //->joinWith('fabricTypeFk')
             ->joinWith('modelFk.sexFk')
             ->joinWith('modelFk.classFk')
             ->joinWith('modelFk.classFk.groupFk')
@@ -108,12 +109,21 @@ class RefArtBlankController extends ActiveControllerExtended
             ->andfilterWhere(['in', 'ref_blank_group.id', $groupIds])
             ->andFilterWhere(['in', 'ref_blank_class.tag', $classTags])
             ->all();
+
+        return $resp;
     }
 
     const actionGetAllExp = 'GET /v1/ref-art-blank/get-all-exp';
 
     public function actionGetAllExp()
     {
+        $resp = RefArtBlank::find()
+            //->with('modelFk.classFk', 'modelFk.sexFk')
+            //->with('fabricTypeFk', 'themeFk')
+            ->where(['id' => 100])
+            //->asArray()
+            ->all();
 
+        return $resp;
     }
 }
