@@ -9,6 +9,7 @@
 namespace app\modules\v1\models\ref;
 
 
+use app\extension\Sizes;
 use app\gii\GiiRefArtBlank;
 use app\modules\AppMod;
 
@@ -22,8 +23,7 @@ class RefArtBlank extends GiiRefArtBlank
     {
         return array_merge(parent::fields(), [
             'titleStr' => function () {
-//                return $this->modelFk->classFk->title . ':' . $this->modelFk->sexFk->code_ru . ' ' .
-//                    $this->modelFk->title;
+                // ':' . $this->modelFk->sexFk->code_ru . ' ' .
                 return $this->modelFk->classFk->title . ' ' .
                     $this->modelFk->title;
             },
@@ -57,6 +57,15 @@ class RefArtBlank extends GiiRefArtBlank
                 }
                 return $resp;
             },
+            'minPrice' => function () {
+                foreach (Sizes::prices as $fPrice) {
+                    if ($this->$fPrice > 0) {
+                        return $this->$fPrice;
+                    }
+                }
+                return null;
+            },
+
             'fabricTypeFk',
             'themeFk',
             'modelFk',

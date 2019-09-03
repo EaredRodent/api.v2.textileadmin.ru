@@ -108,6 +108,7 @@ class RefArtBlankController extends ActiveControllerExtended
             ->filterWhere(['in', 'ref_blank_sex.title', $sexTitles])
             ->andfilterWhere(['in', 'ref_blank_group.id', $groupIds])
             ->andFilterWhere(['in', 'ref_blank_class.tag', $classTags])
+            ->andWhere(['flag_price' => 1])
             ->all();
 
         return $resp;
