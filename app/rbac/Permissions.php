@@ -183,6 +183,7 @@ class Permissions
             RefBlankClassController::actionGetClassesExp,
             RefArtBlankController::actionGetByFiltersExp,
             RefArtBlankController::actionGetAllExp,
+            RefArtBlankController::actionGetClientDetail,
 
         ],
 

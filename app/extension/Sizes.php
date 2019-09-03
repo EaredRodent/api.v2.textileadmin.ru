@@ -78,6 +78,11 @@ class Sizes
 		'size_4xl' => '164',
 	];
 
+	const typeCompare = [
+	  'adults' => self::adults,
+	  'kids' => self::kids,
+    ];
+
 	// ENUM('5XS','4XS','3XS','XXS','XS','S','M','L','XL','XXL','3XL','4XL', '98','104','110','116','122','128','134','140','146','152','158','164')
 
 	const revers = [
@@ -149,7 +154,7 @@ class Sizes
 		'IFNULL(SUM(size_2xl), 0) + ' .
 		'IFNULL(SUM(size_3xl), 0) + ' .
 		'IFNULL(SUM(size_4xl), 0)' .
-		') AS total_sum',
+		') AS totalSum',
 	];
 
 	const selectSumAbs = [
@@ -178,7 +183,7 @@ class Sizes
 		'ABS(IFNULL(SUM(size_2xl), 0)) + ' .
 		'ABS(IFNULL(SUM(size_3xl), 0)) + ' .
 		'ABS(IFNULL(SUM(size_4xl), 0))' .
-		') AS total_sum',
+		') AS totalSum',
 	];
 
 

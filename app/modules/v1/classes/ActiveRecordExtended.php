@@ -9,11 +9,12 @@
 namespace app\modules\v1\classes;
 
 use app\modules\v1\V1Mod;
+use phpDocumentor\Reflection\Types\This;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\web\HttpException;
 
-
+// todo перейти на трейты
 class ActiveRecordExtended extends ActiveRecord
 {
     public function save($runValidation = true, $attributeNames = null)
@@ -58,6 +59,10 @@ class ActiveRecordExtended extends ActiveRecord
     }
 
 
+    /**
+     * @param $id
+     * @return self
+     */
     public static function get($id)
     {
         return static::findOne(['id' => (int)$id]);

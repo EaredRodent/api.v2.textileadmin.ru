@@ -72,19 +72,29 @@ class RefArtBlank extends GiiRefArtBlank
         ]);
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getRefArtBlanksTree()
-    {
-        return $this->hasMany(RefArtBlank::className(), ['model_fk' => 'id'])
-            ->joinWith('themeFk')
-            ->orderBy('favric_type_fk, ref_fabric_theme.title');
-    }
+//
+//    /**
+//     * @return \yii\db\ActiveQuery
+//     */
+//    public function getRefArtBlanksTree()
+//    {
+//        return $this->hasMany(RefArtBlank::className(), ['model_fk' => 'id'])
+//            ->joinWith('themeFk')
+//            ->orderBy('favric_type_fk, ref_fabric_theme.title');
+//    }
 
     public function hArt()
     {
         return 'OXO-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
+    }
 
+    /**
+     * Вернуть тип размера - взрослый или детский
+     */
+    public function calcSizeType()
+    {
+        // todo - переделать взрослый детский в талицу
+        $sexId = $this->modelFk->sex_fk;
+        return (in_array($sexId, [1,2,5])) ? 'adults' : 'kids';
     }
 }

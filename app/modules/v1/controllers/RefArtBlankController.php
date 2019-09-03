@@ -8,11 +8,14 @@
 
 namespace app\modules\v1\controllers;
 
+use app\extension\ProdRest;
+use app\extension\Sizes;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefBlankClass;
 use app\modules\v1\models\ref\RefBlankModel;
 use app\modules\v1\models\ref\RefProdPrint;
+use app\modules\v1\models\ref\RefWeight;
 
 class RefArtBlankController extends ActiveControllerExtended
 {
@@ -116,15 +119,64 @@ class RefArtBlankController extends ActiveControllerExtended
 
     const actionGetAllExp = 'GET /v1/ref-art-blank/get-all-exp';
 
+    /**
+     * Эеспериментальынй экшн потом удалить
+     *
+     * @return array|\yii\db\ActiveRecord[]
+     */
     public function actionGetAllExp()
     {
+        // todo
+
         $resp = RefArtBlank::find()
             //->with('modelFk.classFk', 'modelFk.sexFk')
             //->with('fabricTypeFk', 'themeFk')
             ->where(['id' => 100])
             //->asArray()
             ->all();
+        return $resp;
+    }
+
+    const actionGetClientDetail = 'GET /v1/ref-art-blank/get-client-detail';
+
+    /**
+     * Вернуть размеры и остатки по складу (для отповых клиентов)
+     * @param $id
+     * @return array
+     */
+    public function actionGetClientDetail($id)
+    {
+        /** @var $prod RefArtBlank */
+        $prod = RefArtBlank::get($id);
+        $sexType = $prod->calcSizeType();
+
+        $rest = new ProdRest([$id]);
+        $weight = RefWeight::readRec($prod->model_fk, $prod->fabric_type_fk);
+
+        $resp = [];
+        foreach (Sizes::prices as $fSize => $fPrice) {
+            if ($prod->$fPrice > 0) {
+
+                $restVal = $rest->getRestPrint($id, 1, $fSize);
+                if ($restVal == 0) {
+                    $restStr = 'red';
+                } elseif ($restVal > 0 && $restVal <= 10) {
+                    $restStr = 'yellow';
+                } else {
+                    $restStr = 'green';
+                }
+
+                $resp[] = [
+                    // 'fSize' => $fSize,
+                    'sizeStr' => Sizes::typeCompare[$sexType][$fSize],
+                    'price' => $prod->$fPrice,
+                    'rest' => $restStr,
+                    'weight' => $weight->$fSize,
+                ];
+            }
+        }
 
         return $resp;
     }
+
 }
