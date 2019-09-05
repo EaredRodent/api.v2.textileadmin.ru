@@ -192,11 +192,11 @@ class RefArtBlankController extends ActiveControllerExtended
 
                 $restVal = $rest->getRestPrint($id, 1, $fSize);
                 if ($restVal == 0) {
-                    $restStr = 'red';
+                    $restStr = '#d4000038';
                 } elseif ($restVal > 0 && $restVal <= 10) {
-                    $restStr = 'yellow';
+                    $restStr = '#d4d40038';
                 } else {
-                    $restStr = 'green';
+                    $restStr = '#00d40038';
                 }
 
                 $resp[] = [
