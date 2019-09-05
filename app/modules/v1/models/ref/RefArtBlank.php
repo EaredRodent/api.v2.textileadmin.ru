@@ -27,6 +27,9 @@ class RefArtBlank extends GiiRefArtBlank
                 return $this->modelFk->classFk->title . ' ' .
                     $this->modelFk->title;
             },
+            'class' => function () {
+                return $this->modelFk->classFk->title;
+            },
             'art' => function () {
                 return 'OXO-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
             },
