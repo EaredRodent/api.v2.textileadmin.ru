@@ -14,6 +14,8 @@ use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefBlankClass;
 use app\modules\v1\models\ref\RefBlankModel;
+use app\modules\v1\models\ref\RefBlankTheme;
+use app\modules\v1\models\ref\RefFabricType;
 use app\modules\v1\models\ref\RefProdPrint;
 use app\modules\v1\models\ref\RefWeight;
 
@@ -76,7 +78,7 @@ class RefArtBlankController extends ActiveControllerExtended
      * @param null $classTags
      * @return array|\yii\db\ActiveRecord[]
      */
-    public function actionGetByFiltersExp($sexIds = null, $groupIds = null, $classTags = null)
+    public function actionGetByFiltersExp($sexIds = null, $groupIds = null, $classTags = null, $themeIds = null, $fabTypeIds = null)
     {
         $sexIds = $sexIds ? explode(',', $sexIds) : [];
         $sexTitles = [];
@@ -98,23 +100,54 @@ class RefArtBlankController extends ActiveControllerExtended
 
         $groupIds = $groupIds ? explode(',', $groupIds) : [];
         $classTags = $classTags ? explode(',', $classTags) : [];
+        $themeIds = $themeIds ? explode(',', $themeIds) : [];
+        $fabTypeIds = $fabTypeIds ? explode(',', $fabTypeIds) : [];
 
-        $resp = RefArtBlank::find()
+        /** @var RefArtBlank[] $refArtBlanks */
+        $refArtBlanks = RefArtBlank::find()
             //->with('modelFk.classFk', 'modelFk.sexFk')
             //->with('fabricTypeFk', 'themeFk')
             //->joinWith('fabricTypeFk')
             ->joinWith('modelFk.sexFk')
             ->joinWith('modelFk.classFk')
             ->joinWith('modelFk.classFk.groupFk')
+            ->joinWith('fabricTypeFk')
+            ->joinWith('themeFk')
             //->select('ref_art_blank.id, ref_art_blank.fabric_type_fk, ref_fabric_type.struct')
             //->select('ref_fabric_type.struct')
             ->filterWhere(['in', 'ref_blank_sex.title', $sexTitles])
             ->andfilterWhere(['in', 'ref_blank_group.id', $groupIds])
             ->andFilterWhere(['in', 'ref_blank_class.tag', $classTags])
+            ->andFilterWhere(['in', 'ref_blank_theme.id', $themeIds])
+            ->andFilterWhere(['in', 'ref_fabric_type.id', $fabTypeIds])
             ->andWhere(['flag_price' => 1])
             ->all();
 
-        return $resp;
+        $availableRefBlankTheme = [];
+        $availableRefFabricType = [];
+
+        foreach ($refArtBlanks as $refArtBlank) {
+            if (!in_array($refArtBlank->theme_fk, $availableRefBlankTheme)) {
+                $availableRefBlankTheme[] = $refArtBlank->theme_fk;
+            }
+            if (!in_array($refArtBlank->fabric_type_fk, $availableRefFabricType)) {
+                $availableRefFabricType[] = $refArtBlank->fabric_type_fk;
+            }
+        }
+
+        $availableRefBlankTheme = RefBlankTheme::find()
+            ->where(['id' => $availableRefBlankTheme])
+            ->all();
+
+        $availableRefFabricType = RefFabricType::find()
+            ->where(['id' => $availableRefFabricType])
+            ->all();
+
+        return [
+            'refArtBlank' => $refArtBlanks ? $refArtBlanks : [],
+            'availableRefBlankTheme' => $availableRefBlankTheme,
+            'availableRefFabricType' => $availableRefFabricType
+        ];
     }
 
     const actionGetAllExp = 'GET /v1/ref-art-blank/get-all-exp';

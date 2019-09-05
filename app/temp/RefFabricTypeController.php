@@ -12,7 +12,7 @@ namespace app\modules\v1\controllers;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\ref\RefFabricType;
 
-class RefFabricTypeController extends ActiveControllerExtended
+class RefFabricTypeController2 extends ActiveControllerExtended
 {
     /** @var RefFabricType $modelClass */
 	public $modelClass = 'app\modules\v1\models\ref\RefFabricType';

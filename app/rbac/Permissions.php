@@ -11,6 +11,8 @@ use app\modules\v1\controllers\RefArtBlankController;
 use app\modules\v1\controllers\RefBlankClassController;
 use app\modules\v1\controllers\RefBlankGroupController;
 use app\modules\v1\controllers\RefBlankModelController;
+use app\modules\v1\controllers\RefBlankThemeController;
+use app\modules\v1\controllers\RefFabricTypeController;
 use app\modules\v1\controllers\SlsClientController;
 use app\modules\v1\controllers\SlsCurrencyController;
 use app\modules\v1\controllers\SlsInvoiceController;
@@ -184,6 +186,9 @@ class Permissions
             RefArtBlankController::actionGetByFiltersExp,
             RefArtBlankController::actionGetAllExp,
             RefArtBlankController::actionGetClientDetail,
+            //
+            RefBlankThemeController::actionGetAll,
+            RefFabricTypeController::actionGetAll,
 
         ],
 
