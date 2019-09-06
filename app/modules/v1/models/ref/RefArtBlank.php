@@ -68,6 +68,22 @@ class RefArtBlank extends GiiRefArtBlank
                 }
                 return null;
             },
+            'sizes' => function () {
+                $resp = [];
+                $typeSize = $this->calcSizeType();
+                $sizesStr = Sizes::typeCompare[$typeSize];
+
+                foreach (Sizes::prices as $fSize => $fPrice) {
+                    if ($this->$fPrice > 0) {
+                        $resp[] = [
+                            'size' => $sizesStr[$fSize],
+                            'price' => $this->$fPrice,
+                        ];
+                    }
+                }
+                return $resp;
+            },
+
 
             'fabricTypeFk',
             'themeFk',
