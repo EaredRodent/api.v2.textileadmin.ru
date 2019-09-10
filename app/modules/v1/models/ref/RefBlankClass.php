@@ -17,9 +17,6 @@ use app\gii\GiiRefBlankClass;
  */
 class RefBlankClass extends GiiRefBlankClass
 {
-
-    static $setFiels = [];
-
     /**
      * @return array|false
      */
@@ -33,12 +30,7 @@ class RefBlankClass extends GiiRefBlankClass
 
         ];
 
-        $addFields = [];
-        foreach (self::$setFiels as $fItem) {
-            $addFields[$fItem] = $fields[$fItem];
-        }
-
-        return array_merge(parent::fields(), $addFields);
+        return array_merge(parent::fields(), $fields);
     }
 
     /**

@@ -17,6 +17,17 @@ class RefBlankGroupController extends ActiveControllerExtended
 {
     public $modelClass = 'app\modules\v1\models\ref\RefBlankGroup';
 
+    const actionGet = 'GET /v1/ref-blank-group/get';
+
+    /**
+     * @param $id
+     * @return \app\modules\v1\classes\ActiveRecordExtended
+     */
+    public function actionGet($id)
+    {
+        return RefBlankGroup::get($id);
+    }
+
     const actionGetSort = 'GET /v1/ref-blank-group/get-sort';
 
     /**

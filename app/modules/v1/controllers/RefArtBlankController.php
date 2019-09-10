@@ -76,6 +76,8 @@ class RefArtBlankController extends ActiveControllerExtended
      * @param null $sexIds
      * @param null $groupIds
      * @param null $classTags
+     * @param null $themeIds
+     * @param null $fabTypeIds
      * @return array|\yii\db\ActiveRecord[]
      */
     public function actionGetByFiltersExp($sexIds = null, $groupIds = null, $classTags = null, $themeIds = null, $fabTypeIds = null)

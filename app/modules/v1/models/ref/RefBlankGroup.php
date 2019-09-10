@@ -20,8 +20,6 @@ use app\gii\GiiRefBlankGroup;
  */
 class RefBlankGroup extends GiiRefBlankGroup
 {
-    static $setFiels;
-
     /**
      * @return array|false
      */
@@ -34,12 +32,7 @@ class RefBlankGroup extends GiiRefBlankGroup
             'children' => 'refBlankClassesTree',
         ];
 
-        $addFields = [];
-        foreach (self::$setFiels as $fItem) {
-            $addFields[$fItem] = $fields[$fItem];
-        }
-
-        return array_merge(parent::fields(), $addFields);
+        return array_merge(parent::fields(), $fields);
     }
 
 
