@@ -13,6 +13,8 @@ use app\modules\v1\controllers\RefBlankGroupController;
 use app\modules\v1\controllers\RefBlankModelController;
 use app\modules\v1\controllers\RefBlankThemeController;
 use app\modules\v1\controllers\RefFabricTypeController;
+use app\modules\v1\controllers\RefProdPrintController;
+use app\modules\v1\controllers\RefProductPrintController;
 use app\modules\v1\controllers\SlsClientController;
 use app\modules\v1\controllers\SlsCurrencyController;
 use app\modules\v1\controllers\SlsInvoiceController;
@@ -22,6 +24,7 @@ use app\modules\v1\controllers\SlsPayItemController;
 use app\modules\v1\models\ref\RefBlankClass;
 use app\modules\v1\models\ref\RefBlankGroup;
 use app\modules\v1\models\ref\RefBlankModel;
+use app\modules\v1\models\ref\RefProdPrint;
 use app\modules\v1\models\sls\SlsInvoice;
 use app\modules\v1\models\sls\SlsMoney;
 
@@ -173,7 +176,6 @@ class Permissions
 
         self::taskReferenceAccess => [
             self::pageReference,
-            RefBlankGroupController::actionGet,
             RefBlankGroupController::actionGetSort,
             RefBlankGroupController::actionGetTree,
             RefBlankGroupController::actionGetBaseTree,
@@ -190,6 +192,12 @@ class Permissions
             //
             RefBlankThemeController::actionGetAll,
             RefFabricTypeController::actionGetAll,
+            //
+            RefBlankGroupController::actionGet,
+            RefBlankClassController::actionGet,
+            RefBlankModelController::actionGet,
+            RefArtBlankController::actionGet,
+            RefProductPrintController::actionGet,
 
         ],
 

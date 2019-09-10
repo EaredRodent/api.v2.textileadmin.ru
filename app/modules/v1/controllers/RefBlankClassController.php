@@ -15,6 +15,17 @@ class RefBlankClassController extends ActiveControllerExtended
 {
     public $modelClass = 'app\modules\v1\models\ref\RefBlankClass';
 
+    const actionGet = 'GET /v1/ref-blank-class/get';
+
+    /**
+     * @param $id
+     * @return \app\modules\v1\classes\ActiveRecordExtended
+     */
+    public function actionGet($id)
+    {
+        return RefBlankClass::get($id);
+    }
+
     const actionGetForGroupSex = 'GET /v1/ref-blank-class/get-for-group-sex';
 
     /**

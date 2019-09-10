@@ -2,6 +2,7 @@
 
 namespace app\gii;
 
+use app\modules\v1\classes\ActiveRecordExtended;
 use Yii;
 
 /**
@@ -24,7 +25,7 @@ use Yii;
  * @property SlsPreorderItem[] $slsPreorderItems
  * @property SlsPreorderReserv[] $slsPreorderReservs
  */
-class GiiRefProdPrint extends \yii\db\ActiveRecord
+class GiiRefProdPrint extends ActiveRecordExtended
 {
     /**
      * {@inheritdoc}

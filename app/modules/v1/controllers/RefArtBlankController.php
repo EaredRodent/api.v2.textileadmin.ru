@@ -23,6 +23,17 @@ class RefArtBlankController extends ActiveControllerExtended
 {
     public $modelClass = 'app\modules\v1\models\ref\RefArtBlank';
 
+    const actionGet = 'GET /v1/ref-art-blank/get';
+
+    /**
+     * @param $id
+     * @return \app\modules\v1\classes\ActiveRecordExtended
+     */
+    public function actionGet($id)
+    {
+        return RefArtBlank::get($id);
+    }
+
     const actionGetForModel = 'GET /v1/ref-art-blank/get-for-model';
 
     /**

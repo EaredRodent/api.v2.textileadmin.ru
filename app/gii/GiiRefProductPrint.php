@@ -2,6 +2,7 @@
 
 namespace app\gii;
 
+use app\modules\v1\classes\ActiveRecordExtended;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefProdPrint;
 use Yii;
@@ -34,7 +35,7 @@ use Yii;
  * @property RefArtBlank $blankFk
  * @property RefProdPrint $printFk
  */
-class GiiRefProductPrint extends \yii\db\ActiveRecord
+class GiiRefProductPrint extends ActiveRecordExtended
 {
     /**
      * {@inheritdoc}
