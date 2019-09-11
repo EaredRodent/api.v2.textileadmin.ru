@@ -22,4 +22,11 @@ class RefBlankModel extends GiiRefBlankModel
         ]);
     }
 
+    public function extraFields()
+    {
+        return array_merge(parent::extraFields(), [
+            'classFk'
+        ]);
+    }
+
 }

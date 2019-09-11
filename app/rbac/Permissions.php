@@ -198,6 +198,7 @@ class Permissions
             RefBlankModelController::actionGet,
             RefArtBlankController::actionGet,
             RefProductPrintController::actionGet,
+            RefProductPrintController::actionGetClientDetail,
 
         ],
 

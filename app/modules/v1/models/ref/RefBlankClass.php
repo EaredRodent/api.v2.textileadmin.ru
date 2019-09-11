@@ -26,11 +26,16 @@ class RefBlankClass extends GiiRefBlankClass
             'type' => function () {
                 return 'class';
             },
-            'children' => 'refBlankModelsTree',
-
         ];
 
         return array_merge(parent::fields(), $fields);
+    }
+
+    public function extraFields()
+    {
+        return array_merge(parent::extraFields(), [
+            'children' => 'refBlankModelsTree',
+        ]);
     }
 
     /**
