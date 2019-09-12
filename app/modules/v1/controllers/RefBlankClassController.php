@@ -61,4 +61,31 @@ class RefBlankClassController extends ActiveControllerExtended
         return $resp;
     }
 
+    const actionGetClassesGroupType = 'GET /v1/ref-blank-class/get-classes-group-type';
+
+    /**
+     * Список наименований c группировкой по типу
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function actionGetClassesGroupType()
+    {
+
+        $resp = [
+            'Верх' => [],
+            'Костюм' => [],
+            'Низ' => [],
+        ];
+
+        foreach ($resp as $type => $arr) {
+            $data = RefBlankClass::find()
+                ->where(['type' => $type])
+                ->orderBy('title')
+                ->groupBy('tag')
+                ->all();
+            $resp[$type] = $data;
+        }
+
+        return $resp;
+    }
+
 }

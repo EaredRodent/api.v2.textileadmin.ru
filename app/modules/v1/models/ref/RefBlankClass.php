@@ -23,9 +23,6 @@ class RefBlankClass extends GiiRefBlankClass
     public function fields()
     {
         $fields = [
-            'type' => function () {
-                return 'class';
-            },
         ];
 
         return array_merge(parent::fields(), $fields);

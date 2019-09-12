@@ -19,6 +19,8 @@ use Yii;
  * @property string $code
  * @property string $kids_unisex
  * @property string $tag
+ * @property string $oxouno для магазина oxouno
+ * @property string $type
  *
  * @property RefBlankGroup $groupFk
  * @property RefBlankModel[] $refBlankModels
@@ -42,8 +44,8 @@ class GiiRefBlankClass extends ActiveRecordExtended
             [['ts_create'], 'safe'],
             [['group_fk', 'title', 'code'], 'required'],
             [['group_fk'], 'integer'],
-            [['kids_unisex'], 'string'],
-            [['title', 'title_client', 'title_en', 'tag'], 'string', 'max' => 45],
+            [['kids_unisex', 'type'], 'string'],
+            [['title', 'title_client', 'title_en', 'tag', 'oxouno'], 'string', 'max' => 45],
             [['code'], 'string', 'max' => 2],
             [['code'], 'unique'],
             [['group_fk'], 'exist', 'skipOnError' => true, 'targetClass' => RefBlankGroup::className(), 'targetAttribute' => ['group_fk' => 'id']],
@@ -64,7 +66,9 @@ class GiiRefBlankClass extends ActiveRecordExtended
             'title_en' => 'Title En',
             'code' => 'Code',
             'kids_unisex' => 'Kids Unisex',
-            'tag' => 'tag',
+            'tag' => 'Tag',
+            'oxouno' => 'Oxouno',
+            'type' => 'Type',
         ];
     }
 
@@ -81,6 +85,6 @@ class GiiRefBlankClass extends ActiveRecordExtended
      */
     public function getRefBlankModels()
     {
-        return $this->hasMany(RefBlankModel::className(), ['class_fk' => 'id'])->orderBy('title');
+        return $this->hasMany(RefBlankModel::className(), ['class_fk' => 'id']);
     }
 }

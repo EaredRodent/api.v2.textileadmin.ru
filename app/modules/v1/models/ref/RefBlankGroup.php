@@ -26,10 +26,6 @@ class RefBlankGroup extends GiiRefBlankGroup
     public function fields()
     {
         $fields = [
-            'type' => function () {
-                return 'group';
-            },
-            'children' => 'refBlankClassesTree',
         ];
 
         return array_merge(parent::fields(), $fields);
