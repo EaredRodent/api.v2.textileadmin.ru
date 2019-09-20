@@ -52,16 +52,16 @@ class AnxUserController extends ActiveControllerExtended
 
     /**
      * Попытка логина
-     * @param $login string
+     * @param $username
      * @param $password string
      * @return array
      * @throws HttpException
      */
-    function actionLogin($login, $password)
+    function actionLogin($username, $password)
     {
         /** @var $user AnxUser */
         $user = AnxUser::find()
-            ->where(['login' => $login])
+            ->where(['login' => $username])
             ->one();
 
         if ($user) {
