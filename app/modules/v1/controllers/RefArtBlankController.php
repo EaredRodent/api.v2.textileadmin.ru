@@ -34,6 +34,23 @@ class RefArtBlankController extends ActiveControllerExtended
         return RefArtBlank::get($id);
     }
 
+    const actionGetForModel = 'GET /v1/ref-art-blank/get-for-model';
+
+    /**
+     * Вернуть список изделий для заданной модели
+     * @param $id
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function actionGetForModel($id)
+    {
+
+        return RefArtBlank::find()
+            ->joinWith('themeFk', false)
+            ->where(['model_fk' => $id])
+            ->orderBy('fabric_type_fk, ref_blank_theme.title, id')
+            ->all();
+    }
+
     const actionGetByFiltersExp = 'GET /v1/ref-art-blank/get-by-filters-exp';
 
     /**
@@ -140,11 +157,11 @@ class RefArtBlankController extends ActiveControllerExtended
 
                 $restVal = $rest->getRestPrint($id, 1, $fSize);
                 if ($restVal == 0) {
-                    $restStr = '#d4000038';
+                    $restStr = '#d4000018';
                 } elseif ($restVal > 0 && $restVal <= 10) {
-                    $restStr = '#d4d40038';
+                    $restStr = '#d4d40018';
                 } else {
-                    $restStr = '#00d40038';
+                    $restStr = '#00d40018';
                 }
 
                 $resp[] = [

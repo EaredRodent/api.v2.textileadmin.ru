@@ -42,7 +42,6 @@ class Permissions
     const roleBuh = 'roleBuh';
 
     const roles = [
-
         self::roleGuest => [
             AnxUserController::actionLogin,
             AnxUserController::getBootstrap,
@@ -54,6 +53,7 @@ class Permissions
             self::taskMaster,
             self::taskReferenceAccess,
             self::taskReferenceB2BAccess,
+            self::taskReferenceB2Bv2Access,
             ///
             AnxUserController::postCreateUser,
             BaseController::actionPostTestData,
@@ -132,6 +132,11 @@ class Permissions
      */
     const taskReferenceB2BAccess = 'taskReferenceB2BAccess';
 
+    /**
+     * Доступ к B2B 2.0
+     */
+    const taskReferenceB2Bv2Access = 'taskReferenceB2Bv2Access';
+
 
 
     const tasks = [
@@ -193,6 +198,7 @@ class Permissions
             RefBlankClassController::actionGet,
             RefBlankModelController::actionGet,
             RefArtBlankController::actionGet,
+            RefArtBlankController::actionGetForModel,
             RefArtBlankController::actionGetClientDetail,
             RefProductPrintController::actionGet,
             RefProductPrintController::actionGetClientDetail,
@@ -204,7 +210,11 @@ class Permissions
             RefBlankClassController::actionGetClassesGroupType,
             RefArtBlankController::actionGetClientDetail,
             RefArtBlankController::actionGetByFiltersExp,
-        ]
+        ],
+
+        self::taskReferenceB2Bv2Access => [
+
+        ],
 
 
     ];

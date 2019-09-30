@@ -56,11 +56,11 @@ class RefProductPrintController extends ActiveControllerExtended
 
                 $restVal = $rest->getRestPrint($postProd->blank_fk, $printId, $fSize);
                 if ($restVal === 0) {
-                    $restStr = '#d4000038';
+                    $restStr = '#d4000018';
                 } elseif ($restVal > 0 && $restVal <= 10) {
-                    $restStr = '#d4d40038';
+                    $restStr = '#d4d40018';
                 } else {
-                    $restStr = '#00d40038';
+                    $restStr = '#00d40018';
                 }
 
                 $resp[] = [
