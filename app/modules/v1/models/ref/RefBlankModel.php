@@ -12,19 +12,10 @@ use app\gii\GiiRefBlankModel;
 
 class RefBlankModel extends GiiRefBlankModel
 {
-    /**
-     * @return array|false
-     */
-    public function fields()
-    {
-        return array_merge(parent::fields(), [
-            'sexFk'
-        ]);
-    }
-
     public function extraFields()
     {
         return array_merge(parent::extraFields(), [
+            'sexFk',
             'classFk'
         ]);
     }

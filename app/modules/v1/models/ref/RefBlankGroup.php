@@ -21,18 +21,6 @@ use app\gii\GiiRefBlankGroup;
 class RefBlankGroup extends GiiRefBlankGroup
 {
     /**
-     * @return array|false
-     */
-    public function fields()
-    {
-        $fields = [
-        ];
-
-        return array_merge(parent::fields(), $fields);
-    }
-
-
-    /**
      * @return \yii\db\ActiveQuery
      */
     public function getRefBlankClassesTree()

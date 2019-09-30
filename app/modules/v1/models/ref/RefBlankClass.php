@@ -17,20 +17,10 @@ use app\gii\GiiRefBlankClass;
  */
 class RefBlankClass extends GiiRefBlankClass
 {
-    /**
-     * @return array|false
-     */
-    public function fields()
-    {
-        $fields = [
-        ];
-
-        return array_merge(parent::fields(), $fields);
-    }
-
     public function extraFields()
     {
         return array_merge(parent::extraFields(), [
+            'groupFk',
             'children' => 'refBlankModelsTree',
         ]);
     }

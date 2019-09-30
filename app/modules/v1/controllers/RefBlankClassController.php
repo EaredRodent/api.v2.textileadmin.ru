@@ -26,41 +26,6 @@ class RefBlankClassController extends ActiveControllerExtended
         return RefBlankClass::get($id);
     }
 
-    const actionGetForGroupSex = 'GET /v1/ref-blank-class/get-for-group-sex';
-
-    /**
-     * Вернуть список наименований для определенных sexId и groupId
-     * @param $sexId
-     * @param $groupId
-     * @return array|\yii\db\ActiveRecord[]
-     */
-    public function actionGetForGroupSex($sexId, $groupId)
-    {
-
-        $resp = RefBlankClass::find()
-            ->joinWith('refBlankModels')
-            ->where(['sex_fk' => $sexId])
-            ->andWhere(['group_fk' => $groupId])
-            ->orderBy('title')
-            ->all();
-        return $resp;
-    }
-
-    const actionGetClassesExp = 'GET /v1/ref-blank-class/get-classes-exp';
-
-    /**
-     * Список наименований
-     * @return array|\yii\db\ActiveRecord[]
-     */
-    public function actionGetClassesExp()
-    {
-        $resp = RefBlankClass::find()
-            ->orderBy('title')
-            ->groupBy('tag')
-            ->all();
-        return $resp;
-    }
-
     const actionGetClassesGroupType = 'GET /v1/ref-blank-class/get-classes-group-type';
 
     /**

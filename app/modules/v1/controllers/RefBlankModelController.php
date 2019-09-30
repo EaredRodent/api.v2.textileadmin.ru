@@ -11,11 +11,14 @@ namespace app\modules\v1\controllers;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\ref\RefBlankClass;
 use app\modules\v1\models\ref\RefBlankModel;
+use yii\data\ActiveDataProvider;
 
 class RefBlankModelController extends ActiveControllerExtended
 {
+    /** @var RefBlankModel $modelClass */
     public $modelClass = 'app\modules\v1\models\ref\RefBlankModel';
 
+    const actionIndex = 'GET /v1/ref-blank-model/index';
     const actionGet = 'GET /v1/ref-blank-model/get';
 
     /**
@@ -27,17 +30,15 @@ class RefBlankModelController extends ActiveControllerExtended
         return RefBlankModel::get($id);
     }
 
-    const actionGetForClass = 'GET /v1/ref-blank-model/get-for-class';
-
-    /**
-     * Вернуть список моделей для заданного наименования (класса)
-     * @param $id
-     * @return array|\yii\db\ActiveRecord[]
-     */
-    public function actionGetForClass($id)
-    {
-
-        return RefBlankModel::find()->where(['class_fk' => $id])->orderBy('sex_fk, title')->all();
+    public function actions() {
+        $actions = parent::actions();
+        $actions['index']['prepareDataProvider'] = [$this, 'indexDataProvider'];
+        return $actions;
     }
 
+    public function indexDataProvider() {
+        return new ActiveDataProvider([
+            'query' => $this->modelClass::find()
+        ]);
+    }
 }

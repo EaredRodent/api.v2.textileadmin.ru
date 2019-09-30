@@ -15,15 +15,4 @@ use app\modules\v1\models\ref\RefFabricType;
 class RefFabricTypeController extends ActiveControllerExtended
 {
     public $modelClass = 'app\modules\v1\models\ref\RefFabricType';
-
-    const actionGetAll = 'GET /v1/ref-fabric-type/get-all';
-
-    /**
-     * Получить список всех тканей
-     * @return array|\yii\db\ActiveRecord[]
-     */
-    public function actionGetAll()
-    {
-        return RefFabricType::getAll();
-    }
 }

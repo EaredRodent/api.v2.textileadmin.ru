@@ -53,6 +53,7 @@ class Permissions
             self::roleEdush,
             self::taskMaster,
             self::taskReferenceAccess,
+            self::taskReferenceB2BAccess,
             ///
             AnxUserController::postCreateUser,
             BaseController::actionPostTestData,
@@ -86,10 +87,13 @@ class Permissions
 
     const pageReference = 'pageReference';
 
+    const pageReferenceB2B = 'pageReferenceB2B';
+
     const pages = [
         self::pageRegPays => 'Реестры платежей',
         self::pageTestApi => 'Тестирование API проекта',
         self::pageReference => 'Справочник изделий',
+        self::pageReferenceB2B => 'B2B',
     ];
 
 
@@ -123,10 +127,18 @@ class Permissions
      */
     const taskReferenceAccess = 'taskReferenceAccess';
 
+    /**
+     * Доступ к B2B 1.0
+     */
+    const taskReferenceB2BAccess = 'taskReferenceB2BAccess';
+
+
+
     const tasks = [
 
         self::taskMaster => [
             BaseController::actionGetControllers,
+            RefBlankModelController::actionIndex,
         ],
 
         self::taskRegPaysPageAccess => [
@@ -176,32 +188,23 @@ class Permissions
 
         self::taskReferenceAccess => [
             self::pageReference,
-            RefBlankGroupController::actionGetSort,
-            RefBlankGroupController::actionGetTree,
             RefBlankGroupController::actionGetBaseTree,
-            RefBlankModelController::actionGetForClass,
-            RefArtBlankController::actionGetForModel,
-            ///
-            RefArtBlankController::actionGetProps,
-            ///
-            RefBlankClassController::actionGetForGroupSex,
-            RefBlankClassController::actionGetClassesExp,
-            RefBlankClassController::actionGetClassesGroupType,
-            RefArtBlankController::actionGetByFiltersExp,
-            RefArtBlankController::actionGetAllExp,
-            RefArtBlankController::actionGetClientDetail,
-            //
-            RefBlankThemeController::actionGetAll,
-            RefFabricTypeController::actionGetAll,
-            //
             RefBlankGroupController::actionGet,
             RefBlankClassController::actionGet,
             RefBlankModelController::actionGet,
             RefArtBlankController::actionGet,
+            RefArtBlankController::actionGetClientDetail,
             RefProductPrintController::actionGet,
             RefProductPrintController::actionGetClientDetail,
 
         ],
+
+        self::taskReferenceB2BAccess => [
+            self::pageReferenceB2B,
+            RefBlankClassController::actionGetClassesGroupType,
+            RefArtBlankController::actionGetClientDetail,
+            RefArtBlankController::actionGetByFiltersExp,
+        ]
 
 
     ];

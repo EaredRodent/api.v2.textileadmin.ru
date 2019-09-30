@@ -34,52 +34,6 @@ class RefArtBlankController extends ActiveControllerExtended
         return RefArtBlank::get($id);
     }
 
-    const actionGetForModel = 'GET /v1/ref-art-blank/get-for-model';
-
-    /**
-     * Вернуть список изделий для заданной модели
-     * @param $id
-     * @return array|\yii\db\ActiveRecord[]
-     */
-    public function actionGetForModel($id)
-    {
-
-        return RefArtBlank::find()
-            ->joinWith('themeFk', false)
-            ->where(['model_fk' => $id])
-            ->orderBy('fabric_type_fk, ref_blank_theme.title, id')
-            ->all();
-    }
-
-
-    const actionGetProps = 'GET /v1/ref-art-blank/get-props';
-
-    /**
-     * Вернуть параметры продукта для отображения в стравочнике
-     * @param $id
-     * @return array|\yii\db\ActiveRecord[]
-     */
-    public function actionGetProps($id)
-    {
-
-        /** @var $prod RefArtBlank */
-        $prod = RefArtBlank::find()
-            ->where(['id' => $id])
-            ->one();
-
-        $resp = [];
-
-        // Термобелье комплект: для девочек. РЕГЛАН (Нэко-13 134) Арт:
-        // OXO-0154
-
-        $resp['title'] =
-            $prod->modelFk->classFk->title . ' ' .
-            $prod->modelFk->title . ':' . $prod->modelFk->sexFk->title;
-        $resp['art'] = $prod->hArt();
-
-        return $resp;
-    }
-
     const actionGetByFiltersExp = 'GET /v1/ref-art-blank/get-by-filters-exp';
 
     /**
@@ -161,26 +115,6 @@ class RefArtBlankController extends ActiveControllerExtended
             'availableRefBlankTheme' => $availableRefBlankTheme,
             'availableRefFabricType' => $availableRefFabricType
         ];
-    }
-
-    const actionGetAllExp = 'GET /v1/ref-art-blank/get-all-exp';
-
-    /**
-     * Эеспериментальынй экшн потом удалить
-     *
-     * @return array|\yii\db\ActiveRecord[]
-     */
-    public function actionGetAllExp()
-    {
-        // todo
-
-        $resp = RefArtBlank::find()
-            //->with('modelFk.classFk', 'modelFk.sexFk')
-            //->with('fabricTypeFk', 'themeFk')
-            ->where(['id' => 100])
-            //->asArray()
-            ->all();
-        return $resp;
     }
 
     const actionGetClientDetail = 'GET /v1/ref-art-blank/get-client-detail';
