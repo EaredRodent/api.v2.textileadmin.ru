@@ -2,10 +2,10 @@
 
 namespace app\gii;
 
-use app\modules\v1\classes\ActiveRecordExtended;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefBlankClass;
 use app\modules\v1\models\ref\RefBlankSex;
+use app\modules\v1\models\ref\RefWeight;
 use Yii;
 
 /**
@@ -24,6 +24,7 @@ use Yii;
  * @property string $cut4
  * @property string $cut5
  * @property string $epithets
+ * @property string $fashion
  *
  * @property RefArtBlank[] $refArtBlanks
  * @property RefBlankClass $classFk
@@ -32,7 +33,7 @@ use Yii;
  * @property SpecCurve[] $specCurves
  * @property TsScheme[] $tsSchemes
  */
-class GiiRefBlankModel extends ActiveRecordExtended
+class GiiRefBlankModel extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -52,7 +53,7 @@ class GiiRefBlankModel extends ActiveRecordExtended
             [['class_fk', 'sex_fk', 'title'], 'required'],
             [['class_fk', 'sex_fk'], 'integer'],
             [['epithets'], 'string'],
-            [['title', 'title_en'], 'string', 'max' => 45],
+            [['title', 'title_en', 'fashion'], 'string', 'max' => 45],
             [['descript'], 'string', 'max' => 300],
             [['cut1', 'cut2', 'cut3', 'cut4', 'cut5'], 'string', 'max' => 100],
             [['class_fk'], 'exist', 'skipOnError' => true, 'targetClass' => RefBlankClass::className(), 'targetAttribute' => ['class_fk' => 'id']],
@@ -79,6 +80,7 @@ class GiiRefBlankModel extends ActiveRecordExtended
             'cut4' => 'Cut4',
             'cut5' => 'Cut5',
             'epithets' => 'Epithets',
+            'fashion' => 'Fashion',
         ];
     }
 
