@@ -68,7 +68,9 @@ class RefBlankGroupController extends ActiveControllerExtended
                     $model = [];
                     $model['id'] = $modelItem->id;
                     $model['type'] = 'model';
-                    $model['title'] = $modelItem->title . ':' . $modelItem->sexFk->code_ru;
+                    $fashion = $modelItem->fashion ? $modelItem->fashion : '--------------------------';
+                    $model['title'] = $modelItem->sexFk->code_ru . ': ' . $fashion .
+                        ' ('. $modelItem->title . ')';
                     $model['children'] = [];
 
                     $_modelChildren = [];
