@@ -14,15 +14,5 @@ use app\gii\GiiRefBlankSex;
 
 class RefBlankSex extends GiiRefBlankSex
 {
-//
-//    /**
-//     * @return array|false
-//     */
-//    public function fields()
-//    {
-//        return array_merge(parent::fields(), [
-//            'refBlankModels'
-//        ]);
-//    }
 
 }
