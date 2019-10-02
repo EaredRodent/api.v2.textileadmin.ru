@@ -11,6 +11,7 @@ use app\modules\v1\controllers\RefArtBlankController;
 use app\modules\v1\controllers\RefBlankClassController;
 use app\modules\v1\controllers\RefBlankGroupController;
 use app\modules\v1\controllers\RefBlankModelController;
+use app\modules\v1\controllers\RefBlankSexController;
 use app\modules\v1\controllers\RefBlankThemeController;
 use app\modules\v1\controllers\RefFabricTypeController;
 use app\modules\v1\controllers\RefProdPrintController;
@@ -207,6 +208,8 @@ class Permissions
 
         self::taskReferenceB2BAccess => [
             self::pageReferenceB2B,
+            RefBlankSexController::actionGetAppBarTree,
+
             RefBlankClassController::actionGetClassesGroupType,
             RefArtBlankController::actionGetClientDetail,
             RefArtBlankController::actionGetByFiltersExp,
