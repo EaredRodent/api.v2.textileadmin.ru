@@ -57,6 +57,7 @@ class RefBlankSexController extends ActiveControllerExtended
                     ->innerJoin('ref_blank_sex', 'ref_blank_model.sex_fk = ref_blank_sex.id')
                     ->where(['ref_blank_sex.id' => $sexIds])
                     ->andWhere(['ref_blank_group.id' => $group['id']])
+                    ->groupBy('ref_blank_class.tag')
                     ->all();
             }
         }
