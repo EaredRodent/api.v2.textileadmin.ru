@@ -39,14 +39,26 @@ class RefBlankSexController extends ActiveControllerExtended
 
         foreach ($sexes as $sex => $sexIds) {
             $resp[$sex] = (new Query())
-                ->select('ref_blank_class.tag AS classTitle, ref_blank_class.id AS classId, ref_blank_group.title AS groupTitle, ref_blank_group.id AS groupId')
+                ->select('ref_blank_group.*')
                 ->distinct()
                 ->from('ref_blank_model')
-                ->leftJoin('ref_blank_class', 'ref_blank_model.class_fk = ref_blank_class.id')
-                ->leftJoin('ref_blank_group', 'ref_blank_class.group_fk = ref_blank_group.id')
-                ->leftJoin('ref_blank_sex', 'ref_blank_model.sex_fk = ref_blank_sex.id')
+                ->innerJoin('ref_blank_class', 'ref_blank_model.class_fk = ref_blank_class.id')
+                ->innerJoin('ref_blank_group', 'ref_blank_class.group_fk = ref_blank_group.id')
+                ->innerJoin('ref_blank_sex', 'ref_blank_model.sex_fk = ref_blank_sex.id')
                 ->where(['ref_blank_sex.id' => $sexIds])
                 ->all();
+            foreach ($resp[$sex] as &$group) {
+                $group['classes'] = (new Query())
+                    ->select('ref_blank_class.*')
+                    ->distinct()
+                    ->from('ref_blank_model')
+                    ->innerJoin('ref_blank_class', 'ref_blank_model.class_fk = ref_blank_class.id')
+                    ->innerJoin('ref_blank_group', 'ref_blank_class.group_fk = ref_blank_group.id')
+                    ->innerJoin('ref_blank_sex', 'ref_blank_model.sex_fk = ref_blank_sex.id')
+                    ->where(['ref_blank_sex.id' => $sexIds])
+                    ->andWhere(['ref_blank_group.id' => $group['id']])
+                    ->all();
+            }
         }
 
 
