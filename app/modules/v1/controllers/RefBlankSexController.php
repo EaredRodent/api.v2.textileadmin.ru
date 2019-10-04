@@ -20,6 +20,16 @@ class RefBlankSexController extends ActiveControllerExtended
 {
     public $modelClass = 'app\modules\v1\models\ref\RefBlankSex';
 
+    const actionGetSexTags = 'GET /v1/ref-blank-sex/get-sex-tags';
+
+    /**
+     * Вернуть список для фильтра по полу
+     * @return array
+     */
+    public function actionGetSexTags() {
+        return ['Женщинам', 'Мужчинам', 'Детям'];
+    }
+
     const actionGetAppBarTree = 'GET /v1/ref-blank-sex/get-app-bar-tree';
 
     /**
@@ -28,17 +38,33 @@ class RefBlankSexController extends ActiveControllerExtended
      */
     public function actionGetAppBarTree()
     {
-        $resp = [
-            'man' => [],
-            'woman' => [],
-            'kids' => []
+        $sexObjects = [
+            [
+                'tag' => 'Женщинам',
+                'groups' => []
+            ],
+            [
+                'tag' => 'Мужчинам',
+                'groups' => []
+            ],
+            [
+                'tag' => 'Детям',
+                'groups' => []
+            ]
         ];
 
 
-        $sexes = ['man' => [1, 5], 'woman' => [2, 5], 'kids' => [3]];
+        $sexObjectToRealSexIDs = [
+            // Женщинам
+            0 => [2, 5],
+            // Мужчинам
+            1 => [1, 5],
+            // Детям
+            2 => [3]
+        ];
 
-        foreach ($sexes as $sex => $sexIds) {
-            $resp[$sex] = (new Query())
+        foreach ($sexObjectToRealSexIDs as $sexObjectIndex => $sexIds) {
+            $sexObjects[$sexObjectIndex]['groups'] = (new Query())
                 ->select('ref_blank_group.*')
                 ->distinct()
                 ->from('ref_blank_model')
@@ -47,7 +73,7 @@ class RefBlankSexController extends ActiveControllerExtended
                 ->innerJoin('ref_blank_sex', 'ref_blank_model.sex_fk = ref_blank_sex.id')
                 ->where(['ref_blank_sex.id' => $sexIds])
                 ->all();
-            foreach ($resp[$sex] as &$group) {
+            foreach ($sexObjects[$sexObjectIndex]['groups'] as &$group) {
                 $group['classes'] = (new Query())
                     ->select('ref_blank_class.*')
                     ->distinct()
@@ -63,6 +89,6 @@ class RefBlankSexController extends ActiveControllerExtended
         }
 
 
-        return $resp;
+        return $sexObjects;
     }
 }
