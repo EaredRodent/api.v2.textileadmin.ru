@@ -208,7 +208,21 @@ class Permissions
 
         self::taskReferenceB2BAccess => [
             self::pageReferenceB2B,
+            // app-bar
             RefBlankSexController::actionGetAppBarTree,
+
+            // filters
+
+            RefBlankSexController::actionGetSexTags,
+            RefBlankGroupController::actionGetGroups,
+            RefBlankClassController::actionGetClassesGroupType,
+            RefBlankThemeController::actionGetThemes,
+            RefFabricTypeController::actionGetFabricTypes,
+
+
+            // filters on action
+
+            RefArtBlankController::actionGetByFilters,
 
             RefBlankClassController::actionGetClassesGroupType,
             RefArtBlankController::actionGetClientDetail,

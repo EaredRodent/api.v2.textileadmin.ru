@@ -15,4 +15,14 @@ use app\modules\v1\models\ref\RefFabricType;
 class RefFabricTypeController extends ActiveControllerExtended
 {
     public $modelClass = 'app\modules\v1\models\ref\RefFabricType';
+
+    const actionGetFabricTypes = 'GET /v1/ref-fabric-type/get-fabric-types';
+
+    /**
+     * Вернуть список для фильтра по ткани
+     * @return RefFabricType[]
+     */
+    public function actionGetFabricTypes() {
+        return RefFabricType::getAll();
+    }
 }

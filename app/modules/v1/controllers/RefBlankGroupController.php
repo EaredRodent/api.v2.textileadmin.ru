@@ -112,5 +112,13 @@ class RefBlankGroupController extends ActiveControllerExtended
         return $resp;
     }
 
+    const actionGetGroups = 'GET /v1/ref-blank-group/get-groups';
 
+    /**
+     * Вернуть список для фильтра по группе
+     * @return RefBlankGroup[]
+     */
+    public function actionGetGroups() {
+        return RefBlankGroup::getAll();
+    }
 }

@@ -177,4 +177,86 @@ class RefArtBlankController extends ActiveControllerExtended
         return $resp;
     }
 
+    const actionGetByFilters = 'GET /v1/ref-art-blank/get-by-filters';
+
+    /**
+     * Вернуть все артикулы соответствующие фильтрам
+     * @param null $sexTags
+     * @param null $groupIDs
+     * @param null $classTags
+     * @param null $themeIDs
+     * @param null $fabTypeIDs
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function actionGetByFilters($sexTags = null, $groupIDs = null, $classTags = null, $themeIDs = null, $fabTypeIDs = null)
+    {
+        $sexTags = $sexTags ? explode(',', $sexTags) : [];
+        $sexTitles = [];
+
+        if (in_array('Женщинам', $sexTags)) {
+            $sexTitles = array_merge($sexTitles,
+                ['Женский', 'Унисекс взрослый']);
+        }
+
+        if (in_array('Мужчинам', $sexTags)) {
+            $sexTitles = array_merge($sexTitles,
+                ['Мужской', 'Унисекс взрослый']);
+        }
+
+        if (in_array('Детям', $sexTags)) {
+            $sexTitles = array_merge($sexTitles,
+                ['Для мальчиков', 'Для девочек', 'Унисекс детский']);
+        }
+
+        $groupIDs = $groupIDs ? explode(',', $groupIDs) : [];
+        $classTags = $classTags ? explode(',', $classTags) : [];
+        $themeIDs = $themeIDs ? explode(',', $themeIDs) : [];
+        $fabTypeIDs = $fabTypeIDs ? explode(',', $fabTypeIDs) : [];
+
+        /** @var RefArtBlank[] $refArtBlanks */
+        $refArtBlanks = RefArtBlank::find()
+            //->with('modelFk.classFk', 'modelFk.sexFk')
+            //->with('fabricTypeFk', 'themeFk')
+            //->joinWith('fabricTypeFk')
+            ->joinWith('modelFk.sexFk')
+            ->joinWith('modelFk.classFk')
+            ->joinWith('modelFk.classFk.groupFk')
+            ->joinWith('fabricTypeFk')
+            ->joinWith('themeFk')
+            //->select('ref_art_blank.id, ref_art_blank.fabric_type_fk, ref_fabric_type.struct')
+            //->select('ref_fabric_type.struct')
+            ->filterWhere(['in', 'ref_blank_sex.title', $sexTitles])
+            ->andfilterWhere(['in', 'ref_blank_group.id', $groupIDs])
+            ->andFilterWhere(['in', 'ref_blank_class.tag', $classTags])
+            ->andFilterWhere(['in', 'ref_blank_theme.id', $themeIDs])
+            ->andFilterWhere(['in', 'ref_fabric_type.id', $fabTypeIDs])
+            ->andWhere(['flag_price' => 1])
+            ->all();
+
+        $availableRefBlankTheme = [];
+        $availableRefFabricType = [];
+
+        foreach ($refArtBlanks as $refArtBlank) {
+            if (!in_array($refArtBlank->theme_fk, $availableRefBlankTheme)) {
+                $availableRefBlankTheme[] = $refArtBlank->theme_fk;
+            }
+            if (!in_array($refArtBlank->fabric_type_fk, $availableRefFabricType)) {
+                $availableRefFabricType[] = $refArtBlank->fabric_type_fk;
+            }
+        }
+
+        $availableRefBlankTheme = RefBlankTheme::find()
+            ->where(['id' => $availableRefBlankTheme])
+            ->all();
+
+        $availableRefFabricType = RefFabricType::find()
+            ->where(['id' => $availableRefFabricType])
+            ->all();
+
+        return [
+            'refArtBlank' => $refArtBlanks ? $refArtBlanks : [],
+            'availableRefBlankTheme' => $availableRefBlankTheme,
+            'availableRefFabricType' => $availableRefFabricType
+        ];
+    }
 }
