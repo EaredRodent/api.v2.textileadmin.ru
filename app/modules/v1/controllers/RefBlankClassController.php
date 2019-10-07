@@ -45,7 +45,7 @@ class RefBlankClassController extends ActiveControllerExtended
             $data = RefBlankClass::find()
                 ->where(['type' => $type])
                 ->orderBy('title')
-                ->groupBy('tag')
+                ->groupBy('oxouno')
                 ->all();
             $resp[$type] = $data;
         }

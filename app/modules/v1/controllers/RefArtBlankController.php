@@ -227,7 +227,7 @@ class RefArtBlankController extends ActiveControllerExtended
             //->select('ref_fabric_type.struct')
             ->filterWhere(['in', 'ref_blank_sex.title', $sexTitles])
             ->andfilterWhere(['in', 'ref_blank_group.id', $groupIDs])
-            ->andFilterWhere(['in', 'ref_blank_class.tag', $classTags])
+            ->andFilterWhere(['in', 'ref_blank_class.oxouno', $classTags])
             ->andFilterWhere(['in', 'ref_blank_theme.id', $themeIDs])
             ->andFilterWhere(['in', 'ref_fabric_type.id', $fabTypeIDs])
             ->andWhere(['flag_price' => 1])
@@ -249,7 +249,7 @@ class RefArtBlankController extends ActiveControllerExtended
             //->select('ref_fabric_type.struct')
             ->filterWhere(['in', 'ref_blank_sex.title', $sexTitles])
             ->andfilterWhere(['in', 'ref_blank_group.id', $groupIDs])
-            ->andFilterWhere(['in', 'ref_blank_class.tag', $classTags])
+            ->andFilterWhere(['in', 'ref_blank_class.oxouno', $classTags])
             ->andWhere(['flag_price' => 1])
             ->all();
 
