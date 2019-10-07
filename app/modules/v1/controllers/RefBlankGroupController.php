@@ -119,6 +119,8 @@ class RefBlankGroupController extends ActiveControllerExtended
      * @return RefBlankGroup[]
      */
     public function actionGetGroups() {
-        return RefBlankGroup::getAll();
+        return RefBlankGroup::find()
+            ->orderBy('sort')
+            ->all();
     }
 }

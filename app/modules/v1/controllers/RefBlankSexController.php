@@ -66,6 +66,7 @@ class RefBlankSexController extends ActiveControllerExtended
         foreach ($sexObjectToRealSexIDs as $sexObjectIndex => $sexIds) {
             $sexObjects[$sexObjectIndex]['groups'] = (new Query())
                 ->select('ref_blank_group.*')
+                ->orderBy('sort')
                 ->distinct()
                 ->from('ref_blank_model')
                 ->innerJoin('ref_blank_class', 'ref_blank_model.class_fk = ref_blank_class.id')

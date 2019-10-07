@@ -14,9 +14,9 @@ use Yii;
  * @property string $title
  * @property string $title_en
  * @property string $code
+ * @property int $sort
  *
  * @property RefBlankClass[] $refBlankClasses
-
  */
 class GiiRefBlankGroup extends ActiveRecordExtended
 {
@@ -36,6 +36,7 @@ class GiiRefBlankGroup extends ActiveRecordExtended
         return [
             [['ts_create'], 'safe'],
             [['title', 'code'], 'required'],
+            [['sort'], 'integer'],
             [['title', 'title_en'], 'string', 'max' => 45],
             [['code'], 'string', 'max' => 2],
             [['code'], 'unique'],
@@ -53,6 +54,7 @@ class GiiRefBlankGroup extends ActiveRecordExtended
             'title' => 'Title',
             'title_en' => 'Title En',
             'code' => 'Code',
+            'sort' => 'Sort',
         ];
     }
 
