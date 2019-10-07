@@ -213,8 +213,8 @@ class RefArtBlankController extends ActiveControllerExtended
         $themeIDs = $themeIDs ? explode(',', $themeIDs) : [];
         $fabTypeIDs = $fabTypeIDs ? explode(',', $fabTypeIDs) : [];
 
-        /** @var RefArtBlank[] $refArtBlanks */
-        $refArtBlanks = RefArtBlank::find()
+        /** @var RefArtBlank[] $filteredProds */
+        $filteredProds = RefArtBlank::find()
             //->with('modelFk.classFk', 'modelFk.sexFk')
             //->with('fabricTypeFk', 'themeFk')
             //->joinWith('fabricTypeFk')
@@ -233,15 +233,35 @@ class RefArtBlankController extends ActiveControllerExtended
             ->andWhere(['flag_price' => 1])
             ->all();
 
+        // Ignore theme and fabric type
+
+        /** @var RefArtBlank[] $filteredProds2 */
+        $filteredProds2 = RefArtBlank::find()
+            //->with('modelFk.classFk', 'modelFk.sexFk')
+            //->with('fabricTypeFk', 'themeFk')
+            //->joinWith('fabricTypeFk')
+            ->joinWith('modelFk.sexFk')
+            ->joinWith('modelFk.classFk')
+            ->joinWith('modelFk.classFk.groupFk')
+            ->joinWith('fabricTypeFk')
+            ->joinWith('themeFk')
+            //->select('ref_art_blank.id, ref_art_blank.fabric_type_fk, ref_fabric_type.struct')
+            //->select('ref_fabric_type.struct')
+            ->filterWhere(['in', 'ref_blank_sex.title', $sexTitles])
+            ->andfilterWhere(['in', 'ref_blank_group.id', $groupIDs])
+            ->andFilterWhere(['in', 'ref_blank_class.tag', $classTags])
+            ->andWhere(['flag_price' => 1])
+            ->all();
+
         $availableRefBlankTheme = [];
         $availableRefFabricType = [];
 
-        foreach ($refArtBlanks as $refArtBlank) {
-            if (!in_array($refArtBlank->theme_fk, $availableRefBlankTheme)) {
-                $availableRefBlankTheme[] = $refArtBlank->theme_fk;
+        foreach ($filteredProds2 as $prod) {
+            if (!in_array($prod->theme_fk, $availableRefBlankTheme)) {
+                $availableRefBlankTheme[] = $prod->theme_fk;
             }
-            if (!in_array($refArtBlank->fabric_type_fk, $availableRefFabricType)) {
-                $availableRefFabricType[] = $refArtBlank->fabric_type_fk;
+            if (!in_array($prod->fabric_type_fk, $availableRefFabricType)) {
+                $availableRefFabricType[] = $prod->fabric_type_fk;
             }
         }
 
@@ -254,7 +274,7 @@ class RefArtBlankController extends ActiveControllerExtended
             ->all();
 
         return [
-            'refArtBlank' => $refArtBlanks ? $refArtBlanks : [],
+            'filteredProds' => $filteredProds ? $filteredProds : [],
             'availableRefBlankTheme' => $availableRefBlankTheme,
             'availableRefFabricType' => $availableRefFabricType
         ];
