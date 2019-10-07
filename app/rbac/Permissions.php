@@ -208,7 +208,14 @@ class Permissions
 
         self::taskReferenceB2BAccess => [
             self::pageReferenceB2B,
-            // app-bar
+            RefBlankSexController::actionGetAppBarTree,
+            RefBlankClassController::actionGetClassesGroupType,
+            RefArtBlankController::actionGetClientDetail,
+            RefArtBlankController::actionGetByFiltersExp,
+        ],
+
+        self::taskReferenceB2Bv2Access => [
+            //app-bar
             RefBlankSexController::actionGetAppBarTree,
 
             // filters
@@ -224,13 +231,9 @@ class Permissions
 
             RefArtBlankController::actionGetByFilters,
 
-            RefBlankClassController::actionGetClassesGroupType,
+            // viewer
+
             RefArtBlankController::actionGetClientDetail,
-            RefArtBlankController::actionGetByFiltersExp,
-        ],
-
-        self::taskReferenceB2Bv2Access => [
-
         ],
 
 
