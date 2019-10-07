@@ -41,6 +41,7 @@ class Permissions
     const roleEdush = 'roleEdush';
     const roleBuhMain = 'roleBuhMain';
     const roleBuh = 'roleBuh';
+    const roleB2bClient = 'roleB2bClient';
 
     const roles = [
         self::roleGuest => [
@@ -75,6 +76,10 @@ class Permissions
             self::taskBuh,
             self::taskReferenceAccess,
         ],
+        self::roleB2bClient => [
+            self::taskReferenceB2Bv2Access,
+        ],
+
 
     ];
 
