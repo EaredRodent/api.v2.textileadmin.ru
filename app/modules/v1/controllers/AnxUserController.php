@@ -8,8 +8,10 @@
 
 namespace app\modules\v1\controllers;
 
+use app\extension\reCAPTCHA;
 use app\models\AnxUser;
 use app\modules\v1\classes\ActiveControllerExtended;
+use app\modules\v1\models\sls\SlsClient;
 use Yii;
 use yii\web\HttpException;
 use yii\web\ServerErrorHttpException;
@@ -79,7 +81,7 @@ class AnxUserController extends ActiveControllerExtended
     /**
      * Вернуть данные юзера и его роли в случае успешного логина
      */
-    const getBootstrap = "GET /v1/anx-user/bootstrap";
+    const actionBootstrap = "GET /v1/anx-user/bootstrap";
 
     function actionBootstrap()
     {
@@ -133,4 +135,19 @@ class AnxUserController extends ActiveControllerExtended
         ];
     }
 
+    const actionRegistration = "POST /v1/anx-user/registration";
+
+    public function actionRegistration($username, $password, $brandName, $tin, $managerName, $phone, $address, $reCaptchaToken = null)
+    {
+        if (reCAPTCHA::verify($reCaptchaToken)) {
+            $slsClient = new SlsClient();
+            $slsClient->email = $username;
+            $slsClient->full_name = $brandName;
+            $slsClient->inn = $tin;
+            $slsClient->short_name = $managerName;
+            $slsClient->phone = $phone;
+            $slsClient->post_address = $address;
+            $slsClient->save();
+        }
+    }
 }
