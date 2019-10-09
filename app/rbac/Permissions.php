@@ -48,7 +48,7 @@ class Permissions
             AnxUserController::actionLogin,
             AnxUserController::actionBootstrap,
             AnxUserController::actionIndex,
-            AnxUserController::actionRegistration,
+            SlsClientController::actionRegister,
         ],
         self::roleMaster => [
             self::pageTestApi,

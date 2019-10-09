@@ -70,10 +70,10 @@ class AnxUserController extends ActiveControllerExtended
             if (YII_ENV_DEV || Yii::$app->security->validatePassword($password, $user->hash)) {
                 return ['accesstoken' => $user->accesstoken];
             } else {
-                throw new HttpException(404, "Неверный пароль");
+                throw new HttpException(200, "Неверный пароль", 200);
             }
         } else {
-            throw new HttpException(404, "Пользователь не зарегистрирован");
+            throw new HttpException(200, "Пользователь не зарегистрирован", 200);
         }
 
     }
@@ -133,21 +133,5 @@ class AnxUserController extends ActiveControllerExtended
             // Алена
             8 => 'Молодцова',
         ];
-    }
-
-    const actionRegistration = "POST /v1/anx-user/registration";
-
-    public function actionRegistration($username, $password, $brandName, $tin, $managerName, $phone, $address, $reCaptchaToken = null)
-    {
-        if (reCAPTCHA::verify($reCaptchaToken)) {
-            $slsClient = new SlsClient();
-            $slsClient->email = $username;
-            $slsClient->full_name = $brandName;
-            $slsClient->inn = $tin;
-            $slsClient->short_name = $managerName;
-            $slsClient->phone = $phone;
-            $slsClient->post_address = $address;
-            $slsClient->save();
-        }
     }
 }
