@@ -3,9 +3,10 @@
 namespace app\gii;
 
 use app\models\AnxUser;
-use app\modules\v1\classes\ActiveRecordExtended;
+use app\modules\v1\models\sls\SlsMoney;
 use app\modules\v1\models\sls\SlsOrder;
-use yii\db\ActiveQuery;
+use app\modules\v1\models\sls\SlsPreorder;
+use Yii;
 
 /**
  * This is the model class for table "sls_client".
@@ -25,9 +26,11 @@ use yii\db\ActiveQuery;
  * @property int $manager_fk
  *
  * @property AnxUser $managerFk
+ * @property SlsMoney[] $slsMoneys
  * @property SlsOrder[] $slsOrders
+ * @property SlsPreorder[] $slsPreorders
  */
-class GiiSlsClient extends ActiveRecordExtended
+class GiiSlsClient extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -75,7 +78,7 @@ class GiiSlsClient extends ActiveRecordExtended
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
      */
     public function getManagerFk()
     {
@@ -83,10 +86,26 @@ class GiiSlsClient extends ActiveRecordExtended
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSlsMoneys()
+    {
+        return $this->hasMany(SlsMoney::className(), ['client_fk' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
      */
     public function getSlsOrders()
     {
         return $this->hasMany(SlsOrder::className(), ['client_fk' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSlsPreorders()
+    {
+        return $this->hasMany(SlsPreorder::className(), ['client_fk' => 'id']);
     }
 }
