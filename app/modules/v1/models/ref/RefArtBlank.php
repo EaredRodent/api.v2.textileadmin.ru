@@ -24,8 +24,10 @@ class RefArtBlank extends GiiRefArtBlank
         return array_merge(parent::fields(), [
             'titleStr' => function () {
                 // ':' . $this->modelFk->sexFk->code_ru . ' ' .
-                return $this->modelFk->classFk->title . ' ' .
-                    $this->modelFk->title;
+//                return $this->modelFk->classFk->title . ' ' .
+//                    $this->modelFk->title;
+
+                return $this->modelFk->fashion;
             },
             'class' => function () {
                 return $this->modelFk->classFk->title;

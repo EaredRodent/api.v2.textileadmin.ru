@@ -2,6 +2,7 @@
 
 namespace app\gii;
 
+use app\modules\v1\classes\ActiveRecordExtended;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefBlankClass;
 use app\modules\v1\models\ref\RefBlankSex;
@@ -33,7 +34,7 @@ use Yii;
  * @property SpecCurve[] $specCurves
  * @property TsScheme[] $tsSchemes
  */
-class GiiRefBlankModel extends \yii\db\ActiveRecord
+class GiiRefBlankModel extends ActiveRecordExtended
 {
     /**
      * {@inheritdoc}
