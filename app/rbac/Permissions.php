@@ -43,6 +43,9 @@ class Permissions
     const roleBuhMain = 'roleBuhMain';
     const roleBuh = 'roleBuh';
     const roleB2bClient = 'roleB2bClient';
+    const roleSaller = 'roleSaller'; // Менеджер отдела продаж
+    const roleSallerMain = 'roleSallerMain'; // Руководитель отдела продаж
+
 
     const roles = [
         self::roleGuest => [
@@ -82,6 +85,12 @@ class Permissions
         self::roleB2bClient => [
             self::taskReferenceB2Bv2Access,
         ],
+        self::roleSaller => [
+            self::pageSalesClients,
+        ],
+        self::roleSallerMain => [
+            self::pageSalesClients,
+        ],
 
 
     ];
@@ -98,11 +107,14 @@ class Permissions
 
     const pageReferenceB2B = 'pageReferenceB2B';
 
+    const pageSalesClients = 'pageSalesClients';
+
     const pages = [
         self::pageRegPays => 'Реестры платежей',
         self::pageTestApi => 'Тестирование API проекта',
         self::pageReference => 'Справочник изделий',
         self::pageReferenceB2B => 'B2B',
+        self::pageSalesClients => 'Отдел продаж / Клиенты'
     ];
 
 
@@ -150,7 +162,6 @@ class Permissions
      * Экшены для тестирования чего-либо
      */
     const taskTest = 'taskTest';
-
 
 
     const tasks = [
@@ -253,7 +264,6 @@ class Permissions
 
             TestController::actionSendMail,
         ],
-
 
 
     ];
