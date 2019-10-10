@@ -22,6 +22,7 @@ use app\modules\v1\controllers\SlsInvoiceController;
 use app\modules\v1\controllers\SlsMoneyController;
 use app\modules\v1\controllers\SlsOrderController;
 use app\modules\v1\controllers\SlsPayItemController;
+use app\modules\v1\controllers\TestController;
 use app\modules\v1\models\ref\RefBlankClass;
 use app\modules\v1\models\ref\RefBlankGroup;
 use app\modules\v1\models\ref\RefBlankModel;
@@ -57,6 +58,7 @@ class Permissions
             self::taskReferenceAccess,
             self::taskReferenceB2BAccess,
             self::taskReferenceB2Bv2Access,
+            self::taskTest,
             ///
             AnxUserController::postCreateUser,
             BaseController::actionPostTestData,
@@ -143,6 +145,11 @@ class Permissions
      * Доступ к B2B 2.0
      */
     const taskReferenceB2Bv2Access = 'taskReferenceB2Bv2Access';
+
+    /**
+     * Экшены для тестирования чего-либо
+     */
+    const taskTest = 'taskTest';
 
 
 
@@ -241,6 +248,12 @@ class Permissions
 
             RefArtBlankController::actionGetClientDetail,
         ],
+
+        self::taskTest => [
+
+            TestController::actionSendMail,
+        ],
+
 
 
     ];
