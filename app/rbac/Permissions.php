@@ -263,6 +263,7 @@ class Permissions
         self::taskTest => [
 
             TestController::actionSendMail,
+            TestController::actionSendTelegram,
         ],
 
 
