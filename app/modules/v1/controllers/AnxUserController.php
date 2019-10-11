@@ -12,6 +12,7 @@ use app\extension\reCAPTCHA;
 use app\models\AnxUser;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\sls\SlsClient;
+use app\modules\v1\models\sls\SlsOrg;
 use Yii;
 use yii\web\HttpException;
 use yii\web\ServerErrorHttpException;
