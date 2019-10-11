@@ -2,34 +2,39 @@
 
 namespace app\gii;
 
-use app\modules\v1\classes\ActiveRecordExtended;
-use yii\db\ActiveQuery;
+use app\modules\v1\models\sls\SlsOrg;
+use Yii;
 
 /**
  * This is the model class for table "anx_user".
  *
  * @property int $id
- * @property string $login
+ * @property string $project к какому проекту относится пользователь
+ * @property string $login может быть email если project = b2b
  * @property string $name
  * @property string $role
  * @property int $status
+ * @property string $phone
  * @property string $hash
  * @property string $auth_key
  * @property string $accesstoken
+ * @property int $org_fk если юзер контактное лицо клиента b2b - то тут ссылка на свмого клиента
  *
  * @property AmfilesDirectory[] $amfilesDirectories
  * @property AmfilesFile[] $amfilesFiles
  * @property AnxCmdLog[] $anxCmdLogs
  * @property AnxDbLog[] $anxDbLogs
+ * @property SlsOrg $orgFk
  * @property PrInventItem[] $prInventItems
  * @property PrTsdItem[] $prTsdItems
  * @property SlsClient[] $slsClients
  * @property SlsInvoice[] $slsInvoices
  * @property SlsMoney[] $slsMoneys
  * @property SlsOrder[] $slsOrders
+ * @property SlsPreorder[] $slsPreorders
  * @property SlsStatPrice[] $slsStatPrices
  */
-class GiiAnxUser extends ActiveRecordExtended
+class GiiAnxUser extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -45,12 +50,14 @@ class GiiAnxUser extends ActiveRecordExtended
     public function rules()
     {
         return [
+            [['project'], 'string'],
             [['login', 'name', 'role', 'status', 'hash', 'auth_key'], 'required'],
-            [['status'], 'integer'],
-            [['login', 'name', 'role', 'auth_key'], 'string', 'max' => 45],
+            [['status', 'org_fk'], 'integer'],
+            [['login', 'name', 'role', 'phone', 'auth_key'], 'string', 'max' => 45],
             [['hash'], 'string', 'max' => 60],
             [['accesstoken'], 'string', 'max' => 128],
             [['login'], 'unique'],
+            [['org_fk'], 'exist', 'skipOnError' => true, 'targetClass' => SlsOrg::className(), 'targetAttribute' => ['org_fk' => 'id']],
         ];
     }
 
@@ -61,18 +68,21 @@ class GiiAnxUser extends ActiveRecordExtended
     {
         return [
             'id' => 'ID',
+            'project' => 'Project',
             'login' => 'Login',
             'name' => 'Name',
             'role' => 'Role',
             'status' => 'Status',
+            'phone' => 'Phone',
             'hash' => 'Hash',
             'auth_key' => 'Auth Key',
             'accesstoken' => 'Accesstoken',
+            'org_fk' => 'Org Fk',
         ];
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
      */
     public function getAmfilesDirectories()
     {
@@ -80,7 +90,7 @@ class GiiAnxUser extends ActiveRecordExtended
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
      */
     public function getAmfilesFiles()
     {
@@ -88,7 +98,7 @@ class GiiAnxUser extends ActiveRecordExtended
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
      */
     public function getAnxCmdLogs()
     {
@@ -96,7 +106,7 @@ class GiiAnxUser extends ActiveRecordExtended
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
      */
     public function getAnxDbLogs()
     {
@@ -104,7 +114,15 @@ class GiiAnxUser extends ActiveRecordExtended
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
+     */
+    public function getOrgFk()
+    {
+        return $this->hasOne(SlsOrg::className(), ['id' => 'org_fk']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
      */
     public function getPrInventItems()
     {
@@ -112,7 +130,7 @@ class GiiAnxUser extends ActiveRecordExtended
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
      */
     public function getPrTsdItems()
     {
@@ -120,7 +138,7 @@ class GiiAnxUser extends ActiveRecordExtended
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
      */
     public function getSlsClients()
     {
@@ -128,7 +146,7 @@ class GiiAnxUser extends ActiveRecordExtended
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
      */
     public function getSlsInvoices()
     {
@@ -136,7 +154,7 @@ class GiiAnxUser extends ActiveRecordExtended
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
      */
     public function getSlsMoneys()
     {
@@ -144,7 +162,7 @@ class GiiAnxUser extends ActiveRecordExtended
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
      */
     public function getSlsOrders()
     {
@@ -152,7 +170,15 @@ class GiiAnxUser extends ActiveRecordExtended
     }
 
     /**
-     * @return ActiveQuery
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSlsPreorders()
+    {
+        return $this->hasMany(SlsPreorder::className(), ['user_fk' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
      */
     public function getSlsStatPrices()
     {

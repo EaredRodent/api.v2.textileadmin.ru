@@ -14,6 +14,7 @@ use app\modules\AppMod;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\sls\SlsClient;
 use app\modules\v1\models\sls\SlsOrg;
+use app\rbac\Permissions;
 use app\services\ServTelegramSend;
 use Yii;
 use yii\web\HttpException;
@@ -144,6 +145,8 @@ class AnxUserController extends ActiveControllerExtended
      * @param $client
      * @param $contact
      * @param $legalEntities
+     * @return array
+     * @throws HttpException
      */
     public function actionB2bRegister($client, $contact, $legalEntities)
     {
@@ -151,12 +154,71 @@ class AnxUserController extends ActiveControllerExtended
         $contact = json_decode($contact, true);
         $legalEntities = json_decode($legalEntities, true);
 
-        $org = new SlsOrg();
-        $org->attributes = $client;
-        $org->save();
 
-        ServTelegramSend::send(AppMod::tgBotOxounoB2b, AppMod::tgGroupOxounoB2b, 'Новый клиент');
+        // Клиент
 
-        return ['resp' => 'ok'];
+        $slsOrg = SlsOrg::find()
+            ->where(['name' => $client['name']])
+            ->one();
+
+        if ($slsOrg) {
+            throw new HttpException(200, 'Такая организация уже зарегистрирована.', 200);
+        }
+
+        $slsOrg = new SlsOrg();
+        $slsOrg->attributes = $client;
+
+        if (!$slsOrg->save()) {
+            throw new HttpException(200, 'Внутренняя ошибка.', 200);
+        }
+
+
+        // Контакт
+
+        $anxUser = AnxUser::find()
+            ->where(['login' => $contact['login']])
+            ->one();
+
+        if ($anxUser) {
+            throw new HttpException(200, 'Такой контакт уже зарегистрирован.', 200);
+        }
+
+        $anxUser = new AnxUser();
+        $anxUser->attributes = $contact;
+        $anxUser->role = Permissions::roleB2bClient;
+        $anxUser->status = 0;
+        $anxUser->hash = 'no hash';
+        $anxUser->auth_key = 'no auth_key';
+        $anxUser->project = 'b2b';
+        $anxUser->org_fk = $slsOrg->id;
+
+        if (!$anxUser->save()) {
+            throw new HttpException(200, 'Внутренняя ошибка.', 200);
+        }
+
+
+        // Юр лица
+
+        foreach ($legalEntities as $legalEntity) {
+            $slsClient = SlsClient::find()
+                ->where(['inn' => $legalEntity['inn']])
+                ->one();
+
+            if ($slsClient) {
+                throw new HttpException(200, 'Такое юр. лицо уже зарегистрировано.', 200);
+            }
+
+            $slsClient = new SlsClient();
+            $slsClient->attributes = $legalEntity;
+            $slsClient->org_fk = $slsOrg->id;
+
+            if (!$slsClient->save()) {
+                throw new HttpException(200, 'Внутренняя ошибка.', 200);
+            }
+        }
+
+//        ServTelegramSend::send(AppMod::tgBotOxounoB2b, AppMod::tgGroupOxounoB2b, 'Новый клиент');
+
+        return ['_result_' => 'success'];
     }
 }
