@@ -10,9 +10,11 @@ namespace app\modules\v1\controllers;
 
 use app\extension\reCAPTCHA;
 use app\models\AnxUser;
+use app\modules\AppMod;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\sls\SlsClient;
 use app\modules\v1\models\sls\SlsOrg;
+use app\services\ServTelegramSend;
 use Yii;
 use yii\web\HttpException;
 use yii\web\ServerErrorHttpException;
@@ -145,13 +147,15 @@ class AnxUserController extends ActiveControllerExtended
      */
     public function actionB2bRegister($client, $contact, $legalEntities)
     {
-        $client = json_decode($client);
+        $client = json_decode($client, true);
         $contact = json_decode($contact, true);
         $legalEntities = json_decode($legalEntities, true);
 
         $org = new SlsOrg();
         $org->attributes = $client;
         $org->save();
+
+        ServTelegramSend::send(AppMod::tgBotOxounoB2b, AppMod::tgGroupOxounoB2b, 'Новый клиент');
 
         return ['resp' => 'ok'];
     }
