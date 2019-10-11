@@ -135,4 +135,24 @@ class AnxUserController extends ActiveControllerExtended
             8 => 'Молодцова',
         ];
     }
+
+    const actionB2bRegister = 'POST /v1/anx-user/b2b-register';
+
+    /**
+     * @param $client
+     * @param $contact
+     * @param $legalEntities
+     */
+    public function actionB2bRegister($client, $contact, $legalEntities)
+    {
+        $client = json_decode($client);
+        $contact = json_decode($contact, true);
+        $legalEntities = json_decode($legalEntities, true);
+
+        $org = new SlsOrg();
+        $org->attributes = $client;
+        $org->save();
+
+        return ['resp' => 'ok'];
+    }
 }
