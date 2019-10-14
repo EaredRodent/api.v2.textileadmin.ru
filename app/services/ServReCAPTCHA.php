@@ -1,11 +1,11 @@
 <?php
-namespace app\extension;
+namespace app\services;
 
 
 use yii\httpclient\Client;
 use yii\httpclient\Response;
 
-class reCAPTCHA
+class ServReCAPTCHA
 {
     public static function verify($reCaptchaToken = null)
     {

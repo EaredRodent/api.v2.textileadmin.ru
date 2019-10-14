@@ -8,7 +8,7 @@
 
 namespace app\modules\v1\controllers;
 
-use app\extension\reCAPTCHA;
+use app\services\ServReCAPTCHA;
 use app\models\AnxUser;
 use app\modules\AppMod;
 use app\modules\v1\classes\ActiveControllerExtended;
@@ -148,8 +148,12 @@ class AnxUserController extends ActiveControllerExtended
      * @return array
      * @throws HttpException
      */
-    public function actionB2bRegister($client, $contact, $legalEntities)
+    public function actionB2bRegister($client, $contact, $legalEntities, $reCaptchaToken)
     {
+        if(!ServReCAPTCHA::verify($reCaptchaToken)) {
+            throw new HttpException(200, 'Вы робот!', 200);
+        }
+
         $client = json_decode($client, true);
         $contact = json_decode($contact, true);
         $legalEntities = json_decode($legalEntities, true);
@@ -157,17 +161,8 @@ class AnxUserController extends ActiveControllerExtended
 
         // Клиент
 
-        $slsOrg = SlsOrg::find()
-            ->where(['name' => $client['name']])
-            ->one();
-
-        if ($slsOrg) {
-            throw new HttpException(200, 'Такая организация уже зарегистрирована.', 200);
-        }
-
         $slsOrg = new SlsOrg();
         $slsOrg->attributes = $client;
-
         if (!$slsOrg->save()) {
             throw new HttpException(200, 'Внутренняя ошибка.', 200);
         }

@@ -8,7 +8,7 @@
 
 namespace app\modules\v1\controllers;
 
-use app\extension\reCAPTCHA;
+use app\services\ServReCAPTCHA;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\sls\SlsClient;
 use yii\web\HttpException;
