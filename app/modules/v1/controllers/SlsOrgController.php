@@ -17,9 +17,9 @@ class SlsOrgController extends ActiveControllerExtended
     /** @var SlsOrg $modelClass */
     public $modelClass = 'app\modules\v1\models\sls\SlsOrg';
 
-    const orgs = 'GET /v1/sls-org/orgs';
+    const actionGetOrgs = 'GET /v1/sls-org/get-orgs';
 
-    public function orgs()
+    public function actionGetOrgs()
     {
         return SlsOrg::find()
             ->where(['project' => 'b2b'])
