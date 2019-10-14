@@ -275,7 +275,7 @@ class Permissions
 
         self::taskSalesClientsAccess => [
             self::pageSalesClients,
-            SlsOrgController::orgs,
+            SlsOrgController::actionGetOrgs,
         ]
 
 
