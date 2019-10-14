@@ -21,6 +21,7 @@ use app\modules\v1\controllers\SlsCurrencyController;
 use app\modules\v1\controllers\SlsInvoiceController;
 use app\modules\v1\controllers\SlsMoneyController;
 use app\modules\v1\controllers\SlsOrderController;
+use app\modules\v1\controllers\SlsOrgController;
 use app\modules\v1\controllers\SlsPayItemController;
 use app\modules\v1\controllers\TestController;
 use app\modules\v1\models\ref\RefBlankClass;
@@ -62,6 +63,7 @@ class Permissions
             self::taskReferenceB2BAccess,
             self::taskReferenceB2Bv2Access,
             self::taskTest,
+            self::taskSalesClientsAccess,
             ///
             AnxUserController::postCreateUser,
             BaseController::actionPostTestData,
@@ -86,10 +88,10 @@ class Permissions
             self::taskReferenceB2Bv2Access,
         ],
         self::roleSaller => [
-            self::pageSalesClients,
+            self::taskSalesClientsAccess,
         ],
         self::roleSallerMain => [
-            self::pageSalesClients,
+            self::taskSalesClientsAccess,
         ],
 
 
@@ -162,6 +164,11 @@ class Permissions
      * Экшены для тестирования чего-либо
      */
     const taskTest = 'taskTest';
+
+    /**
+     * Экшены для доступа к странице sales/clients
+     */
+    const taskSalesClientsAccess = 'taskSalesClientsAccess';
 
 
     const tasks = [
@@ -265,6 +272,11 @@ class Permissions
             TestController::actionSendMail,
             TestController::actionSendTelegram,
         ],
+
+        self::taskSalesClientsAccess => [
+            self::pageSalesClients,
+            SlsOrgController::orgs,
+        ]
 
 
     ];
