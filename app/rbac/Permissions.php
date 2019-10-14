@@ -286,6 +286,7 @@ class Permissions
 
         self::taskSalesClientsWrite => [
             SlsOrgController::actionAccept,
+            SlsOrgController::actionReject,
         ]
     ];
 
