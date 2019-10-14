@@ -282,6 +282,8 @@ class Permissions
         self::taskSalesClientsAccess => [
             self::pageSalesClients,
             SlsOrgController::actionGetOrgs,
+            AnxUserController::actionGetContactsByOrgId,
+            SlsClientController::actionGetLegalEntitiesByOrgId,
         ],
 
         self::taskSalesClientsWrite => [

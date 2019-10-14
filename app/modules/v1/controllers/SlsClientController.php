@@ -31,4 +31,16 @@ class SlsClientController extends ActiveControllerExtended
             ->orderBy('short_name')
             ->all();
     }
+
+    const actionGetLegalEntitiesByOrgId = 'GET /v1/sls-client/get-legal-entities-by-org-id';
+
+    /**
+     * Возвращает юр.лиц для организации (b2b)
+     * @param $id
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    function actionGetLegalEntitiesByOrgId($id)
+    {
+        return SlsClient::find()->where(['org_fk' => $id])->all();
+    }
 }

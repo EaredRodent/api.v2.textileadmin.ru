@@ -150,7 +150,7 @@ class AnxUserController extends ActiveControllerExtended
      */
     public function actionB2bRegister($client, $contact, $legalEntities, $reCaptchaToken)
     {
-        if(!ServReCAPTCHA::verify($reCaptchaToken)) {
+        if (!ServReCAPTCHA::verify($reCaptchaToken)) {
             throw new HttpException(200, 'Вы робот!', 200);
         }
 
@@ -216,5 +216,17 @@ class AnxUserController extends ActiveControllerExtended
 //        ServTelegramSend::send(AppMod::tgBotOxounoB2b, AppMod::tgGroupOxounoB2b, 'Новый клиент');
 
         return ['_result_' => 'success'];
+    }
+
+    const actionGetContactsByOrgId = 'GET /v1/anx-user/get-contacts-by-org-id';
+
+    /**
+     * Возвращает пользователей для организации (b2b)
+     * @param $id
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    function actionGetContactsByOrgId($id)
+    {
+        return AnxUser::find()->where(['org_fk' => $id])->all();
     }
 }

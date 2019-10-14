@@ -13,5 +13,10 @@ use app\gii\GiiSlsClient;
 
 class SlsClient extends GiiSlsClient
 {
-
+    public function fields()
+    {
+        return array_merge(parent::fields(), [
+            'managerFk'
+        ]);
+    }
 }
