@@ -284,11 +284,12 @@ class Permissions
             SlsOrgController::actionGetOrgs,
             AnxUserController::actionGetContactsByOrgId,
             SlsClientController::actionGetLegalEntitiesByOrgId,
+            AnxUserController::actionGetManagers,
         ],
 
         self::taskSalesClientsWrite => [
             SlsOrgController::actionAccept,
-            SlsOrgController::actionReject,
+            SlsOrgController::actionReject
         ]
     ];
 

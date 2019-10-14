@@ -227,6 +227,21 @@ class AnxUserController extends ActiveControllerExtended
      */
     function actionGetContactsByOrgId($id)
     {
-        return AnxUser::find()->where(['org_fk' => $id])->all();
+        return AnxUser::find()
+            ->where(['org_fk' => $id])
+            ->all();
+    }
+
+    const actionGetManagers = 'GET /v1/anx-user/get-managers';
+
+    /**
+     * Получает список менеджеров
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    function actionGetManagers()
+    {
+        return AnxUser::find()
+            ->where(['role' => ['roleSaller', 'roleSallerMain']])
+            ->all();
     }
 }

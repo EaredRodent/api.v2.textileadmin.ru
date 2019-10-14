@@ -29,7 +29,6 @@ class SlsOrgController extends ActiveControllerExtended
     {
 
 
-
         return SlsOrg::find()->all();
 
 
@@ -40,9 +39,10 @@ class SlsOrgController extends ActiveControllerExtended
     /**
      * Акцептовать заявку регистрации кдиента в b2b кабинете
      * @param $id
+     * @param $manager_fk
      * @throws HttpException
      */
-    public function actionAccept($id)
+    public function actionAccept($id, $manager_fk)
     {
         $org = SlsOrg::findOne(['id' => $id]);
         if (!$org) {
@@ -50,6 +50,7 @@ class SlsOrgController extends ActiveControllerExtended
         }
         $org->state = 'accept';
         $org->ts_accept = date('Y-m-d H:i:s');
+        $org->manager_fk = $manager_fk;
         if (!$org->save()) {
             throw new HttpException(200, 'Внутренняя ошибка.', 200);
         }
@@ -58,7 +59,7 @@ class SlsOrgController extends ActiveControllerExtended
         $clients = AnxUser::findAll(['org_fk' => $org->id]);
         foreach ($clients as $client) {
             $client->status = 1;
-            if(!$client->save()) {
+            if (!$client->save()) {
                 throw new HttpException(200, 'Ошибка при обновлении статуса клиента.', 200);
             }
         }
@@ -89,7 +90,7 @@ class SlsOrgController extends ActiveControllerExtended
         $clients = AnxUser::findAll(['org_fk' => $org->id]);
         foreach ($clients as $client) {
             $client->status = 0;
-            if(!$client->save()) {
+            if (!$client->save()) {
                 throw new HttpException(200, 'Ошибка при обновлении статуса клиента.', 200);
             }
         }
