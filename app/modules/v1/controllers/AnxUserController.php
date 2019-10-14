@@ -163,6 +163,7 @@ class AnxUserController extends ActiveControllerExtended
 
         $slsOrg = new SlsOrg();
         $slsOrg->attributes = $client;
+        $slsOrg->state = 'wait';
         if (!$slsOrg->save()) {
             throw new HttpException(200, 'Внутренняя ошибка.', 200);
         }

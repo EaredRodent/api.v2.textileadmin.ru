@@ -64,6 +64,7 @@ class Permissions
             self::taskReferenceB2Bv2Access,
             self::taskTest,
             self::taskSalesClientsAccess,
+            self::taskSalesClientsWrite,
             ///
             AnxUserController::postCreateUser,
             BaseController::actionPostTestData,
@@ -92,6 +93,7 @@ class Permissions
         ],
         self::roleSallerMain => [
             self::taskSalesClientsAccess,
+            self::taskSalesClientsWrite,
         ],
 
 
@@ -170,6 +172,10 @@ class Permissions
      */
     const taskSalesClientsAccess = 'taskSalesClientsAccess';
 
+    /**
+     * Экшены для изменений на странице sales/clients
+     */
+    const taskSalesClientsWrite = 'taskSalesClientsWrite';
 
     const tasks = [
 
@@ -276,9 +282,11 @@ class Permissions
         self::taskSalesClientsAccess => [
             self::pageSalesClients,
             SlsOrgController::actionGetOrgs,
+        ],
+
+        self::taskSalesClientsWrite => [
+            SlsOrgController::actionAccept,
         ]
-
-
     ];
 
 

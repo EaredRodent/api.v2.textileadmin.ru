@@ -16,6 +16,8 @@ use Yii;
  * @property string $location
  * @property string $plan_summ
  * @property string $status
+ * @property string $state
+ * @property int $manager_fk ссылка на менеджера
  *
  * @property AnxUser[] $anxUsers
  * @property SlsClient[] $slsClients
@@ -36,8 +38,9 @@ class GiiSlsOrg extends ActiveRecordExtended
     public function rules()
     {
         return [
-            [['name', 'location', 'plan_summ'], 'required'],
-            [['comment', 'plan_summ'], 'string'],
+            [['name', 'location', 'plan_summ', 'state'], 'required'],
+            [['comment', 'plan_summ', 'state'], 'string'],
+            [['manager_fk'], 'integer'],
             [['name'], 'string', 'max' => 100],
             [['location', 'status'], 'string', 'max' => 255],
         ];
@@ -55,6 +58,8 @@ class GiiSlsOrg extends ActiveRecordExtended
             'location' => 'Location',
             'plan_summ' => 'Plan Summ',
             'status' => 'Status',
+            'state' => 'State',
+            'manager_fk' => 'Manager Fk',
         ];
     }
 
