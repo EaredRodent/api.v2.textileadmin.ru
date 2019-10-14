@@ -27,7 +27,12 @@ class SlsOrgController extends ActiveControllerExtended
      */
     public function actionGetOrgs()
     {
+
+
+
         return SlsOrg::find()->all();
+
+
     }
 
     const actionAccept = 'POST /v1/sls-org/accept';
