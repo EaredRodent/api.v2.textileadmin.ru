@@ -72,12 +72,10 @@ class AnxUserController extends ActiveControllerExtended
 
         if ($user) {
             if (!$user->status) {
-                throw new HttpException(200, "Аккаунт деактивирован.", 200);
+                throw new HttpException(200, "Аккаунт не активирован. Пожалуйста, попробуйте позже.", 200);
             }
 
-            // todo !YII_ENV_DEV - для прода
-
-            if (YII_ENV_DEV) {
+            if (!YII_ENV_DEV) {
                 if (!Yii::$app->security->validatePassword($password, $user->hash)) {
                     throw new HttpException(200, "Неверный пароль.", 200);
                 }

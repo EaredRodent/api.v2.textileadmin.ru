@@ -65,7 +65,7 @@ class SlsOrgController extends ActiveControllerExtended
         foreach ($clients as $client) {
             $client->status = 1;
 
-            $password = Yii::$app->security->generateRandomString(16);
+            $password = Yii::$app->security->generateRandomString(6);
             $hash = Yii::$app->security->generatePasswordHash($password);
             $accesstoken = Yii::$app->security->generateRandomString(32);
 
