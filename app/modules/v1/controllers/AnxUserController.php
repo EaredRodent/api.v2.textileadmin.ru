@@ -206,6 +206,7 @@ class AnxUserController extends ActiveControllerExtended
 
             $slsClient = new SlsClient();
             $slsClient->attributes = $legalEntity;
+            $slsClient->short_name = $slsClient->full_name;
             $slsClient->org_fk = $slsOrg->id;
 
             if (!$slsClient->save()) {
