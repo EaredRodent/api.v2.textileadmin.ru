@@ -28,6 +28,7 @@ use app\modules\v1\models\ref\RefBlankClass;
 use app\modules\v1\models\ref\RefBlankGroup;
 use app\modules\v1\models\ref\RefBlankModel;
 use app\modules\v1\models\ref\RefProdPrint;
+use app\modules\v1\models\sls\SlsClient;
 use app\modules\v1\models\sls\SlsInvoice;
 use app\modules\v1\models\sls\SlsMoney;
 
@@ -285,11 +286,18 @@ class Permissions
             AnxUserController::actionGetContactsByOrgId,
             SlsClientController::actionGetLegalEntitiesByOrgId,
             AnxUserController::actionGetManagers,
+            SlsClientController::actionGetOutdatedLegalEntities,
         ],
 
         self::taskSalesClientsWrite => [
             SlsOrgController::actionAccept,
-            SlsOrgController::actionReject
+            SlsOrgController::actionReject,
+
+            SlsClientController::actionImportLegalEntity,
+
+            SlsOrgController::actionCreateUpdate,
+            AnxUserController::actionCreateUpdateForOrg,
+            SlsClientController::actionCreateLegalEntityForOrg,
         ]
     ];
 

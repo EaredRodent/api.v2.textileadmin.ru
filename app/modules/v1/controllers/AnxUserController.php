@@ -255,4 +255,30 @@ class AnxUserController extends ActiveControllerExtended
             ->where(['role' => ['roleSaller', 'roleSallerMain']])
             ->all();
     }
+
+    const actionCreateUpdateForOrg = 'POST /v1/anx-user/create-update-for-org';
+
+    function actionCreateUpdateForOrg($form)
+    {
+        $form = json_decode($form, true);
+
+        if(isset($form['id'])) {
+            $user = AnxUser::get($form['id']);
+            $user->attributes = $form;
+        } else {
+            $user = new AnxUser();
+            $user->attributes = $form;
+            $user->project = 'b2b';
+            $user->role = Permissions::roleB2bClient;
+            $user->hash = 'no hash';
+            $user->status = 0;
+            $user->auth_key = 'no auth_key';
+        }
+
+        if (!$user->save()) {
+            throw new HttpException(200, 'Внутренняя ошибка.', 200);
+        }
+
+        return ['_result_' => 'success'];
+    }
 }

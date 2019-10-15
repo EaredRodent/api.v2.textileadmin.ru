@@ -117,4 +117,32 @@ class SlsOrgController extends ActiveControllerExtended
             }
         }
     }
+
+    const actionCreateUpdate = 'POST /v1/sls-org/create-update';
+
+    /**
+     * @param $form
+     * @param int $id
+     * @return array
+     * @throws HttpException
+     */
+    public function actionCreateUpdate($form)
+    {
+        $form = json_decode($form, true);
+
+        if(isset($form['id'])) {
+            $org = SlsOrg::get($form['id']);
+            $org->attributes = $form;
+        } else {
+            $org = new SlsOrg();
+            $org->attributes = $form;
+            $org->state = 'wait';
+        }
+
+        if (!$org->save()) {
+            throw new HttpException(200, 'Внутренняя ошибка.', 200);
+        }
+
+        return ['_result_' => 'success'];
+    }
 }

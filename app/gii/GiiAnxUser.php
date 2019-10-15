@@ -2,6 +2,7 @@
 
 namespace app\gii;
 
+use app\modules\v1\classes\ActiveRecordExtended;
 use app\modules\v1\models\sls\SlsOrg;
 use Yii;
 
@@ -34,7 +35,7 @@ use Yii;
  * @property SlsPreorder[] $slsPreorders
  * @property SlsStatPrice[] $slsStatPrices
  */
-class GiiAnxUser extends \yii\db\ActiveRecord
+class GiiAnxUser extends ActiveRecordExtended
 {
     /**
      * {@inheritdoc}

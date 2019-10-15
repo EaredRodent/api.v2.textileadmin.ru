@@ -3,6 +3,7 @@
 namespace app\gii;
 
 use app\models\AnxUser;
+use app\modules\v1\classes\ActiveRecordExtended;
 use app\modules\v1\models\sls\SlsClient;
 use Yii;
 
@@ -24,7 +25,7 @@ use Yii;
  * @property AnxUser[] $anxUsers
  * @property SlsClient[] $slsClients
  */
-class GiiSlsOrg extends \yii\db\ActiveRecord
+class GiiSlsOrg extends ActiveRecordExtended
 {
     /**
      * {@inheritdoc}
