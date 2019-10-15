@@ -11014,7 +11014,7 @@
             </Location>
             <Size>
               <Width>220 px</Width>
-              <Height>174 px</Height>
+              <Height>225 px</Height>
             </Size>
             <DbOid>
               <Path>textile.sls_org</Path>
@@ -11131,7 +11131,7 @@
               <Port>
                 <Location>
                   <X>0 px</X>
-                  <Y>65.25 px</Y>
+                  <Y>84.375 px</Y>
                 </Location>
                 <Anchors>Top Bottom</Anchors>
                 <Align>Right</Align>
@@ -11148,7 +11148,7 @@
               </PointD>
               <PointD>
                 <X>7124 px</X>
-                <Y>2265.25 px</Y>
+                <Y>2284.375 px</Y>
               </PointD>
             </BendPoints>
             <IsManuallyRouted>false</IsManuallyRouted>
@@ -11168,91 +11168,12 @@
               <Port xsi:type="LinkPort">
                 <Location>
                   <X>227 px</X>
-                  <Y>3.17210144927549 px</Y>
+                  <Y>-15.9528985507245 px</Y>
                 </Location>
                 <Anchors>None</Anchors>
                 <Align>Left</Align>
                 <CustomProperties>
                   <OID>654</OID>
-                  <PortType>FixedAnchor</PortType>
-                </CustomProperties>
-                <LinkPortAnchor>OutPoint</LinkPortAnchor>
-              </Port>
-            </PortAnchors>
-            <CommentOffset>
-              <X>22 px</X>
-              <Y>2 px</Y>
-            </CommentOffset>
-          </Model>
-          <Model xsi:type="RelationLinkModel">
-            <CustomProperties>
-              <OID>655</OID>
-              <Comment>656</Comment>
-              <OutModel>644</OutModel>
-              <InModel>72</InModel>
-              <OutPort>657</OutPort>
-              <InPort>658</InPort>
-              <Parent>0</Parent>
-            </CustomProperties>
-            <PortAnchors>
-              <Port>
-                <Location>
-                  <X>14.7619539954321 px</X>
-                  <Y>153.968271785072 px</Y>
-                </Location>
-                <Anchors>None</Anchors>
-                <Align>Left</Align>
-                <CustomProperties>
-                  <OID>657</OID>
-                  <PortType>FixedAnchor</PortType>
-                </CustomProperties>
-              </Port>
-              <Port>
-                <Location>
-                  <X>0 px</X>
-                  <Y>140.625 px</Y>
-                </Location>
-                <Anchors>Top Bottom</Anchors>
-                <Align>Left</Align>
-                <CustomProperties>
-                  <OID>658</OID>
-                  <PortType>FloatAnchor</PortType>
-                </CustomProperties>
-              </Port>
-            </PortAnchors>
-            <BendPoints>
-              <PointD>
-                <X>6471 px</X>
-                <Y>2353.96826171875 px</Y>
-              </PointD>
-              <PointD>
-                <X>6471 px</X>
-                <Y>506.625 px</Y>
-              </PointD>
-            </BendPoints>
-            <IsManuallyRouted>false</IsManuallyRouted>
-            <DbOid>
-              <Path>textile.sls_org.FK_sls_org_anx_user_id</Path>
-              <TypeName>ForeignKey</TypeName>
-            </DbOid>
-          </Model>
-          <Model xsi:type="RelationCommentModel">
-            <CustomProperties>
-              <OID>656</OID>
-              <HolderModel>655</HolderModel>
-              <Port>659</Port>
-              <Parent>0</Parent>
-            </CustomProperties>
-            <PortAnchors>
-              <Port xsi:type="LinkPort">
-                <Location>
-                  <X>19 px</X>
-                  <Y>923.671640925697 px</Y>
-                </Location>
-                <Anchors>None</Anchors>
-                <Align>Left</Align>
-                <CustomProperties>
-                  <OID>659</OID>
                   <PortType>FixedAnchor</PortType>
                 </CustomProperties>
                 <LinkPortAnchor>OutPoint</LinkPortAnchor>
@@ -11269,8 +11190,8 @@
           <ScaleMode>Free</ScaleMode>
           <Scale>0.72</Scale>
           <Location>
-            <X>5424.99975902947 px</X>
-            <Y>1808.33327567578 px</Y>
+            <X>6355.55529364393 px</X>
+            <Y>1554.1665830546 px</Y>
           </Location>
         </ViewPort>
       </Model>
