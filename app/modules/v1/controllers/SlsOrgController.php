@@ -12,6 +12,7 @@ namespace app\modules\v1\controllers;
 use app\models\AnxUser;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\sls\SlsOrg;
+use Yii;
 use yii\web\HttpException;
 
 class SlsOrgController extends ActiveControllerExtended
@@ -40,7 +41,9 @@ class SlsOrgController extends ActiveControllerExtended
      * Акцептовать заявку регистрации кдиента в b2b кабинете
      * @param $id
      * @param $manager_fk
+     * @return array
      * @throws HttpException
+     * @throws \yii\base\Exception
      */
     public function actionAccept($id, $manager_fk)
     {
@@ -55,14 +58,33 @@ class SlsOrgController extends ActiveControllerExtended
             throw new HttpException(200, 'Внутренняя ошибка.', 200);
         }
 
+        $result = ['_result_' => 'success', 'accounts' => []];
+
         /** @var AnxUser[] $clients */
         $clients = AnxUser::findAll(['org_fk' => $org->id]);
         foreach ($clients as $client) {
             $client->status = 1;
+
+            $password = Yii::$app->security->generateRandomString(16);
+            $hash = Yii::$app->security->generatePasswordHash($password);
+            $accesstoken = Yii::$app->security->generateRandomString(32);
+
+            $client->hash = $hash;
+            $client->accesstoken = $accesstoken;
+
             if (!$client->save()) {
                 throw new HttpException(200, 'Ошибка при обновлении статуса клиента.', 200);
             }
+
+
+            // temp (замена почты)
+            $result['accounts'][] = [
+                'login' => $client->login,
+                'password' => $password
+            ];
         }
+
+        return $result;
     }
 
 

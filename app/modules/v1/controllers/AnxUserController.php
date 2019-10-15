@@ -71,13 +71,24 @@ class AnxUserController extends ActiveControllerExtended
             ->one();
 
         if ($user) {
-            if (YII_ENV_DEV || Yii::$app->security->validatePassword($password, $user->hash)) {
-                return ['accesstoken' => $user->accesstoken];
-            } else {
-                throw new HttpException(200, "Неверный пароль", 200);
+            if (!$user->status) {
+                throw new HttpException(200, "Аккаунт деактивирован.", 200);
             }
+
+            // todo !YII_ENV_DEV - для прода
+
+            if (YII_ENV_DEV) {
+                if (!Yii::$app->security->validatePassword($password, $user->hash)) {
+                    throw new HttpException(200, "Неверный пароль.", 200);
+                }
+            }
+
+            if (!$user->accesstoken) {
+                throw new HttpException(200, "Токен для этого аккаунта не создан.", 200);
+            }
+            return ['accesstoken' => $user->accesstoken];
         } else {
-            throw new HttpException(200, "Пользователь не зарегистрирован", 200);
+            throw new HttpException(200, "Аккаунт не зарегистрирован.", 200);
         }
 
     }
