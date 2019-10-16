@@ -114,22 +114,13 @@ class ActiveControllerExtended extends ActiveController
 
             $this->transaction->commit();
 
-            /** @var V1Mod $module */
-//            $module = Yii::$app->getModule('v1');
-//            $errors = $module->cmdErrors;
-//            if (empty($errors)) {
-//                $this->transaction->commit();
-//            } else {
-//                throw new \Exception("{$module->cmdErrors[0]}");
-//            }
-
             // Отправка измененных таблиц по WebSocket
             /** @var V1Mod $module */
-//            $module = Yii::$app->getModule('v1');
-//            if (!empty($module->cmdTables)) {
-//                $wsc = new Client($this->wssUrl);
-//                $wsc->send(json_encode($module->cmdTables));
-//            }
+            $module = Yii::$app->getModule('v1');
+            if (!empty($module->cmdTables)) {
+                $wsc = new Client($this->wssUrl);
+                $wsc->send(json_encode($module->cmdTables));
+            }
             return $result;
         } catch (Exception $e) {
             $this->transaction->rollBack();
