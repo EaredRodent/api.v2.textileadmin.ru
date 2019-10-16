@@ -121,8 +121,8 @@ class SlsOrgController extends ActiveControllerExtended
     const actionCreateUpdate = 'POST /v1/sls-org/create-update';
 
     /**
+     * Создает или редактирует организацию
      * @param $form
-     * @param int $id
      * @return array
      * @throws HttpException
      */

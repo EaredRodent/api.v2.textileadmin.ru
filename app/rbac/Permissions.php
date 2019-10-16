@@ -297,7 +297,7 @@ class Permissions
 
             SlsOrgController::actionCreateUpdate,
             AnxUserController::actionCreateUpdateForOrg,
-            SlsClientController::actionCreateLegalEntityForOrg,
+            SlsClientController::actionCreateUpdateForOrg,
         ]
     ];
 

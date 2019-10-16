@@ -258,6 +258,12 @@ class AnxUserController extends ActiveControllerExtended
 
     const actionCreateUpdateForOrg = 'POST /v1/anx-user/create-update-for-org';
 
+    /**
+     * Создает или редактирует контактное лицо
+     * @param $form
+     * @return array
+     * @throws HttpException
+     */
     function actionCreateUpdateForOrg($form)
     {
         $form = json_decode($form, true);

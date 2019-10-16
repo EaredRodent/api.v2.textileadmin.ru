@@ -69,7 +69,8 @@ class SlsClientController extends ActiveControllerExtended
     const actionGetOutdatedLegalEntities = 'GET /v1/sls-client/get-outdated-legal-entities';
 
     /**
-     * @return array
+     * Проучает список юр.лиц с старого ТА
+     * @return SlsClient[]
      */
     public function actionGetOutdatedLegalEntities()
     {
@@ -89,6 +90,34 @@ class SlsClientController extends ActiveControllerExtended
     {
         $slsClient = SlsClient::get($id);
         $slsClient->org_fk = $org_fk;
+
+        if (!$slsClient->save()) {
+            throw new HttpException(200, 'Внутренняя ошибка.', 200);
+        }
+
+        return ['_result_' => 'success'];
+    }
+
+    const actionCreateUpdateForOrg = 'POST /v1/sls-client/create-update-for-org';
+
+    /**
+     * Создает или редактирует юр.лицо
+     * @param $form
+     * @return array
+     * @throws HttpException
+     */
+    public function actionCreateUpdateForOrg($form)
+    {
+        $form = json_decode($form, true);
+
+        if (isset($form['id'])) {
+            $slsClient = SlsClient::get($form['id']);
+            $slsClient->attributes = $form;
+        } else {
+            $slsClient = new SlsClient();
+            $slsClient->attributes = $form;
+            $slsClient->short_name = $form['full_name'];
+        }
 
         if (!$slsClient->save()) {
             throw new HttpException(200, 'Внутренняя ошибка.', 200);
