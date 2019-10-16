@@ -44,27 +44,6 @@ class SlsClientController extends ActiveControllerExtended
         return SlsClient::find()->where(['org_fk' => $id])->all();
     }
 
-    const actionCreateLegalEntityForOrg = 'POST /v1/sls-client/create-legal-entity-for-org';
-
-    /**
-     * @param $id
-     * @return array|\yii\db\ActiveRecord[]
-     * @throws HttpException
-     */
-    function actionCreateLegalEntityForOrg($id)
-    {
-        $slsClient = new SlsClient();
-        $slsClient->org_fk = $id;
-        $slsClient->short_name = 'Новое юр.лицо';
-        $slsClient->full_name = 'Новое юр.лицо';
-        $slsClient->inn = random_int(100000, 999999) . random_int(100000, 999999);
-
-        if (!$slsClient->save()) {
-            throw new HttpException(200, 'Внутренняя ошибка.', 200);
-        }
-
-        return ['_result_' => 'success'];
-    }
 
     const actionGetOutdatedLegalEntities = 'GET /v1/sls-client/get-outdated-legal-entities';
 
