@@ -53,7 +53,10 @@ class SlsClientController extends ActiveControllerExtended
      */
     public function actionGetOutdatedLegalEntities()
     {
-        return SlsClient::findAll(['org_fk' => null]);
+        return SlsClient::find()
+            ->where(['org_fk' => null])
+            ->orderBy('short_name')
+            ->all();
     }
 
     const actionImportLegalEntity = 'POST /v1/sls-client/import-legal-entity';
@@ -95,7 +98,6 @@ class SlsClientController extends ActiveControllerExtended
         } else {
             $slsClient = new SlsClient();
             $slsClient->attributes = $form;
-            $slsClient->short_name = $form['full_name'];
         }
 
         if (!$slsClient->save()) {

@@ -41,11 +41,13 @@ class SlsOrgController extends ActiveControllerExtended
      * Акцептовать заявку регистрации кдиента в b2b кабинете
      * @param $id
      * @param $manager_fk
+     * @param $status
+     * @param $discount
      * @return array
      * @throws HttpException
      * @throws \yii\base\Exception
      */
-    public function actionAccept($id, $manager_fk)
+    public function actionAccept($id, $manager_fk, $status, $discount)
     {
         $org = SlsOrg::findOne(['id' => $id]);
         if (!$org) {
@@ -54,6 +56,8 @@ class SlsOrgController extends ActiveControllerExtended
         $org->state = 'accept';
         $org->ts_accept = date('Y-m-d H:i:s');
         $org->manager_fk = $manager_fk;
+        $org->status = $status;
+        $org->discount = $discount;
         if (!$org->save()) {
             throw new HttpException(200, 'Внутренняя ошибка.', 200);
         }
