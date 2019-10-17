@@ -119,7 +119,11 @@ class ActiveControllerExtended extends ActiveController
             $module = Yii::$app->getModule('v1');
             if (!empty($module->cmdTables)) {
                 $wsc = new Client($this->wssUrl);
-                $wsc->send(json_encode($module->cmdTables));
+                try {
+                    $wsc->send(json_encode($module->cmdTables));
+                } catch (Exception $ee) {
+
+                }
             }
             return $result;
         } catch (Exception $e) {
