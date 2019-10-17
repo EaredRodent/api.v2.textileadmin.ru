@@ -19,6 +19,7 @@ use app\modules\v1\controllers\RefProductPrintController;
 use app\modules\v1\controllers\SlsClientController;
 use app\modules\v1\controllers\SlsCurrencyController;
 use app\modules\v1\controllers\SlsInvoiceController;
+use app\modules\v1\controllers\SlsMessageController;
 use app\modules\v1\controllers\SlsMoneyController;
 use app\modules\v1\controllers\SlsOrderController;
 use app\modules\v1\controllers\SlsOrgController;
@@ -69,6 +70,7 @@ class Permissions
             ///
             AnxUserController::postCreateUser,
             BaseController::actionPostTestData,
+            self::taskMessagesB2B,
         ],
         self::roleEdush => [
             self::taskRegPaysPageAccess,
@@ -88,6 +90,7 @@ class Permissions
         ],
         self::roleB2bClient => [
             self::taskReferenceB2Bv2Access,
+            self::taskMessagesB2B,
         ],
         self::roleSaller => [
             self::taskSalesClientsAccess,
@@ -159,9 +162,14 @@ class Permissions
     const taskReferenceB2BAccess = 'taskReferenceB2BAccess';
 
     /**
-     * Доступ к B2B 2.0
+     * Доступ к B2B 2.0 каталогу
      */
     const taskReferenceB2Bv2Access = 'taskReferenceB2Bv2Access';
+
+    /**
+     * Доступ к чату в B2B
+     */
+    const taskMessagesB2B = 'taskMessagesB2B';
 
     /**
      * Экшены для тестирования чего-либо
@@ -272,6 +280,11 @@ class Permissions
             // viewer
 
             RefArtBlankController::actionGetClientDetail,
+        ],
+
+        self::taskMessagesB2B => [
+            SlsMessageController::actionGetMessagesForClient,
+            SlsMessageController::actionSendFromClient,
         ],
 
         self::taskTest => [
