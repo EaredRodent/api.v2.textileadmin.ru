@@ -20,37 +20,65 @@ use PHPMailer\PHPMailer\PHPMailer;
 class ServMailSend
 {
 
-    static function send($text)
+    /**
+     * @param $email - адресат
+     * @param $subject - тема письма
+     * @param $body - тело в html
+     * @return array
+     */
+    static function send($email, $subject, $body)
     {
         // Instantiation and passing `true` enables exceptions
         $mail = new PHPMailer(true);
 
         try {
 
-            $mail->CharSet = 'UTF-8';
+            // Настройки SMTP yandex
+//            $mail->isSMTP();
+//            $mail->CharSet = 'UTF-8';
+//            $mail->SMTPAuth = true;
+//            $mail->SMTPDebug = 0;
+//            $mail->Host = 'ssl://smtp.yandex.ru';
+//            $mail->Port = 465;
+//            $mail->Username = 'invoice@textileadmin.ru';
+//            $mail->Password = 'lYHTnEB7R2bNOlkHErrN';
 
-            // Настройки SMTP
+
+            // Настройки SMTP 587 STARTTLS
             $mail->isSMTP();
-            $mail->SMTPAuth = true;
             $mail->SMTPDebug = 0;
+            $mail->CharSet = 'UTF-8';
+            $mail->SMTPAuth = true;
+            $mail->SMTPSecure = 'tls';
+            $mail->Port = 587;
+            $mail->SMTPOptions = [
+                'ssl' => [
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                ]
+            ];
+            $mail->Host = 'oxouno.ru';
+            $mail->Username = 'b2b@oxouno.ru';
+            $mail->Password = '876IwN61Lr';
 
-            $mail->Host = 'ssl://smtp.yandex.ru';
-            $mail->Port = 465;
-            $mail->Username = 'invoice@textileadmin.ru';
-            $mail->Password = 'lYHTnEB7R2bNOlkHErrN';
 
             // От кого
-            $mail->setFrom('invoice@textileadmin.ru', 'invoice@textileadmin.ru');
+//            $mail->setFrom('invoice@textileadmin.ru', 'invoice@textileadmin.ru');
+            $mail->setFrom('b2b@oxouno.ru', 'B2B-кабинет OXOUNO');
 
             // Кому
             //$mail->addAddress('accnotfake@gmail.com');
+            //$mail->addAddress('ralex@tsrz.biz');
             //$mail->addAddress('test-1psin@mail-tester.com');
+            $mail->addAddress($email);
 
             // Тема письма
-            $mail->Subject = 'Тестовое письмо';
+            //$mail->Subject = 'Тестовое письмо';
+            $mail->Subject = $subject;
 
             // Тело письма
-            $body = '<p><strong>' . $text . '</strong></p>';
+            //$body = '<p><strong>' . $text . '</strong></p>';
             $mail->msgHTML($body);
 
             // Приложение
@@ -60,7 +88,8 @@ class ServMailSend
             return ['resp' => 'ok'];
 
         } catch (Exception $e) {
-            return ['resp' => 'fail'];
+            $str = $e->getMessage();
+            return ['resp' => 'fail:' . $str];
         }
 
 

@@ -36,7 +36,19 @@ class TestController extends ActiveControllerExtended
     public function actionSendMail($text)
     {
         //return ['ss' => $text];
-        return ServMailSend::send($text);
+        $email = 'accnotfake@gmail.com';
+        $subject = 'Регистрация в B2B-кабинете OXOUNO';
+        $body = '';
+
+        $body .= "<h1>Вас приветствует сервис OXOUNO B2B</h1>";
+        $body .= "<h3>Ваша регистрация одобрена</h3>";
+        $body .= "<p>Логин: azaza</p>";
+        $body .= "<p>Пароль: bebebe</p>";
+        $body .= "<hr>";
+        $body .= "<p><i>Сообщение создано автоматически</i></p>";
+
+
+        return ServMailSend::send($email, $text, $body);
     }
 
     const actionSendTelegram = 'POST /v1/test/send-telegram';
