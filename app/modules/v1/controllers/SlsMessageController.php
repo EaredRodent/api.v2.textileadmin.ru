@@ -58,4 +58,43 @@ class SlsMessageController extends ActiveControllerExtended
 
         return ['_result_' => 'success'];
     }
+
+    const actionGetMessagesForOrg = 'GET /v1/sls-message/get-messages-for-org';
+
+    /**
+     * Возвращает сообщения для менеджера B2B
+     * @param $org_fk
+     * @return SlsMessage[]
+     */
+    function actionGetMessagesForOrg($org_fk)
+    {
+        return SlsMessage::findAll(['org_fk' => $org_fk]);
+    }
+
+    const actionSendFromManager = 'POST /v1/sls-message/send-from-manager';
+
+    /**
+     * Сохраняет сообщение отпправленное менеджером из B2B кабинета
+     * @param $message
+     * @param $org_fk
+     * @return array
+     * @throws HttpException
+     * @throws \Throwable
+     */
+    function actionSendFromManager($message, $org_fk)
+    {
+        /** @var AnxUser $contact */
+        $contact = Yii::$app->getUser()->getIdentity();
+
+        $msg = new SlsMessage();
+        $msg->org_fk = $org_fk;
+        $msg->user_fk = $contact->id;
+        $msg->message = $message;
+
+        if (!$msg->save()) {
+            throw new HttpException(200, 'Внутренняя ошибка.', 200);
+        }
+
+        return ['_result_' => 'success'];
+    }
 }

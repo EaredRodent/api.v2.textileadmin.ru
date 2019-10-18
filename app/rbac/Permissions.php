@@ -300,6 +300,7 @@ class Permissions
             SlsClientController::actionGetLegalEntitiesByOrgId,
             AnxUserController::actionGetManagers,
             SlsClientController::actionGetOutdatedLegalEntities,
+            SlsMessageController::actionGetMessagesForOrg,
         ],
 
         self::taskSalesClientsWrite => [
@@ -311,6 +312,7 @@ class Permissions
             SlsOrgController::actionCreateUpdate,
             AnxUserController::actionCreateUpdateForOrg,
             SlsClientController::actionCreateUpdateForOrg,
+            SlsMessageController::actionSendFromManager,
         ]
     ];
 
