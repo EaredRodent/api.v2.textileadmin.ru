@@ -300,7 +300,7 @@ class Permissions
             SlsClientController::actionGetLegalEntitiesByOrgId,
             AnxUserController::actionGetManagers,
             SlsClientController::actionGetOutdatedLegalEntities,
-            SlsMessageController::actionGetMessagesForOrg,
+            SlsMessageController::actionGetMessagesForOrg
         ],
 
         self::taskSalesClientsWrite => [
