@@ -8,8 +8,14 @@
 
 namespace app\modules\v1\controllers;
 
+use app\extension\Sizes;
+use app\models\AnxUser;
 use app\modules\v1\classes\ActiveControllerExtended;
+use app\modules\v1\models\sls\SlsClient;
+use app\modules\v1\models\sls\SlsItem;
 use app\modules\v1\models\sls\SlsOrder;
+use Yii;
+use yii\web\HttpException;
 
 class SlsOrderController extends ActiveControllerExtended
 {
@@ -67,5 +73,66 @@ class SlsOrderController extends ActiveControllerExtended
             ->all();
     }
 
+    const actionGetPrep2 = 'GET /v1/sls-order/get-prep-2';
 
+    /**
+     * Получает заказы на подготовке (B2B)
+     * @return array|\yii\db\ActiveRecord[]
+     * @throws \Throwable
+     */
+    public function actionGetPrep2()
+    {
+        /** @var AnxUser $contact */
+        $contact = Yii::$app->getUser()->getIdentity();
+
+        /** @var SlsClient[] $legalEntities */
+        $legalEntities = SlsClient::findAll(['org_fk' => $contact->org_fk]);
+        $legalEntitiesIds = [];
+
+        foreach ($legalEntities as $legalEntity) {
+            $legalEntitiesIds[] = $legalEntity->id;
+        }
+
+        return SlsOrder::find()
+            ->where(['status' => SlsOrder::s1_prep])
+            ->andWhere(['client_fk' => $legalEntitiesIds])
+            ->all();
+    }
+
+    const actionCreateOrder = 'POST /v1/sls-order/create-order';
+
+    /**
+     * Создает заказ (B2B)
+     * @param $form
+     * @return array
+     * @throws HttpException
+     * @throws \Throwable
+     */
+    public function actionCreateOrder($form)
+    {
+        $form = json_decode($form, true);
+
+        /** @var AnxUser $contact */
+        $contact = Yii::$app->getUser()->getIdentity();
+
+        /** @var SlsClient $legalEntity */
+        $legalEntity = SlsClient::get($form['client_fk']);
+
+        if(!$legalEntity) {
+            throw new HttpException(200, 'Попытка добавить заказ на несуществующее юр.лицо.', 200);
+        }
+
+        if($legalEntity->org_fk !== $contact->org_fk) {
+            throw new HttpException(200, 'Попытка добавить заказ юр.лицо закрепленное за другим клиентом.', 200);
+        }
+
+        $order = new SlsOrder();
+        $order->attributes = $form;
+
+        if (!$order->save()) {
+            throw new HttpException(200, 'Внутренняя ошибка.', 200);
+        }
+
+        return ['_result_' => 'success'];
+    }
 }

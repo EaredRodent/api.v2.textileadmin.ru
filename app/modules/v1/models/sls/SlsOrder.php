@@ -49,6 +49,11 @@ class SlsOrder extends GiiSlsOrder
             'statusStr' => function () {
                 return self::statuses[$this->status];
             },
+            'items' => function () {
+                return SlsItem::find()
+                    ->where(['order_fk' => $this->id])
+                    ->all();
+            }
         ]);
     }
 

@@ -3,6 +3,7 @@
 namespace app\gii;
 
 use app\models\AnxUser;
+use app\modules\v1\classes\ActiveRecordExtended;
 use app\modules\v1\models\sls\SlsMoney;
 use app\modules\v1\models\sls\SlsOrder;
 use app\modules\v1\models\sls\SlsOrg;
@@ -34,7 +35,7 @@ use Yii;
  * @property SlsOrder[] $slsOrders
  * @property SlsPreorder[] $slsPreorders
  */
-class GiiSlsClient extends \yii\db\ActiveRecord
+class GiiSlsClient extends ActiveRecordExtended
 {
     /**
      * {@inheritdoc}
