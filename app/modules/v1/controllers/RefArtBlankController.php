@@ -167,6 +167,7 @@ class RefArtBlankController extends ActiveControllerExtended
                 $resp[] = [
                     // 'fSize' => $fSize,
                     'sizeStr' => Sizes::typeCompare[$sexType][$fSize],
+                    'size' => $fSize,
                     'price' => $prod->$fPrice,
                     'rest' => $restStr,
                     'weight' => $weight->$fSize,

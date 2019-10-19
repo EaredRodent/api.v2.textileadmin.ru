@@ -8,9 +8,11 @@
 
 namespace app\modules\v1\controllers;
 
+use app\models\AnxUser;
 use app\services\ServReCAPTCHA;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\sls\SlsClient;
+use Yii;
 use yii\web\HttpException;
 
 
@@ -105,5 +107,22 @@ class SlsClientController extends ActiveControllerExtended
         }
 
         return ['_result_' => 'success'];
+    }
+
+    const actionGetLegalEntities = 'GET /v1/sls-client/get-legal-entities';
+
+    /**
+     * Возвращает юр.лиц для организации текущего контакта (B2B)
+     * @return array|\yii\db\ActiveRecord[]
+     * @throws \Throwable
+     */
+    function actionGetLegalEntities()
+    {
+        /** @var AnxUser $contact */
+        $contact = Yii::$app->getUser()->getIdentity();
+
+        return SlsClient::find()
+            ->where(['org_fk' => $contact->org_fk])
+            ->all();
     }
 }

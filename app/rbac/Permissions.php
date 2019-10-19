@@ -20,6 +20,7 @@ use app\modules\v1\controllers\RefProductPrintController;
 use app\modules\v1\controllers\SlsClientController;
 use app\modules\v1\controllers\SlsCurrencyController;
 use app\modules\v1\controllers\SlsInvoiceController;
+use app\modules\v1\controllers\SlsItemController;
 use app\modules\v1\controllers\SlsMessageController;
 use app\modules\v1\controllers\SlsMoneyController;
 use app\modules\v1\controllers\SlsOrderController;
@@ -65,6 +66,7 @@ class Permissions
             self::taskReferenceAccess,
             self::taskReferenceB2BAccess,
             self::taskReferenceB2Bv2Access,
+            self::taskReferenceB2Bv2Write,
             self::taskTest,
             self::taskSalesClientsAccess,
             self::taskSalesClientsWrite,
@@ -93,6 +95,7 @@ class Permissions
         self::roleB2bClient => [
             self::taskReferenceB2Bv2Access,
             self::taskMessagesB2B,
+            self::taskReferenceB2Bv2Write,
         ],
         self::roleSaller => [
             self::taskSalesClientsAccess,
@@ -171,6 +174,11 @@ class Permissions
      * Доступ к B2B 2.0 каталогу
      */
     const taskReferenceB2Bv2Access = 'taskReferenceB2Bv2Access';
+
+    /**
+     * Доступ к B2B 2.0 каталогу (запись)
+     */
+    const taskReferenceB2Bv2Write = 'taskReferenceB2Bv2Write';
 
     /**
      * Доступ к чату в B2B
@@ -291,6 +299,16 @@ class Permissions
             // viewer
 
             RefArtBlankController::actionGetClientDetail,
+
+            // orders
+
+            SlsOrderController::actionGetPrep2,
+            SlsClientController::actionGetLegalEntities,
+        ],
+
+        self::taskReferenceB2Bv2Write => [
+            SlsOrderController::actionCreateOrder,
+            SlsItemController::actionCreateItem,
         ],
 
         self::taskMessagesB2B => [
