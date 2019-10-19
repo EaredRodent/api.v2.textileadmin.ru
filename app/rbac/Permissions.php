@@ -7,6 +7,7 @@ namespace app\rbac;
 use app\modules\v1\controllers\AnxUserController;
 use app\modules\v1\controllers\BaseController;
 use app\modules\v1\controllers\FilesController;
+use app\modules\v1\controllers\PrStorProdController;
 use app\modules\v1\controllers\RefArtBlankController;
 use app\modules\v1\controllers\RefBlankClassController;
 use app\modules\v1\controllers\RefBlankGroupController;
@@ -76,6 +77,7 @@ class Permissions
             self::taskRegPaysPageAccess,
             self::taskRegPaysInvoiceManage,
             self::taskReferenceAccess,
+            self::taskReportProduction,
         ],
         self::roleBuhMain => [
             self::taskRegPaysPageAccess,
@@ -117,12 +119,16 @@ class Permissions
 
     const pageSalesClients = 'pageSalesClients';
 
+    // Отчеты (дашборды) по производству
+    const pageManagamentProduction = 'pageManagamentProduction';
+
     const pages = [
         self::pageRegPays => 'Реестры платежей',
         self::pageTestApi => 'Тестирование API проекта',
         self::pageReference => 'Справочник изделий',
         self::pageReferenceB2B => 'B2B',
-        self::pageSalesClients => 'Отдел продаж / Клиенты'
+        self::pageSalesClients => 'Отдел продаж / Клиенты',
+        self::pageManagamentProduction => 'Производство',
     ];
 
 
@@ -185,6 +191,11 @@ class Permissions
      * Экшены для изменений на странице sales/clients
      */
     const taskSalesClientsWrite = 'taskSalesClientsWrite';
+
+    /**
+     * Доступ к странице pageManagamentProduction и все ее API
+     */
+    const taskReportProduction = 'taskReportProduction';
 
     const tasks = [
 
@@ -291,6 +302,7 @@ class Permissions
 
             TestController::actionSendMail,
             TestController::actionSendTelegram,
+            TestController::actionObjPrices,
         ],
 
         self::taskSalesClientsAccess => [
@@ -313,7 +325,13 @@ class Permissions
             AnxUserController::actionCreateUpdateForOrg,
             SlsClientController::actionCreateUpdateForOrg,
             SlsMessageController::actionSendFromManager,
-        ]
+        ],
+
+        self::taskReportProduction => [
+            self::pageManagamentProduction,
+            PrStorProdController::actionGetReportStorIncomAll,
+            PrStorProdController::actionGetReportStorIncomMonth,
+        ],
     ];
 
 

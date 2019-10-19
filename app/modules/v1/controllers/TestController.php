@@ -14,6 +14,7 @@ use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\classes\BaseClassTemp;
 use app\modules\v1\models\sls\SlsClient;
 use app\modules\v1\models\sls\SlsMoney;
+use app\objects\Prices;
 use app\services\ServTelegramSend;
 use ReflectionClass;
 use app\services\ServMailSend;
@@ -63,6 +64,23 @@ class TestController extends ActiveControllerExtended
         $resp = ServTelegramSend::send(AppMod::tgBotOxounoB2b, AppMod::tgGroupOxounoB2b, $text);
         //$resp = ServTelegramSend::send(AppMod::tgBotTextileAdmin, AppMod::tgGroupOxounoB2b, $text);
         return ['resp' => $resp];
+    }
+
+    const actionObjPrices = 'GET /v1/test/obj-prices';
+
+    /**
+     * Тестирование объекта Prices
+     * @param $prodId   [    144,     446]
+     * @param $printId  [      1,     101]
+     * @param $fSize    [size_xl, size_xl]
+     * @return array    [    620,    1130]
+     */
+    public function actionObjPrices($prodId, $printId, $fSize)
+    {
+        $prices = new Prices();
+        $price = $prices->getPrice($prodId, $printId, $fSize);
+
+        return ['resp' => $price];
     }
 
 
