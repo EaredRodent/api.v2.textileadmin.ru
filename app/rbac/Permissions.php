@@ -65,15 +65,13 @@ class Permissions
             self::taskMaster,
             self::taskReferenceAccess,
             self::taskReferenceB2BAccess,
-            self::taskReferenceB2Bv2Access,
-            self::taskReferenceB2Bv2Write,
+            self::taskB2BUser,
             self::taskTest,
             self::taskSalesClientsAccess,
             self::taskSalesClientsWrite,
             ///
             AnxUserController::postCreateUser,
             BaseController::actionPostTestData,
-            self::taskMessagesB2B,
         ],
         self::roleEdush => [
             self::taskRegPaysPageAccess,
@@ -93,9 +91,7 @@ class Permissions
             self::taskReferenceAccess,
         ],
         self::roleB2bClient => [
-            self::taskReferenceB2Bv2Access,
-            self::taskMessagesB2B,
-            self::taskReferenceB2Bv2Write,
+            self::taskB2BUser,
         ],
         self::roleSaller => [
             self::taskSalesClientsAccess,
@@ -173,17 +169,7 @@ class Permissions
     /**
      * Доступ к B2B 2.0 каталогу
      */
-    const taskReferenceB2Bv2Access = 'taskReferenceB2Bv2Access';
-
-    /**
-     * Доступ к B2B 2.0 каталогу (запись)
-     */
-    const taskReferenceB2Bv2Write = 'taskReferenceB2Bv2Write';
-
-    /**
-     * Доступ к чату в B2B
-     */
-    const taskMessagesB2B = 'taskMessagesB2B';
+    const taskB2BUser = 'taskB2BUser';
 
     /**
      * Экшены для тестирования чего-либо
@@ -279,41 +265,39 @@ class Permissions
             RefArtBlankController::actionGetByFiltersExp,
         ],
 
-        self::taskReferenceB2Bv2Access => [
-            //app-bar
+        self::taskB2BUser => [
+            // Аппбар
             RefBlankSexController::actionGetAppBarTree,
 
-            // filters
+            // Фильтры
 
             RefBlankSexController::actionGetSexTags,
             RefBlankGroupController::actionGetGroups,
             RefBlankClassController::actionGetClassesGroupType,
             RefBlankThemeController::actionGetThemes,
             RefFabricTypeController::actionGetFabricTypes,
-
-
-            // filters on action
-
             RefArtBlankController::actionGetByFilters,
 
-            // viewer
+            // Карта товара
 
             RefArtBlankController::actionGetClientDetail,
+            SlsItemController::actionCreateItem,
 
-            // orders
+            // Заказы
 
             SlsOrderController::actionGetPrep2,
             SlsClientController::actionGetLegalEntities,
-        ],
-
-        self::taskReferenceB2Bv2Write => [
             SlsOrderController::actionCreateOrder,
-            SlsItemController::actionCreateItem,
-        ],
+            SlsOrderController::actionSendOrder,
 
-        self::taskMessagesB2B => [
+            // Сообщения
+
             SlsMessageController::actionGetMessagesForClient,
             SlsMessageController::actionSendFromClient,
+
+            // Журнал заказов
+            SlsOrderController::actionGetForClient,
+            SlsOrderController::actionGetDetails,
         ],
 
         self::taskTest => [

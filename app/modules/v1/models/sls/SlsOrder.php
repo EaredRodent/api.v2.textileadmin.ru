@@ -16,6 +16,7 @@ class SlsOrder extends GiiSlsOrder
 {
     const s0_del = 's0_del';
     const s0_preorder = 's0_preorder';
+    const s1_client_prep = 's1_client_prep';
     const s1_prep = 's1_prep';
     const s1_wait_assembl = 's1_wait_assembl';
     const s5_assembl = 's5_assembl';
@@ -28,7 +29,8 @@ class SlsOrder extends GiiSlsOrder
     const statuses = [
         self::s0_del => 'Удален',
         self::s0_preorder => 'Предзаказ',
-        self::s1_prep => 'Подготовка',
+        self::s1_client_prep => 'Подготовка клиентом',
+        self::s1_prep => 'Подготовка менеджером',
         self::s1_wait_assembl => 'На сборке',
         self::s5_assembl => 'Собран',
         self::s2_wait => 'Акцептование',
@@ -46,13 +48,10 @@ class SlsOrder extends GiiSlsOrder
     {
         return array_merge(parent::fields(), [
             'clientFk',
+            'contactFk',
+            'userFk',
             'statusStr' => function () {
                 return self::statuses[$this->status];
-            },
-            'items' => function () {
-                return SlsItem::find()
-                    ->where(['order_fk' => $this->id])
-                    ->all();
             }
         ]);
     }

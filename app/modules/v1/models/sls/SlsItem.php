@@ -17,36 +17,7 @@ class SlsItem extends GiiSlsItem
     public function fields()
     {
         return array_merge(parent::fields(), [
-            'blankFk',
-            'includes' => function () {
-                $result = [];
-                $sexType = $this->blankFk->calcSizeType();
-
-                foreach (Sizes::prices as $size => $price) {
-                    if ($this->$size) {
-                        $result[] = ['size' => Sizes::typeCompare[$sexType][$size], 'count' => $this->$size, 'price' => $this->$price];
-                    }
-                }
-                return $result;
-            },
-            'count' => function () {
-                $count = 0;
-                foreach (Sizes::fields as $size) {
-                    if ($this->$size) {
-                        $count += $this->$size;
-                    }
-                }
-                return $count;
-            },
-            'sum' => function () {
-                $sum = 0;
-                foreach (Sizes::prices as $size => $price) {
-                    if ($this->$size) {
-                        $sum += $this->$size * $this->$price;
-                    }
-                }
-                return $sum;
-            }
+            'blankFk'
         ]);
     }
 }
