@@ -41,7 +41,7 @@ class ProdMoveReport
                 if ($item->$fSize > 0) {
                     $count += $item->$fSize;
                     $price = $this->prices->getPrice($item->blank_fk, $item->print_fk, $fSize);
-                    $cost += $item->$fSize * $price;
+                    $cost += $item->$fSize * $price * 0.71;
                     //$log[] = "{$item->blank_fk}, {$item->print_fk}, $fSize, {$item->$fSize}, {$price}";
                 }
             }

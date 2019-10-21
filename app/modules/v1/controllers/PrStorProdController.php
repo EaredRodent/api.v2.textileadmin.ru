@@ -83,11 +83,12 @@ class PrStorProdController extends ActiveControllerExtended
 
         $year = 2019;
 
-        $resp = [];
+        $data = [];
 
         $startSql = "{$year}-{$month}-01 00:00:00";
         $endSql = date("Y-m-t 23:59:59", strtotime($startSql));
 
+        //$items = PrStorProd::readRecs(['in-production', 'out-prod'], $startSql, $endSql);
         $items = PrStorProd::readRecs(['in-production'], $startSql, $endSql);
         $curBill = 0;
 
@@ -95,7 +96,9 @@ class PrStorProdController extends ActiveControllerExtended
 
             if ($curBill !== $item->waybill_fk) {
                 $curBill = $item->waybill_fk;
-                $resp[$curBill] = [
+                $data[$curBill] = [
+                    'bill' => $curBill,
+                    'date' => $item->dt_move,
                     'count' => 0,
                     'cost' => 0,
                 ];
@@ -103,12 +106,17 @@ class PrStorProdController extends ActiveControllerExtended
 
             foreach (Sizes::fields as $fSize) {
                 if ($item->$fSize > 0) {
-                    $resp[$curBill]['count'] += $item->$fSize;
+                    $data[$curBill]['count'] += $item->$fSize;
                     $price = $prices->getPrice($item->blank_fk, $item->print_fk, $fSize);
-                    $resp[$curBill]['cost'] += $item->$fSize * $price;
+                    $data[$curBill]['cost'] += $item->$fSize * $price * 0.71;
                 }
             }
 
+        }
+
+        $resp = [];
+        foreach ($data as $num => $item) {
+            $resp[] = $item;
         }
 
 
