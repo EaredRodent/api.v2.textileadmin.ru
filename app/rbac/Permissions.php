@@ -288,6 +288,7 @@ class Permissions
             SlsOrderController::actionGetPrep2,
             SlsClientController::actionGetLegalEntities,
             SlsOrderController::actionCreateOrder,
+            SlsOrderController::actionSendOrder,
 
             // Сообщения
 
@@ -296,6 +297,7 @@ class Permissions
 
             // Журнал заказов
             SlsOrderController::actionGetForClient,
+            SlsOrderController::actionGetDetails,
         ],
 
         self::taskTest => [

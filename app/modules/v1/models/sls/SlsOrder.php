@@ -48,13 +48,10 @@ class SlsOrder extends GiiSlsOrder
     {
         return array_merge(parent::fields(), [
             'clientFk',
+            'contactFk',
+            'userFk',
             'statusStr' => function () {
                 return self::statuses[$this->status];
-            },
-            'items' => function () {
-                return SlsItem::find()
-                    ->where(['order_fk' => $this->id])
-                    ->all();
             }
         ]);
     }

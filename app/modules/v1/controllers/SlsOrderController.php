@@ -11,9 +11,11 @@ namespace app\modules\v1\controllers;
 use app\extension\Sizes;
 use app\models\AnxUser;
 use app\modules\v1\classes\ActiveControllerExtended;
+use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\sls\SlsClient;
 use app\modules\v1\models\sls\SlsItem;
 use app\modules\v1\models\sls\SlsOrder;
+use app\modules\v1\models\sls\SlsOrderWithItems;
 use app\modules\v1\models\sls\SlsOrg;
 use Yii;
 use yii\web\HttpException;
@@ -86,7 +88,7 @@ class SlsOrderController extends ActiveControllerExtended
         /** @var AnxUser $contact */
         $contact = Yii::$app->getUser()->getIdentity();
 
-        return SlsOrder::find()
+        return SlsOrderWithItems::find()
             ->where(['status' => SlsOrder::s1_client_prep])
             ->andWhere(['contact_fk' => $contact->id])
             ->all();
@@ -161,5 +163,66 @@ class SlsOrderController extends ActiveControllerExtended
         return SlsOrder::find()
             ->where(['client_fk' => $legalEntitiesIds])
             ->all();
+    }
+
+    const actionGetDetails = 'GET /v1/sls-order/get-details';
+
+    /**
+     * Возарвщает все заказы для клиента, с которым связан текущий пользователь
+     * @return SlsOrderWithItems
+     * @throws \Throwable
+     */
+    public function actionGetDetails($id)
+    {
+        /** @var AnxUser $contact */
+        $contact = Yii::$app->getUser()->getIdentity();
+
+        $order = SlsOrderWithItems::findOne(['id' => $id]);
+
+        if ($order->clientFk->org_fk !== $contact->org_fk) {
+            throw new HttpException(200, 'Попытка получить детали заказа, созданного другим клиентом.', 200);
+        }
+
+        return $order;
+    }
+
+    const actionSendOrder = 'POST /v1/sls-order/send-order';
+
+    /**
+     * Отправляет заказ на согласование (B2B)
+     * @param $form
+     * @return array
+     * @throws HttpException
+     * @throws \Throwable
+     */
+    public function actionSendOrder($form)
+    {
+        $form = json_decode($form, true);
+
+        /** @var AnxUser $contact */
+        $contact = Yii::$app->getUser()->getIdentity();
+
+        /** @var SlsOrder $order */
+        $order = SlsOrder::findOne(['id' => $form['active_order_id']]);
+
+        if (!$order) {
+            throw new HttpException(200, 'Попытка отправить несуществующий заказ.', 200);
+        }
+
+        if ($order->contact_fk !== $contact->id) {
+            throw new HttpException(200, 'Попытка отправить заказ созданный другим контактным лицом.', 200);
+        }
+
+        $order->status = SlsOrder::s1_prep;
+        $order->transp_comp = $form['transp_comp'];
+        $order->addr_delivery = $form['addr_delivery'];
+        $order->pact_date = $form['pact_date'];
+        $order->pact_other = $form['pact_other'];
+
+        if (!$order->save()) {
+            throw new HttpException(200, 'Внутренняя ошибка.', 200);
+        }
+
+        return ['_result_' => 'success'];
     }
 }
