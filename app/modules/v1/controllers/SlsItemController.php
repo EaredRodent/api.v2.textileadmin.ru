@@ -13,8 +13,10 @@ use app\extension\Sizes;
 use app\models\AnxUser;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\ref\RefArtBlank;
+use app\modules\v1\models\sls\SlsClient;
 use app\modules\v1\models\sls\SlsItem;
 use app\modules\v1\models\sls\SlsOrder;
+use app\modules\v1\models\sls\SlsOrg;
 use Yii;
 use yii\web\HttpException;
 
@@ -45,21 +47,32 @@ class SlsItemController extends ActiveControllerExtended
             throw new HttpException(200, 'Попытка добавить продукт в несуществующий заказ.', 200);
         }
 
-        if ($order->clientFk->org_fk !== $contact->org_fk) {
-            throw new HttpException(200, 'Попытка добавить продукт в заказ созданный на юр.лицо другого клиента.', 200);
+        if ($order->contact_fk !== $contact->id) {
+            throw new HttpException(200, 'Попытка добавить продукт в заказ созданный другим пользователем.', 200);
         }
 
         $item = new SlsItem();
-        $item->attributes = $form;
+        $item->order_fk = $form['order_fk'];
+        $item->blank_fk = $form['blank_fk'];
         $item->print_fk = 1;
         $item->pack_fk = 1;
 
         $art = RefArtBlank::findOne(['id' => $item->blank_fk]);
 
         foreach (Sizes::prices as $size => $price) {
-            if ($item->$size) {
+            if (isset($form[$size])) {
+                $item->$size = $form[$size];
                 $item->$price = $art->$price;
             }
+        }
+
+        $legalEntity = SlsClient::findOne(['id' => $order->client_fk]);
+
+        if($legalEntity->discount) {
+            $item->discount = $legalEntity->discount;
+        } else {
+            $org = SlsOrg::findOne(['id' => $legalEntity->org_fk]);
+            $item->discount = $org->discount;
         }
 
         if (!$item->save()) {

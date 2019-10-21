@@ -14,6 +14,7 @@ use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\sls\SlsClient;
 use app\modules\v1\models\sls\SlsItem;
 use app\modules\v1\models\sls\SlsOrder;
+use app\modules\v1\models\sls\SlsOrg;
 use Yii;
 use yii\web\HttpException;
 
@@ -76,7 +77,7 @@ class SlsOrderController extends ActiveControllerExtended
     const actionGetPrep2 = 'GET /v1/sls-order/get-prep-2';
 
     /**
-     * Получает заказы на подготовке (B2B)
+     * Получает заказы на подготовке для текущего пользователя (B2B)
      * @return array|\yii\db\ActiveRecord[]
      * @throws \Throwable
      */
@@ -85,17 +86,9 @@ class SlsOrderController extends ActiveControllerExtended
         /** @var AnxUser $contact */
         $contact = Yii::$app->getUser()->getIdentity();
 
-        /** @var SlsClient[] $legalEntities */
-        $legalEntities = SlsClient::findAll(['org_fk' => $contact->org_fk]);
-        $legalEntitiesIds = [];
-
-        foreach ($legalEntities as $legalEntity) {
-            $legalEntitiesIds[] = $legalEntity->id;
-        }
-
         return SlsOrder::find()
-            ->where(['status' => SlsOrder::s1_prep])
-            ->andWhere(['client_fk' => $legalEntitiesIds])
+            ->where(['status' => SlsOrder::s1_client_prep])
+            ->andWhere(['contact_fk' => $contact->id])
             ->all();
     }
 
@@ -118,21 +111,55 @@ class SlsOrderController extends ActiveControllerExtended
         /** @var SlsClient $legalEntity */
         $legalEntity = SlsClient::get($form['client_fk']);
 
-        if(!$legalEntity) {
+        if (!$legalEntity) {
             throw new HttpException(200, 'Попытка добавить заказ на несуществующее юр.лицо.', 200);
         }
 
-        if($legalEntity->org_fk !== $contact->org_fk) {
+        if ($legalEntity->org_fk !== $contact->org_fk) {
             throw new HttpException(200, 'Попытка добавить заказ юр.лицо закрепленное за другим клиентом.', 200);
         }
 
+        $org = SlsOrg::findOne(['id' => $contact->org_fk]);
+
+        if (!$org) {
+            throw new HttpException(200, 'Пользователь не связан с какой-либо организацией', 200);
+        }
+
         $order = new SlsOrder();
-        $order->attributes = $form;
+        $order->client_fk = $form['client_fk'];
+        $order->status = SlsOrder::s1_client_prep;
+        $order->contact_fk = $contact->id;
+        $order->user_fk = $org->manager_fk;
 
         if (!$order->save()) {
             throw new HttpException(200, 'Внутренняя ошибка.', 200);
         }
 
         return ['_result_' => 'success'];
+    }
+
+    const actionGetForClient = 'GET /v1/sls-order/get-for-client';
+
+    /**
+     * Возарвщает все заказы для клиента, с которым связан текущий пользователь
+     * @return array|\yii\db\ActiveRecord[]
+     * @throws \Throwable
+     */
+    public function actionGetForClient()
+    {
+        /** @var AnxUser $contact */
+        $contact = Yii::$app->getUser()->getIdentity();
+
+        /** @var SlsClient[] $legalEntities */
+        $legalEntities = SlsClient::findAll(['org_fk' => $contact->org_fk]);
+        $legalEntitiesIds = [];
+
+        foreach ($legalEntities as $legalEntity) {
+            $legalEntitiesIds[] = $legalEntity->id;
+        }
+
+        return SlsOrder::find()
+            ->where(['client_fk' => $legalEntitiesIds])
+            ->all();
     }
 }
