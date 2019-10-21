@@ -55,11 +55,13 @@ class PrStorProdController extends ActiveControllerExtended
             $endSql = date("Y-m-t 23:59:59", strtotime($startSql));
 
             $items = $moveReport->getIncomProdCostCount($startSql, $endSql);
+            $itemsOut = $moveReport->getOutProdCostCount($startSql, $endSql);
 
             $resp[] = [
                 'monthNum' => $mNum,
                 'monthStr' => $mStr,
                 'data' => $items,
+                'itemsOut' => $itemsOut,
             ];
 
 
@@ -72,6 +74,7 @@ class PrStorProdController extends ActiveControllerExtended
     const actionGetReportStorIncomMonth = 'GET /v1/pr-stor-prod/get-report-stor-incom-month';
 
     /**
+     * todo дублировние кода
      * Вернуть отчет по приходу на склад за конкретный месяц
      * @param $month - номер месяца
      * @return array|\yii\db\ActiveRecord[]
@@ -106,6 +109,61 @@ class PrStorProdController extends ActiveControllerExtended
 
             foreach (Sizes::fields as $fSize) {
                 if ($item->$fSize > 0) {
+                    $data[$curBill]['count'] += $item->$fSize;
+                    $price = $prices->getPrice($item->blank_fk, $item->print_fk, $fSize);
+                    $data[$curBill]['cost'] += $item->$fSize * $price * 0.71;
+                }
+            }
+
+        }
+
+        $resp = [];
+        foreach ($data as $num => $item) {
+            $resp[] = $item;
+        }
+
+
+        return $resp;
+    }
+
+    const actionGetReportStorOutMonth = 'GET /v1/pr-stor-prod/get-report-stor-out-month';
+
+    /**
+     * todo дублировние кода
+     * Вернуть отчет по возврату со склада за конкретный месяц
+     * @param $month - номер месяца
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function actionGetReportStorOutMonth($month)
+    {
+
+        $prices = new Prices();
+
+        $year = 2019;
+
+        $data = [];
+
+        $startSql = "{$year}-{$month}-01 00:00:00";
+        $endSql = date("Y-m-t 23:59:59", strtotime($startSql));
+
+        //$items = PrStorProd::readRecs(['in-production', 'out-prod'], $startSql, $endSql);
+        $items = PrStorProd::readRecs(['out-prod'], $startSql, $endSql);
+        $curBill = 0;
+
+        foreach ($items as $item) {
+
+            if ($curBill !== $item->waybill_fk) {
+                $curBill = $item->waybill_fk;
+                $data[$curBill] = [
+                    'bill' => $curBill,
+                    'date' => $item->dt_move,
+                    'count' => 0,
+                    'cost' => 0,
+                ];
+            }
+
+            foreach (Sizes::fields as $fSize) {
+                if (abs($item->$fSize) > 0) {
                     $data[$curBill]['count'] += $item->$fSize;
                     $price = $prices->getPrice($item->blank_fk, $item->print_fk, $fSize);
                     $data[$curBill]['cost'] += $item->$fSize * $price * 0.71;

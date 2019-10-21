@@ -349,6 +349,7 @@ class Permissions
             self::pageManagamentProduction,
             PrStorProdController::actionGetReportStorIncomAll,
             PrStorProdController::actionGetReportStorIncomMonth,
+            PrStorProdController::actionGetReportStorOutMonth,
         ],
     ];
 
