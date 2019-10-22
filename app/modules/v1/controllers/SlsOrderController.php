@@ -10,6 +10,7 @@ namespace app\modules\v1\controllers;
 
 use app\extension\Sizes;
 use app\models\AnxUser;
+use app\modules\AppMod;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\sls\SlsClient;
@@ -17,6 +18,7 @@ use app\modules\v1\models\sls\SlsItem;
 use app\modules\v1\models\sls\SlsOrder;
 use app\modules\v1\models\sls\SlsOrderWithItems;
 use app\modules\v1\models\sls\SlsOrg;
+use app\services\ServTelegramSend;
 use Yii;
 use yii\web\HttpException;
 
@@ -222,6 +224,9 @@ class SlsOrderController extends ActiveControllerExtended
         if (!$order->save()) {
             throw new HttpException(200, 'Внутренняя ошибка.', 200);
         }
+
+        ServTelegramSend::send(AppMod::tgBotOxounoB2b, AppMod::tgGroupOxounoB2b,
+            "Поступил новый заказ от клиента B2B-кабинета: {$order->clientFk->orgFk->name}");
 
         return ['_result_' => 'success'];
     }
