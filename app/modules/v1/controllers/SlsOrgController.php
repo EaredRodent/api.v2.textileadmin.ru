@@ -11,6 +11,10 @@ namespace app\modules\v1\controllers;
 
 use app\models\AnxUser;
 use app\modules\v1\classes\ActiveControllerExtended;
+use app\modules\v1\models\sls\SlsClient;
+use app\modules\v1\models\sls\SlsItem;
+use app\modules\v1\models\sls\SlsMessage;
+use app\modules\v1\models\sls\SlsOrder;
 use app\modules\v1\models\sls\SlsOrg;
 use Yii;
 use yii\web\HttpException;
@@ -135,7 +139,7 @@ class SlsOrgController extends ActiveControllerExtended
     {
         $form = json_decode($form, true);
 
-        if(isset($form['id'])) {
+        if (isset($form['id'])) {
             $org = SlsOrg::get($form['id']);
             $org->attributes = $form;
         } else {
@@ -147,6 +151,95 @@ class SlsOrgController extends ActiveControllerExtended
         if (!$org->save()) {
             throw new HttpException(200, 'Внутренняя ошибка.', 200);
         }
+
+        return ['_result_' => 'success'];
+    }
+
+    const actionGetForContact = 'GET /v1/sls-org/get-for-contact';
+
+    /**
+     * Возвращает организацию, в которой состоит текущее контактное лицо
+     * @return SlsOrg
+     * @throws \Throwable
+     */
+    public function actionGetForContact()
+    {
+        /** @var AnxUser $contact */
+        $contact = Yii::$app->getUser()->getIdentity();
+
+        return SlsOrg::findOne(['id' => $contact->org_fk]);
+    }
+
+    const actionDeleteOrg = 'POST /v1/sls-org/delete-org';
+
+    /**
+     * Удаляет организацию и все ссылки на нее
+     * @param $name
+     * @return array
+     * @throws HttpException
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function actionDeleteOrg($name)
+    {
+        if (!YII_ENV_DEV) {
+            throw new HttpException(200, 'Работает только локально.', 200);
+        }
+
+        $org = SlsOrg::findOne(['name' => $name]);
+
+        $messages = SlsMessage::findAll(['org_fk' => $org->id]);
+
+        foreach ($messages as $message) {
+            $message->delete();
+        }
+
+        $users = AnxUser::findAll(['org_fk' => $org->id]);
+
+        foreach ($users as $user) {
+            $orders = SlsOrder::find()
+                ->where(['contact_fk' => $user->id])
+                ->orWhere(['user_fk' => $user->id])
+                ->all();
+
+            foreach ($orders as $order) {
+                $items = SlsItem::findAll(['order_fk' => $order->id]);
+
+                foreach ($items as $item) {
+                    $item->delete();
+                }
+
+                $order->delete();
+            }
+
+            $legalEntities = SlsClient::findAll(['manager_fk' => $user->id]);
+
+            foreach ($legalEntities as $legalEntity) {
+                $legalEntity->delete();
+            }
+
+            $user->delete();
+        }
+
+        $legalEntities = SlsClient::findAll(['org_fk' => $org->id]);
+
+        foreach ($legalEntities as $legalEntity) {
+            $orders = SlsOrder::findAll(['client_fk' => $legalEntity->id]);
+
+            foreach ($orders as $order) {
+                $items = SlsItem::findAll(['order_fk' => $order->id]);
+
+                foreach ($items as $item) {
+                    $item->delete();
+                }
+
+                $order->delete();
+            }
+
+            $legalEntity->delete();
+        }
+
+        $org->delete();
 
         return ['_result_' => 'success'];
     }

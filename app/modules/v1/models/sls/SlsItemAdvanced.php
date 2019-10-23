@@ -22,7 +22,7 @@ class SlsItemAdvanced extends SlsItem
 
                 foreach (Sizes::prices as $size => $price) {
                     if ($this->$size) {
-                        $result[] = ['size' => Sizes::typeCompare[$sexType][$size], 'count' => $this->$size, 'price' => $this->$price];
+                        $result[] = ['size' => $size,'sizeStr' => Sizes::typeCompare[$sexType][$size], 'count' => $this->$size, 'price' => $this->$price];
                     }
                 }
                 return $result;

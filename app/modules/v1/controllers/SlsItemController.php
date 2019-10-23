@@ -68,7 +68,7 @@ class SlsItemController extends ActiveControllerExtended
 
         $legalEntity = SlsClient::findOne(['id' => $order->client_fk]);
 
-        if($legalEntity->discount) {
+        if ($legalEntity->discount) {
             $item->discount = $legalEntity->discount;
         } else {
             $org = SlsOrg::findOne(['id' => $legalEntity->org_fk]);
@@ -78,6 +78,92 @@ class SlsItemController extends ActiveControllerExtended
         if (!$item->save()) {
             throw new HttpException(200, 'Внутренняя ошибка.', 200);
         }
+
+        return ['_result_' => 'success'];
+    }
+
+    const actionEditItem = 'POST /v1/sls-item/edit-item';
+
+    /**
+     * Добавляет продукт в заказ (B2B)
+     * @param $form
+     * @return array
+     * @throws HttpException
+     * @throws \Throwable
+     */
+    public function actionEditItem($form)
+    {
+        $form = json_decode($form, true);
+
+        $item = SlsItem::findOne(['id' => $form['sls_item_id']]);
+
+        /** @var SlsOrder $order */
+        $order = SlsOrder::findOne(['id' => $item->order_fk]);
+
+        /** @var AnxUser $contact */
+        $contact = Yii::$app->getUser()->getIdentity();
+
+        if (!$order) {
+            throw new HttpException(200, 'Попытка редактировать продукт в несуществующем заказе.', 200);
+        }
+
+        if ($order->contact_fk !== $contact->id) {
+            throw new HttpException(200, 'Попытка редактировать продукт в заказе созданным другим пользователем.', 200);
+        }
+
+        $art = RefArtBlank::findOne(['id' => $item->blank_fk]);
+
+        foreach (Sizes::prices as $size => $price) {
+            if (isset($form[$size])) {
+                $item->$size = $form[$size];
+                $item->$price = $art->$price;
+            }
+        }
+
+        $legalEntity = SlsClient::findOne(['id' => $order->client_fk]);
+
+        if ($legalEntity->discount) {
+            $item->discount = $legalEntity->discount;
+        } else {
+            $org = SlsOrg::findOne(['id' => $legalEntity->org_fk]);
+            $item->discount = $org->discount;
+        }
+
+        if (!$item->save()) {
+            throw new HttpException(200, 'Внутренняя ошибка.', 200);
+        }
+
+        return ['_result_' => 'success'];
+    }
+
+    const actionDeleteItem = 'POST /v1/sls-item/delete-item';
+
+    /**
+     * Удаляет продукт из заказа (B2B)
+     * @param $form
+     * @return array
+     * @throws HttpException
+     * @throws \Throwable
+     */
+    public function actionDeleteItem($id)
+    {
+        $item = SlsItem::findOne(['id' => $id]);
+
+        /** @var SlsOrder $order */
+        $order = SlsOrder::findOne(['id' => $item->order_fk]);
+
+        /** @var AnxUser $contact */
+        $contact = Yii::$app->getUser()->getIdentity();
+
+        if (!$order) {
+            throw new HttpException(200, 'Попытка удалить продукт из несуществующего заказа.', 200);
+        }
+
+        if ($order->contact_fk !== $contact->id) {
+            throw new HttpException(200, 'Попытка удалить продукт из заказа созданного другим пользователем.', 200);
+        }
+
+        $item->delete();
 
         return ['_result_' => 'success'];
     }

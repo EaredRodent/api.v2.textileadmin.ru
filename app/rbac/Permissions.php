@@ -6,7 +6,6 @@ namespace app\rbac;
 
 use app\modules\v1\controllers\AnxUserController;
 use app\modules\v1\controllers\BaseController;
-use app\modules\v1\controllers\FilesController;
 use app\modules\v1\controllers\PrStorProdController;
 use app\modules\v1\controllers\RefArtBlankController;
 use app\modules\v1\controllers\RefBlankClassController;
@@ -15,7 +14,6 @@ use app\modules\v1\controllers\RefBlankModelController;
 use app\modules\v1\controllers\RefBlankSexController;
 use app\modules\v1\controllers\RefBlankThemeController;
 use app\modules\v1\controllers\RefFabricTypeController;
-use app\modules\v1\controllers\RefProdPrintController;
 use app\modules\v1\controllers\RefProductPrintController;
 use app\modules\v1\controllers\SlsClientController;
 use app\modules\v1\controllers\SlsCurrencyController;
@@ -27,13 +25,6 @@ use app\modules\v1\controllers\SlsOrderController;
 use app\modules\v1\controllers\SlsOrgController;
 use app\modules\v1\controllers\SlsPayItemController;
 use app\modules\v1\controllers\TestController;
-use app\modules\v1\models\ref\RefBlankClass;
-use app\modules\v1\models\ref\RefBlankGroup;
-use app\modules\v1\models\ref\RefBlankModel;
-use app\modules\v1\models\ref\RefProdPrint;
-use app\modules\v1\models\sls\SlsClient;
-use app\modules\v1\models\sls\SlsInvoice;
-use app\modules\v1\models\sls\SlsMoney;
 
 class Permissions
 {
@@ -72,6 +63,7 @@ class Permissions
             ///
             AnxUserController::postCreateUser,
             BaseController::actionPostTestData,
+            SlsOrgController::actionDeleteOrg,
         ],
         self::roleEdush => [
             self::taskRegPaysPageAccess,
@@ -282,6 +274,8 @@ class Permissions
 
             RefArtBlankController::actionGetClientDetail,
             SlsItemController::actionCreateItem,
+            SlsItemController::actionEditItem,
+            SlsItemController::actionDeleteItem,
 
             // Заказы
 
@@ -298,6 +292,10 @@ class Permissions
             // Журнал заказов
             SlsOrderController::actionGetForClient,
             SlsOrderController::actionGetDetails,
+
+            //Главная
+
+            SlsOrgController::actionGetForContact,
         ],
 
         self::taskTest => [
