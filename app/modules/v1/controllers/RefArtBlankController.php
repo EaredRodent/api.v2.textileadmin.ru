@@ -215,41 +215,12 @@ class RefArtBlankController extends ActiveControllerExtended
         }
 
         /** @var RefArtBlank[] $filteredProds */
-        $filteredProds = RefArtBlank::find()
-            ->joinWith('modelFk.sexFk')
-            ->joinWith('modelFk.classFk')
-            ->joinWith('modelFk.classFk.groupFk')
-            ->joinWith('fabricTypeFk')
-            ->joinWith('themeFk')
-            ->filterWhere(['ref_art_blank.id' => $newProdIDs])
-            ->andfilterWhere(['in', 'ref_blank_sex.title', $sexTitles])
-            ->andfilterWhere(['in', 'ref_blank_group.id', $groupIDs])
-            ->andFilterWhere(['in', 'ref_blank_class.oxouno', $classTags])
-            ->andFilterWhere(['in', 'ref_blank_theme.id', $themeIDs])
-            ->andFilterWhere(['in', 'ref_fabric_type.id', $fabTypeIDs])
-            ->andWhere(['flag_price' => 1])
-            ->all();
+        $filteredProds = $this->filterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, $themeIDs, $fabTypeIDs);
 
         // Ignore theme and fabric type
 
         /** @var RefArtBlank[] $filteredProds2 */
-        $filteredProds2 = RefArtBlank::find()
-            //->with('modelFk.classFk', 'modelFk.sexFk')
-            //->with('fabricTypeFk', 'themeFk')
-            //->joinWith('fabricTypeFk')
-            ->joinWith('modelFk.sexFk')
-            ->joinWith('modelFk.classFk')
-            ->joinWith('modelFk.classFk.groupFk')
-            ->joinWith('fabricTypeFk')
-            ->joinWith('themeFk')
-            //->select('ref_art_blank.id, ref_art_blank.fabric_type_fk, ref_fabric_type.struct')
-            //->select('ref_fabric_type.struct')
-            ->filterWhere(['ref_art_blank.id' => $newProdIDs])
-            ->andfilterWhere(['in', 'ref_blank_sex.title', $sexTitles])
-            ->andfilterWhere(['in', 'ref_blank_group.id', $groupIDs])
-            ->andFilterWhere(['in', 'ref_blank_class.oxouno', $classTags])
-            ->andWhere(['flag_price' => 1])
-            ->all();
+        $filteredProds2 = $this->filterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, [], []);;
 
         $availableRefBlankTheme = [];
         $availableRefFabricType = [];
@@ -276,6 +247,23 @@ class RefArtBlankController extends ActiveControllerExtended
             'availableRefBlankTheme' => $availableRefBlankTheme,
             'availableRefFabricType' => $availableRefFabricType
         ];
+    }
+
+    private function filterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, $themeIDs, $fabTypeIDs) {
+        return RefArtBlank::find()
+            ->joinWith('modelFk.sexFk')
+            ->joinWith('modelFk.classFk')
+            ->joinWith('modelFk.classFk.groupFk')
+            ->joinWith('fabricTypeFk')
+            ->joinWith('themeFk')
+            ->filterWhere(['ref_art_blank.id' => $newProdIDs])
+            ->andfilterWhere(['in', 'ref_blank_sex.title', $sexTitles])
+            ->andfilterWhere(['in', 'ref_blank_group.id', $groupIDs])
+            ->andFilterWhere(['in', 'ref_blank_class.oxouno', $classTags])
+            ->andFilterWhere(['in', 'ref_blank_theme.id', $themeIDs])
+            ->andFilterWhere(['in', 'ref_fabric_type.id', $fabTypeIDs])
+            ->andWhere(['flag_price' => 1])
+            ->all();
     }
 
     /**
