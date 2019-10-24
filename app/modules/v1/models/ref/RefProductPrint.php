@@ -18,5 +18,11 @@ use app\gii\GiiRefProductPrint;
  */
 class RefProductPrint extends GiiRefProductPrint
 {
-
+    public function extraFields()
+    {
+        return array_merge(parent::extraFields(), [
+            'blankFk',
+            'printFk'
+        ]);
+    }
 }

@@ -27,7 +27,7 @@ class RefBlankSexController extends ActiveControllerExtended
      * @return array
      */
     public function actionGetSexTags() {
-        return ['Женщинам', 'Мужчинам', 'Детям'];
+        return ['Женщинам', 'Мужчинам', 'Девочкам', 'Мальчикам'];
     }
 
     const actionGetAppBarTree = 'GET /v1/ref-blank-sex/get-app-bar-tree';
@@ -60,7 +60,7 @@ class RefBlankSexController extends ActiveControllerExtended
             // Мужчинам
             1 => [1, 5],
             // Детям
-            2 => [3]
+            2 => [3, 4, 6]
         ];
 
         foreach ($sexObjectToRealSexIDs as $sexObjectIndex => $sexIds) {

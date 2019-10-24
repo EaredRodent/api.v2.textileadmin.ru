@@ -11,13 +11,16 @@ namespace app\modules\v1\controllers;
 use app\extension\ProdRest;
 use app\extension\Sizes;
 use app\modules\v1\classes\ActiveControllerExtended;
+use app\modules\v1\classes\ActiveRecordExtended;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefBlankClass;
 use app\modules\v1\models\ref\RefBlankModel;
 use app\modules\v1\models\ref\RefBlankTheme;
 use app\modules\v1\models\ref\RefFabricType;
 use app\modules\v1\models\ref\RefProdPrint;
+use app\modules\v1\models\ref\RefProductPrint;
 use app\modules\v1\models\ref\RefWeight;
+use yii\db\ActiveQuery;
 
 class RefArtBlankController extends ActiveControllerExtended
 {
@@ -182,51 +185,44 @@ class RefArtBlankController extends ActiveControllerExtended
 
     /**
      * Вернуть все артикулы соответствующие фильтрам
-     * @param null $sexTags
-     * @param null $groupIDs
-     * @param null $classTags
-     * @param null $themeIDs
-     * @param null $fabTypeIDs
+     * @param $form
      * @return array|\yii\db\ActiveRecord[]
      */
-    public function actionGetByFilters($sexTags = null, $groupIDs = null, $classTags = null, $themeIDs = null, $fabTypeIDs = null)
+    public function actionGetByFilters($form)
     {
-        $sexTags = $sexTags ? explode(',', $sexTags) : [];
-        $sexTitles = [];
+        $form = json_decode($form, true);
+        $sexTitles = $this->sexTagsToRealTitles($form['sexTags']);
+        $groupIDs = $form['groupIDs'];
+        $classTags = $form['classTags'];
+        $themeIDs = $form['themeIDs'];
+        $fabTypeIDs = $form['fabTypeIDs'];
 
-        if (in_array('Женщинам', $sexTags)) {
-            $sexTitles = array_merge($sexTitles,
-                ['Женский', 'Унисекс взрослый']);
+        $newProdIDs = [];
+        $newPrintProdIDs = [];
+
+        if ($form['newOnly']) {
+            switch ($form['print']) {
+                case 'no':
+                    $newProdIDs = $this->getNewProdIDs(30);
+                    break;
+                case 'yes':
+                    $newPrintProdIDs = $this->getNewPrintProdIDs(30);
+                    break;
+                default:
+                    $newProdIDs = $this->getNewProdIDs(15);
+                    $newPrintProdIDs = $this->getNewPrintProdIDs(15);
+            }
         }
-
-        if (in_array('Мужчинам', $sexTags)) {
-            $sexTitles = array_merge($sexTitles,
-                ['Мужской', 'Унисекс взрослый']);
-        }
-
-        if (in_array('Детям', $sexTags)) {
-            $sexTitles = array_merge($sexTitles,
-                ['Для мальчиков', 'Для девочек', 'Унисекс детский']);
-        }
-
-        $groupIDs = $groupIDs ? explode(',', $groupIDs) : [];
-        $classTags = $classTags ? explode(',', $classTags) : [];
-        $themeIDs = $themeIDs ? explode(',', $themeIDs) : [];
-        $fabTypeIDs = $fabTypeIDs ? explode(',', $fabTypeIDs) : [];
 
         /** @var RefArtBlank[] $filteredProds */
         $filteredProds = RefArtBlank::find()
-            //->with('modelFk.classFk', 'modelFk.sexFk')
-            //->with('fabricTypeFk', 'themeFk')
-            //->joinWith('fabricTypeFk')
             ->joinWith('modelFk.sexFk')
             ->joinWith('modelFk.classFk')
             ->joinWith('modelFk.classFk.groupFk')
             ->joinWith('fabricTypeFk')
             ->joinWith('themeFk')
-            //->select('ref_art_blank.id, ref_art_blank.fabric_type_fk, ref_fabric_type.struct')
-            //->select('ref_fabric_type.struct')
-            ->filterWhere(['in', 'ref_blank_sex.title', $sexTitles])
+            ->filterWhere(['ref_art_blank.id' => $newProdIDs])
+            ->andfilterWhere(['in', 'ref_blank_sex.title', $sexTitles])
             ->andfilterWhere(['in', 'ref_blank_group.id', $groupIDs])
             ->andFilterWhere(['in', 'ref_blank_class.oxouno', $classTags])
             ->andFilterWhere(['in', 'ref_blank_theme.id', $themeIDs])
@@ -248,7 +244,8 @@ class RefArtBlankController extends ActiveControllerExtended
             ->joinWith('themeFk')
             //->select('ref_art_blank.id, ref_art_blank.fabric_type_fk, ref_fabric_type.struct')
             //->select('ref_fabric_type.struct')
-            ->filterWhere(['in', 'ref_blank_sex.title', $sexTitles])
+            ->filterWhere(['ref_art_blank.id' => $newProdIDs])
+            ->andfilterWhere(['in', 'ref_blank_sex.title', $sexTitles])
             ->andfilterWhere(['in', 'ref_blank_group.id', $groupIDs])
             ->andFilterWhere(['in', 'ref_blank_class.oxouno', $classTags])
             ->andWhere(['flag_price' => 1])
@@ -279,5 +276,82 @@ class RefArtBlankController extends ActiveControllerExtended
             'availableRefBlankTheme' => $availableRefBlankTheme,
             'availableRefFabricType' => $availableRefFabricType
         ];
+    }
+
+    /**
+     * Получает массив с id новинок изделий
+     * @param int $count
+     * @return array
+     */
+    private function getNewProdIDs($count)
+    {
+        $newIDs = [];
+
+        /** @var ActiveRecordExtended $model */
+        $newProds = RefArtBlank::find()
+            ->where(['flag_price' => 1])
+            ->orderBy(['dt_create' => SORT_DESC])
+            ->limit($count)
+            ->all();
+
+        foreach ($newProds as $newProd) {
+            $newIDs[] = $newProd->id;
+        }
+
+        return $newIDs;
+    }
+
+    /**
+     * Получает массив с id новинок изделий с принтом
+     * @param int $count
+     * @return array
+     */
+    private function getNewPrintProdIDs($count)
+    {
+        $newIDs = [];
+
+        /** @var ActiveRecordExtended $model */
+        $newProds = RefProductPrint::find()
+            ->where(['flag_price' => 1])
+            ->orderBy(['ts_create' => SORT_DESC])
+            ->limit($count)
+            ->all();
+
+        foreach ($newProds as $newProd) {
+            $newIDs[] = $newProd->id;
+        }
+
+        return $newIDs;
+    }
+
+    /**
+     * Преобразует массив упрощенных тегов пола в строки title из таблицы ref_blank_sex
+     * @param $sexTags
+     * @return array
+     */
+    private function sexTagsToRealTitles($sexTags) {
+        $sexTitles = [];
+
+        if (in_array('Женщинам', $sexTags)) {
+            $sexTitles = array_merge($sexTitles,
+                ['Женский', 'Унисекс взрослый']);
+        }
+
+        if (in_array('Мужчинам', $sexTags)) {
+            $sexTitles = array_merge($sexTitles,
+                ['Мужской', 'Унисекс взрослый']);
+        }
+
+        if (in_array('Девочкам', $sexTags)) {
+            $sexTitles = array_merge($sexTitles,
+                ['Для девочек', 'Унисекс детский']);
+        }
+
+        if (in_array('Мальчикам', $sexTags)) {
+            $sexTitles = array_merge($sexTitles,
+                ['Для мальчиков', 'Унисекс детский']);
+        }
+
+        return $sexTitles;
     }
 }
