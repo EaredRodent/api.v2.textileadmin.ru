@@ -112,6 +112,7 @@ class AnxUserController extends ActiveControllerExtended
         return [
             'id' => $user->id,
             'name' => $user->name,
+            'login' => $user->login,
             'role' => $role,
             'permissions' => $permissions,
             'accesstoken' => $user->accesstoken
