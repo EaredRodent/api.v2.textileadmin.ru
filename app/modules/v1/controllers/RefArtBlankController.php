@@ -201,17 +201,17 @@ class RefArtBlankController extends ActiveControllerExtended
         $newPrintProdIDs = [];
 
         if ($form['newOnly']) {
-            switch ($form['print']) {
-                case 'no':
-                    $newProdIDs = $this->getNewProdIDs(30);
-                    break;
-                case 'yes':
-                    $newPrintProdIDs = $this->getNewPrintProdIDs(30);
-                    break;
-                default:
-                    $newProdIDs = $this->getNewProdIDs(15);
-                    $newPrintProdIDs = $this->getNewPrintProdIDs(15);
-            }
+//            switch ($form['print']) {
+//                case 'no':
+            $newProdIDs = $this->getNewProdIDs(30);
+//                    break;
+//                case 'yes':
+//                    $newPrintProdIDs = $this->getNewPrintProdIDs(30);
+//                    break;
+//                default:
+//                    $newProdIDs = $this->getNewProdIDs(15);
+//                    $newPrintProdIDs = $this->getNewPrintProdIDs(15);
+//            }
         }
 
         /** @var RefArtBlank[] $filteredProds */
@@ -249,7 +249,8 @@ class RefArtBlankController extends ActiveControllerExtended
         ];
     }
 
-    private function filterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, $themeIDs, $fabTypeIDs) {
+    private function filterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, $themeIDs, $fabTypeIDs)
+    {
         return RefArtBlank::find()
             ->joinWith('modelFk.sexFk')
             ->joinWith('modelFk.classFk')
@@ -317,7 +318,8 @@ class RefArtBlankController extends ActiveControllerExtended
      * @param $sexTags
      * @return array
      */
-    private function sexTagsToRealTitles($sexTags) {
+    private function sexTagsToRealTitles($sexTags)
+    {
         $sexTitles = [];
 
         if (in_array('Женщинам', $sexTags)) {
