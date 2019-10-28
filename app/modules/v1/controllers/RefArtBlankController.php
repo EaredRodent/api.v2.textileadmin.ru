@@ -15,6 +15,7 @@ use app\modules\v1\classes\ActiveRecordExtended;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefBlankClass;
 use app\modules\v1\models\ref\RefBlankModel;
+use app\modules\v1\models\ref\RefBlankSex;
 use app\modules\v1\models\ref\RefBlankTheme;
 use app\modules\v1\models\ref\RefFabricType;
 use app\modules\v1\models\ref\RefProdPrint;
@@ -185,22 +186,27 @@ class RefArtBlankController extends ActiveControllerExtended
 
     /**
      * Вернуть все артикулы соответствующие фильтрам
-     * @param $form
+     * @param $form - {"sexTags":["Мужчинам"],"groupIDs":[],"classTags":["Футболка"],"themeTags":[],"fabTypeTags":[],"newOnly":false,"print":"all"}
      * @return array|\yii\db\ActiveRecord[]
      */
     public function actionGetByFilters($form)
     {
         $form = json_decode($form, true);
-        $sexTitles = $this->sexTagsToRealTitles($form['sexTags']);
-        $groupIDs = $form['groupIDs'];
-        $classTags = $form['classTags'];
-        $themeTags = $form['themeTags'];
-        $fabTypeTags = $form['fabTypeTags'];
+
+        $sexTags = isset($form['sexTags']) ? $form['sexTags'] : [];
+        $sexTitles = RefBlankSex::sexTagsToRealTitles($sexTags);
+
+        $groupIDs = isset($form['groupIDs']) ? $form['groupIDs'] : [];
+        $classTags = isset($form['classTags']) ? $form['classTags'] : [];
+        $themeTags = isset($form['themeTags']) ? $form['themeTags'] : [];
+        $fabTypeTags = isset($form['fabTypeTags']) ? $form['fabTypeTags'] : [];
+
+        $newOnly = isset($form['newOnly']) ? $form['newOnly'] : false;
 
         $newProdIDs = [];
         $newPrintProdIDs = [];
 
-        if ($form['newOnly']) {
+        if ($newOnly) {
 //            switch ($form['print']) {
 //                case 'no':
             $newProdIDs = $this->getNewProdIDs(30);
@@ -245,6 +251,13 @@ class RefArtBlankController extends ActiveControllerExtended
             ->orderBy('type_price')
             ->groupBy('type_price')
             ->all();
+
+        /*
+         * $filteredProds =>
+         * -
+         *
+         *
+         */
 
         return [
             'filteredProds' => $filteredProds ? $filteredProds : [],
@@ -315,37 +328,5 @@ class RefArtBlankController extends ActiveControllerExtended
         }
 
         return $newIDs;
-    }
-
-    /**
-     * Преобразует массив упрощенных тегов пола в строки title из таблицы ref_blank_sex
-     * @param $sexTags
-     * @return array
-     */
-    private function sexTagsToRealTitles($sexTags)
-    {
-        $sexTitles = [];
-
-        if (in_array('Женщинам', $sexTags)) {
-            $sexTitles = array_merge($sexTitles,
-                ['Женский', 'Унисекс взрослый']);
-        }
-
-        if (in_array('Мужчинам', $sexTags)) {
-            $sexTitles = array_merge($sexTitles,
-                ['Мужской', 'Унисекс взрослый']);
-        }
-
-        if (in_array('Девочкам', $sexTags)) {
-            $sexTitles = array_merge($sexTitles,
-                ['Для девочек', 'Унисекс детский']);
-        }
-
-        if (in_array('Мальчикам', $sexTags)) {
-            $sexTitles = array_merge($sexTitles,
-                ['Для мальчиков', 'Унисекс детский']);
-        }
-
-        return $sexTitles;
     }
 }
