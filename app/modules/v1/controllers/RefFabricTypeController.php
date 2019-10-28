@@ -10,6 +10,7 @@ namespace app\modules\v1\controllers;
 
 
 use app\modules\v1\classes\ActiveControllerExtended;
+use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefFabricType;
 
 class RefFabricTypeController extends ActiveControllerExtended
@@ -23,6 +24,19 @@ class RefFabricTypeController extends ActiveControllerExtended
      * @return RefFabricType[]
      */
     public function actionGetFabricTypes() {
-        return RefFabricType::getAll();
+        /** @var RefArtBlank[] $prods */
+        $prods = RefArtBlank::find()
+            ->where(['flag_price' => 1])
+            ->all();
+        $fabTypeIDs = [];
+        foreach ($prods as $prod) {
+            $fabTypeIDs[] = $prod->fabric_type_fk;
+        }
+
+        return RefFabricType::find()
+            ->where(['in', 'id', $fabTypeIDs])
+            ->orderBy('type_price')
+            ->groupBy('type_price')
+            ->all();
     }
 }

@@ -3,6 +3,7 @@
 namespace app\gii;
 
 use app\modules\v1\classes\ActiveRecordExtended;
+use app\modules\v1\models\ref\RefArtBlank;
 use Yii;
 
 /**
@@ -13,6 +14,7 @@ use Yii;
  * @property string $title
  * @property string $title_en
  * @property string $descript
+ * @property string $title_price
  *
  * @property RefArtBlank[] $refArtBlanks
  */
@@ -35,6 +37,7 @@ class GiiRefBlankTheme extends ActiveRecordExtended
             [['dt_create'], 'safe'],
             [['title'], 'required'],
             [['title', 'title_en', 'descript'], 'string', 'max' => 245],
+            [['title_price'], 'string', 'max' => 255],
         ];
     }
 
@@ -49,6 +52,7 @@ class GiiRefBlankTheme extends ActiveRecordExtended
             'title' => 'Title',
             'title_en' => 'Title En',
             'descript' => 'Descript',
+            'title_price' => 'Title Price',
         ];
     }
 

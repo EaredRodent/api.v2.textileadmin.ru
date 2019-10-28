@@ -24,11 +24,11 @@ class RefBlankThemeController extends ActiveControllerExtended
      * @return RefBlankTheme[]
      */
     public function actionGetThemes() {
-        $themeIDs = [];
-
         $prods = RefArtBlank::find()
             ->where(['flag_price' => 1])
             ->all();
+
+        $themeIDs = [];
 
         foreach ($prods as $prod) {
             if (!in_array($prod->theme_fk, $themeIDs)) {
@@ -37,6 +37,10 @@ class RefBlankThemeController extends ActiveControllerExtended
         }
 
 
-        return RefBlankTheme::findAll(['id' => $themeIDs]);
+        return RefBlankTheme::find()
+            ->where(['in', 'id', $themeIDs])
+            ->orderBy('title_price')
+            ->groupBy('title_price')
+            ->all();
     }
 }

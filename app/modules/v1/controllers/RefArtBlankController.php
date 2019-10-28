@@ -194,8 +194,8 @@ class RefArtBlankController extends ActiveControllerExtended
         $sexTitles = $this->sexTagsToRealTitles($form['sexTags']);
         $groupIDs = $form['groupIDs'];
         $classTags = $form['classTags'];
-        $themeIDs = $form['themeIDs'];
-        $fabTypeIDs = $form['fabTypeIDs'];
+        $themeTags = $form['themeTags'];
+        $fabTypeTags = $form['fabTypeTags'];
 
         $newProdIDs = [];
         $newPrintProdIDs = [];
@@ -215,7 +215,7 @@ class RefArtBlankController extends ActiveControllerExtended
         }
 
         /** @var RefArtBlank[] $filteredProds */
-        $filteredProds = $this->filterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, $themeIDs, $fabTypeIDs);
+        $filteredProds = $this->filterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
 
         // Ignore theme and fabric type
 
@@ -236,10 +236,14 @@ class RefArtBlankController extends ActiveControllerExtended
 
         $availableRefBlankTheme = RefBlankTheme::find()
             ->where(['id' => $availableRefBlankTheme])
+            ->orderBy('title_price')
+            ->groupBy('title_price')
             ->all();
 
         $availableRefFabricType = RefFabricType::find()
             ->where(['id' => $availableRefFabricType])
+            ->orderBy('type_price')
+            ->groupBy('type_price')
             ->all();
 
         return [
@@ -249,7 +253,7 @@ class RefArtBlankController extends ActiveControllerExtended
         ];
     }
 
-    private function filterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, $themeIDs, $fabTypeIDs)
+    private function filterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags)
     {
         return RefArtBlank::find()
             ->joinWith('modelFk.sexFk')
@@ -261,8 +265,8 @@ class RefArtBlankController extends ActiveControllerExtended
             ->andfilterWhere(['in', 'ref_blank_sex.title', $sexTitles])
             ->andfilterWhere(['in', 'ref_blank_group.id', $groupIDs])
             ->andFilterWhere(['in', 'ref_blank_class.oxouno', $classTags])
-            ->andFilterWhere(['in', 'ref_blank_theme.id', $themeIDs])
-            ->andFilterWhere(['in', 'ref_fabric_type.id', $fabTypeIDs])
+            ->andFilterWhere(['in', 'ref_blank_theme.title_price', $themeTags])
+            ->andFilterWhere(['in', 'ref_fabric_type.type_price', $fabTypeTags])
             ->andWhere(['flag_price' => 1])
             ->all();
     }
