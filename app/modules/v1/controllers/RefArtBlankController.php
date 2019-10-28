@@ -254,9 +254,19 @@ class RefArtBlankController extends ActiveControllerExtended
 
         /*
          * $filteredProds =>
-         * -
+         *  id
          *
+         *  titleStr
+         *  art
+         *  class
+         *  photos
+         *  minPrice
+         *  sizes
          *
+         *  fabricTypeFk
+         *  modelFk
+         *  themeFk
+         *  printFk
          */
 
         return [
