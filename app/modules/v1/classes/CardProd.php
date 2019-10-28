@@ -52,7 +52,7 @@ class CardProd
         $this->modelFk = $prod->modelFk;
         $this->themeFk = $prod->themeFk;
 
-        $this->printFk = isset($objProd->print_fk) ? $prod->printFk : null;
+        $this->printFk = isset($objProd->print_fk) ? $objProd->printFk : null;
 
     }
 
