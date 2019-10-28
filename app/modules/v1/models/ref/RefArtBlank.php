@@ -12,6 +12,7 @@ namespace app\modules\v1\models\ref;
 use app\extension\Sizes;
 use app\gii\GiiRefArtBlank;
 use app\modules\AppMod;
+use app\modules\v1\classes\CardProd;
 
 class RefArtBlank extends GiiRefArtBlank
 {
@@ -112,6 +113,15 @@ class RefArtBlank extends GiiRefArtBlank
 //            ->orderBy('favric_type_fk, ref_fabric_theme.title');
 //    }
 
+    /**
+     * Вернуть id базового продукта
+     * @return int
+     */
+    public function calcProdId()
+    {
+        return $this->id;
+    }
+
     public function hArt()
     {
         return 'OXO-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
@@ -124,6 +134,57 @@ class RefArtBlank extends GiiRefArtBlank
     {
         // todo - переделать взрослый детский в талицу
         $sexId = $this->modelFk->sex_fk;
-        return (in_array($sexId, [1,2,5])) ? 'adults' : 'kids';
+        return (in_array($sexId, [1, 2, 5])) ? 'adults' : 'kids';
     }
+
+    /**
+     * Получает массив с id новинок изделий
+     * @param int $count
+     * @return array
+     */
+    public static function calcNewProdIDs($count)
+    {
+        $newIDs = [];
+
+        $newProds = RefArtBlank::find()
+            ->where(['flag_price' => 1])
+            ->orderBy('dt_create DESC')
+            ->limit($count)
+            ->all();
+
+        foreach ($newProds as $newProd) {
+            $newIDs[] = $newProd->id;
+        }
+
+        return $newIDs;
+    }
+
+    /**
+     * Вернуть продукты по фильтрам
+     * @param $newProdIDs
+     * @param $sexTitles
+     * @param $groupIDs
+     * @param $classTags
+     * @param $themeTags
+     * @param $fabTypeTags
+     * @return array|self[]
+     */
+    public static function readFilterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags)
+    {
+        return self::find()
+            ->joinWith('modelFk.sexFk')
+            ->joinWith('modelFk.classFk')
+            ->joinWith('modelFk.classFk.groupFk')
+            ->joinWith('fabricTypeFk')
+            ->joinWith('themeFk')
+            ->filterWhere(['ref_art_blank.id' => $newProdIDs])
+            ->andfilterWhere(['in', 'ref_blank_sex.title', $sexTitles])
+            ->andfilterWhere(['in', 'ref_blank_group.id', $groupIDs])
+            ->andFilterWhere(['in', 'ref_blank_class.oxouno', $classTags])
+            ->andFilterWhere(['in', 'ref_blank_theme.title_price', $themeTags])
+            ->andFilterWhere(['in', 'ref_fabric_type.type_price', $fabTypeTags])
+            ->andWhere(['flag_price' => 1])
+            ->all();
+    }
+
 }

@@ -269,6 +269,7 @@ class Permissions
             RefBlankThemeController::actionGetThemes,
             RefFabricTypeController::actionGetFabricTypes,
             RefArtBlankController::actionGetByFilters,
+            RefArtBlankController::actionGetByFilters2,
 
             // Карта товара
 

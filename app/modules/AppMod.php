@@ -21,10 +21,14 @@ class AppMod
     // Файлы миниатюр для базовых продуктов
     const filesImageBaseProds = 'filesImageBaseProds';
 
+    // Файлы миниатюр для продуктов с пост обработкой
+    const filesImageProdsPrints = 'filesImageProdsPrints';
+
     const filesRout = [
         self::filesInvoiceAttachement => '@app/../../textile/files/mail-doc',
         self::filesInvoiceSlsDep => '@app/../../textile/files/sls/invoices',
         self::filesImageBaseProds => '@app/../../textile/files/ref/prod',
+        self::filesImageProdsPrints => '@app/../../textile/files/ref/prod-print',
     ];
 
     const pathProdPhoto = "@app/../../textile/files/ref/prod";

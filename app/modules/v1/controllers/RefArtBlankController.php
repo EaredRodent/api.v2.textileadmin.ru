@@ -12,6 +12,7 @@ use app\extension\ProdRest;
 use app\extension\Sizes;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\classes\ActiveRecordExtended;
+use app\modules\v1\classes\CardProd;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefBlankClass;
 use app\modules\v1\models\ref\RefBlankModel;
@@ -188,13 +189,30 @@ class RefArtBlankController extends ActiveControllerExtended
      * Вернуть все артикулы соответствующие фильтрам
      * @param $form - {"sexTags":["Мужчинам"],"groupIDs":[],"classTags":["Футболка"],"themeTags":[],"fabTypeTags":[],"newOnly":false,"print":"all"}
      * @return array|\yii\db\ActiveRecord[]
+     *
+     * Метод возвращает 3 массива
+     *
+     * $filteredProds =>
+     *  id
+     *
+     *  titleStr
+     *  art
+     *  class
+     *  photos
+     *  minPrice
+     *  sizes
+     *
+     *  fabricTypeFk
+     *  modelFk
+     *  themeFk
+     *  printFk
      */
     public function actionGetByFilters($form)
     {
         $form = json_decode($form, true);
 
         $sexTags = isset($form['sexTags']) ? $form['sexTags'] : [];
-        $sexTitles = RefBlankSex::sexTagsToRealTitles($sexTags);
+        $sexTitles = RefBlankSex::calcSexTagsToRealTitles($sexTags);
 
         $groupIDs = isset($form['groupIDs']) ? $form['groupIDs'] : [];
         $classTags = isset($form['classTags']) ? $form['classTags'] : [];
@@ -209,7 +227,7 @@ class RefArtBlankController extends ActiveControllerExtended
         if ($newOnly) {
 //            switch ($form['print']) {
 //                case 'no':
-            $newProdIDs = $this->getNewProdIDs(30);
+            $newProdIDs = RefArtBlank::calcNewProdIDs(30);
 //                    break;
 //                case 'yes':
 //                    $newPrintProdIDs = $this->getNewPrintProdIDs(30);
@@ -221,12 +239,12 @@ class RefArtBlankController extends ActiveControllerExtended
         }
 
         /** @var RefArtBlank[] $filteredProds */
-        $filteredProds = $this->filterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
+        $filteredProds = RefArtBlank::readFilterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
 
         // Ignore theme and fabric type
 
         /** @var RefArtBlank[] $filteredProds2 */
-        $filteredProds2 = $this->filterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, [], []);;
+        $filteredProds2 = RefArtBlank::readFilterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, [], []);
 
         $availableRefBlankTheme = [];
         $availableRefFabricType = [];
@@ -252,23 +270,6 @@ class RefArtBlankController extends ActiveControllerExtended
             ->groupBy('type_price')
             ->all();
 
-        /*
-         * $filteredProds =>
-         *  id
-         *
-         *  titleStr
-         *  art
-         *  class
-         *  photos
-         *  minPrice
-         *  sizes
-         *
-         *  fabricTypeFk
-         *  modelFk
-         *  themeFk
-         *  printFk
-         */
-
         return [
             'filteredProds' => $filteredProds ? $filteredProds : [],
             'availableRefBlankTheme' => $availableRefBlankTheme,
@@ -276,67 +277,93 @@ class RefArtBlankController extends ActiveControllerExtended
         ];
     }
 
-    private function filterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags)
-    {
-        return RefArtBlank::find()
-            ->joinWith('modelFk.sexFk')
-            ->joinWith('modelFk.classFk')
-            ->joinWith('modelFk.classFk.groupFk')
-            ->joinWith('fabricTypeFk')
-            ->joinWith('themeFk')
-            ->filterWhere(['ref_art_blank.id' => $newProdIDs])
-            ->andfilterWhere(['in', 'ref_blank_sex.title', $sexTitles])
-            ->andfilterWhere(['in', 'ref_blank_group.id', $groupIDs])
-            ->andFilterWhere(['in', 'ref_blank_class.oxouno', $classTags])
-            ->andFilterWhere(['in', 'ref_blank_theme.title_price', $themeTags])
-            ->andFilterWhere(['in', 'ref_fabric_type.type_price', $fabTypeTags])
-            ->andWhere(['flag_price' => 1])
-            ->all();
-    }
+    const actionGetByFilters2 = 'GET /v1/ref-art-blank/get-by-filters2';
 
     /**
-     * Получает массив с id новинок изделий
-     * @param int $count
+     * Вернуть все изделия соответствующие фильтрам
+     * @param $form - {"sexTags":["Мужчинам"],"groupIDs":[],"classTags":["Футболка"],"themeTags":[],"fabTypeTags":[],"newOnly":false,"print":"all"}
      * @return array
      */
-    private function getNewProdIDs($count)
+    public function actionGetByFilters2($form)
     {
-        $newIDs = [];
+        $form = json_decode($form, true);
 
-        /** @var ActiveRecordExtended $model */
-        $newProds = RefArtBlank::find()
-            ->where(['flag_price' => 1])
-            ->orderBy(['dt_create' => SORT_DESC])
-            ->limit($count)
-            ->all();
+        $sexTags = isset($form['sexTags']) ? $form['sexTags'] : [];
+        $sexTitles = RefBlankSex::calcSexTagsToRealTitles($sexTags);
 
-        foreach ($newProds as $newProd) {
-            $newIDs[] = $newProd->id;
+        $groupIDs = isset($form['groupIDs']) ? $form['groupIDs'] : [];
+        $classTags = isset($form['classTags']) ? $form['classTags'] : [];
+        $themeTags = isset($form['themeTags']) ? $form['themeTags'] : [];
+        $fabTypeTags = isset($form['fabTypeTags']) ? $form['fabTypeTags'] : [];
+        $newOnly = isset($form['newOnly']) ? $form['newOnly'] : false;
+
+        // yes - только принт
+        // no - без принта
+        // all - все равно
+        $print = isset($form['print']) ? $form['print'] : 'all';
+
+        $newProdIDs = [];
+        $newPrintProdIDs = [];
+
+        if ($newOnly && $print === 'all') {
+            $newProdIDs = RefArtBlank::calcNewProdIDs(30);
+            $newPrintProdIDs = RefProductPrint::calcNewProdIDs(30);
+        }
+        if ($newOnly && $print === 'yes') {
+            $newPrintProdIDs = RefProductPrint::calcNewProdIDs(30);
+        }
+        if ($newOnly && $print === 'no') {
+            $newProdIDs = RefArtBlank::calcNewProdIDs(30);
         }
 
-        return $newIDs;
-    }
+        $filteredProds = RefArtBlank::readFilterProds(
+            $newProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
 
-    /**
-     * Получает массив с id новинок изделий с принтом
-     * @param int $count
-     * @return array
-     */
-    private function getNewPrintProdIDs($count)
-    {
-        $newIDs = [];
-
-        /** @var ActiveRecordExtended $model */
-        $newProds = RefProductPrint::find()
-            ->where(['flag_price' => 1])
-            ->orderBy(['ts_create' => SORT_DESC])
-            ->limit($count)
-            ->all();
-
-        foreach ($newProds as $newProd) {
-            $newIDs[] = $newProd->id;
+        $arrCards = [];
+        foreach ($filteredProds as $prod) {
+            $arrCards[] = new CardProd($prod);
         }
 
-        return $newIDs;
+        $filteredProdsPrint = RefProductPrint::readFilterProds(
+            $newPrintProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
+        foreach ($filteredProdsPrint as $prodPrint) {
+            $arrCards[] = new CardProd($prodPrint);
+        }
+
+        usort($arrCards, function ($a, $b) {
+            if($a->art < $b->art) {
+                return -1;
+            }
+            if($a->art > $b->art) {
+                return 1;
+            }
+            return 0;
+        });
+
+
+
+        //        $prods = [];
+//
+//        foreach (array_merge($filteredProds, $filteredProdsPrint) as $prod) {
+//            $prods[] = new CardProd($prod);
+//        }
+
+        return $arrCards;
+
     }
+
+
+//        if ($newOnly) {
+//            switch ($form['print']) {
+//                case 'no':
+//                    $newProdIDs = RefArtBlank::calcNewProdIDs(30);
+//                    break;
+//                case 'yes':
+//                    $newPrintProdIDs = RefProductPrint::calcNewProdIDs(30);
+//                    break;
+//                default:
+//                    $newProdIDs = RefArtBlank::calcNewProdIDs(30);
+//                    $newPrintProdIDs = RefProductPrint::calcNewProdIDs(30);
+//            }
+//        }
 }
