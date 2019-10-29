@@ -8,6 +8,8 @@
 
 namespace app\modules\v1\controllers;
 
+use app\extension\ProdRest;
+use app\extension\Sizes;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\classes\CardProd;
 use app\modules\v1\models\ref\RefArtBlank;
@@ -15,6 +17,7 @@ use app\modules\v1\models\ref\RefBlankSex;
 use app\modules\v1\models\ref\RefBlankTheme;
 use app\modules\v1\models\ref\RefFabricType;
 use app\modules\v1\models\ref\RefProductPrint;
+use app\modules\v1\models\ref\RefWeight;
 
 class CardProdController extends ActiveControllerExtended
 {
@@ -132,5 +135,66 @@ class CardProdController extends ActiveControllerExtended
             'availableRefFabricType' => $availableRefFabricType
         ];
 
+    }
+
+    const actionGetDetails = 'GET /v1/card-prod/get-details';
+
+    /**
+     * Вернуть размеры и остатки по складу
+     * @param $prodId
+     * @param int $printId
+     * @return array
+     */
+    public function actionGetDetails($prodId, $printId = 1)
+    {
+        $prodId = (int) $prodId;
+        $printId = (int) $printId;
+
+        /** @var $prod RefArtBlank */
+        $prod = RefArtBlank::get($prodId);
+
+        $postProd = null;
+
+        if($printId !== 1) {
+            /** @var RefProductPrint $postProd */
+            $postProd = RefProductPrint::find()
+                ->where(['blank_fk' => $prodId])
+                ->andWhere(['print_fk' => $printId])
+                ->one();
+        }
+
+        $sexType = $prod->calcSizeType();
+
+        $rest = new ProdRest([$prodId]);
+        $weight = RefWeight::readRec($prod->model_fk, $prod->fabric_type_fk);
+
+        $resp = [];
+
+        $priceModel = $printId === 1 ? $prod : $postProd;
+
+        foreach (Sizes::prices as $fSize => $fPrice) {
+            if ($priceModel->$fPrice > 0) {
+
+                $restVal = $rest->getRestPrint($prodId, $printId, $fSize);
+                if ($restVal == 0) {
+                    $restStr = '#d4000018';
+                } elseif ($restVal > 0 && $restVal <= 10) {
+                    $restStr = '#d4d40018';
+                } else {
+                    $restStr = '#00d40018';
+                }
+
+                $resp[] = [
+                    // 'fSize' => $fSize,
+                    'sizeStr' => Sizes::typeCompare[$sexType][$fSize],
+                    'size' => $fSize,
+                    'price' => $priceModel->$fPrice,
+                    'rest' => $restStr,
+                    'weight' => $weight->$fSize,
+                ];
+            }
+        }
+
+        return $resp;
     }
 }

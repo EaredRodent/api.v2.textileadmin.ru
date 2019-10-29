@@ -275,7 +275,7 @@ class Permissions
 
             // Карта товара
 
-            RefArtBlankController::actionGetClientDetail,
+            CardProdController::actionGetDetails,
             SlsItemController::actionCreateItem,
             SlsItemController::actionEditItem,
             SlsItemController::actionDeleteItem,

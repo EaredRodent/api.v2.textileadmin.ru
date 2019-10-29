@@ -13,6 +13,7 @@ use app\extension\Sizes;
 use app\models\AnxUser;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\ref\RefArtBlank;
+use app\modules\v1\models\ref\RefProductPrint;
 use app\modules\v1\models\sls\SlsClient;
 use app\modules\v1\models\sls\SlsItem;
 use app\modules\v1\models\sls\SlsOrder;
@@ -27,7 +28,7 @@ class SlsItemController extends ActiveControllerExtended
     const actionCreateItem = 'POST /v1/sls-item/create-item';
 
     /**
-     * Добавляет продукт в заказ (B2B)
+     * Добавляет изделие в заказ (B2B)
      * @param $form
      * @return array
      * @throws HttpException
@@ -54,15 +55,23 @@ class SlsItemController extends ActiveControllerExtended
         $item = new SlsItem();
         $item->order_fk = $form['order_fk'];
         $item->blank_fk = $form['blank_fk'];
-        $item->print_fk = 1;
+        $item->print_fk = $form['print_fk'];
         $item->pack_fk = 1;
 
-        $art = RefArtBlank::findOne(['id' => $item->blank_fk]);
+
+        if ($item->print_fk === 1) {
+            $priceModel = RefArtBlank::findOne(['id' => $item->blank_fk]);
+        } else {
+            $priceModel = RefProductPrint::find()
+                ->where(['blank_fk' => $item->blank_fk])
+                ->andWhere(['print_fk' => $item->print_fk])
+                ->one();
+        }
 
         foreach (Sizes::prices as $size => $price) {
             if (isset($form[$size])) {
                 $item->$size = $form[$size];
-                $item->$price = $art->$price;
+                $item->$price = $priceModel->$price;
             }
         }
 
@@ -85,7 +94,7 @@ class SlsItemController extends ActiveControllerExtended
     const actionEditItem = 'POST /v1/sls-item/edit-item';
 
     /**
-     * Добавляет продукт в заказ (B2B)
+     * Редактирует количество единиц изделия в заказе (B2B)
      * @param $form
      * @return array
      * @throws HttpException
@@ -111,12 +120,19 @@ class SlsItemController extends ActiveControllerExtended
             throw new HttpException(200, 'Попытка редактировать продукт в заказе созданным другим пользователем.', 200);
         }
 
-        $art = RefArtBlank::findOne(['id' => $item->blank_fk]);
+        if ($item->print_fk === 1) {
+            $priceModel = RefArtBlank::findOne(['id' => $item->blank_fk]);
+        } else {
+            $priceModel = RefProductPrint::find()
+                ->where(['blank_fk' => $item->blank_fk])
+                ->andWhere(['print_fk' => $item->print_fk])
+                ->one();
+        }
 
         foreach (Sizes::prices as $size => $price) {
             if (isset($form[$size])) {
                 $item->$size = $form[$size];
-                $item->$price = $art->$price;
+                $item->$price = $priceModel->$price;
             }
         }
 
