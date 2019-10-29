@@ -297,6 +297,11 @@ class Permissions
             //Главная
 
             SlsOrgController::actionGetForContact,
+
+            // Карта клиента
+
+            AnxUserController::actionGetContacts,
+
         ],
 
         self::taskTest => [
