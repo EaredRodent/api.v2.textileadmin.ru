@@ -144,7 +144,6 @@ class RefArtBlankController extends ActiveControllerExtended
     /**
      * Вернуть размеры и остатки по складу (для отповых клиентов)
      * @param $id
-     * @param int $printId
      * @return array
      */
     public function actionGetClientDetail($id)
