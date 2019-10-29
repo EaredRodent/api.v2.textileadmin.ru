@@ -1686,7 +1686,7 @@
             </Location>
             <Size>
               <Width>220 px</Width>
-              <Height>122.999999999997 px</Height>
+              <Height>140 px</Height>
             </Size>
             <DbOid>
               <Path>textile.ref_blank_theme</Path>
@@ -3167,7 +3167,7 @@
               <Port>
                 <Location>
                   <X>8.69560322824691 px</X>
-                  <Y>36.2732759652824 px</Y>
+                  <Y>41.2866555702411 px</Y>
                 </Location>
                 <Anchors>None</Anchors>
                 <Align>Left</Align>
@@ -3184,7 +3184,7 @@
               </PointD>
               <PointD>
                 <X>5434 px</X>
-                <Y>1796.27327596528 px</Y>
+                <Y>1801.28665557024 px</Y>
               </PointD>
             </BendPoints>
             <IsManuallyRouted>true</IsManuallyRouted>
@@ -3204,7 +3204,7 @@
               <Port xsi:type="LinkPort">
                 <Location>
                   <X>-44 px</X>
-                  <Y>-187.119705552123 px</Y>
+                  <Y>-189.626297348998 px</Y>
                 </Location>
                 <Anchors>None</Anchors>
                 <Align>Right</Align>
@@ -4243,7 +4243,7 @@
             <BendPoints>
               <PointD>
                 <X>3784 px</X>
-                <Y>1609.5560805097 px</Y>
+                <Y>1609.55608050969 px</Y>
               </PointD>
               <PointD>
                 <X>3784 px</X>
@@ -11231,7 +11231,7 @@
                 <Y>611 px</Y>
               </PointD>
               <PointD>
-                <X>6601.205078125 px</X>
+                <X>6601.20495201144 px</X>
                 <Y>611 px</Y>
               </PointD>
             </BendPoints>
@@ -11307,7 +11307,7 @@
             <BendPoints>
               <PointD>
                 <X>6730 px</X>
-                <Y>2535.2939453125 px</Y>
+                <Y>2535.29404653398 px</Y>
               </PointD>
               <PointD>
                 <X>6730 px</X>
@@ -11461,11 +11461,11 @@
             <BendPoints>
               <PointD>
                 <X>7022 px</X>
-                <Y>1496.875 px</Y>
+                <Y>1496.87503345776 px</Y>
               </PointD>
               <PointD>
                 <X>7022 px</X>
-                <Y>401.5625 px</Y>
+                <Y>401.562508975621 px</Y>
               </PointD>
             </BendPoints>
             <IsManuallyRouted>false</IsManuallyRouted>
@@ -11507,8 +11507,8 @@
           <ScaleMode>Free</ScaleMode>
           <Scale>0.64</Scale>
           <Location>
-            <X>6442.18764399412 px</X>
-            <Y>1534.37503317837 px</Y>
+            <X>4354.6876106062 px</X>
+            <Y>1159.37503593741 px</Y>
           </Location>
         </ViewPort>
       </Model>

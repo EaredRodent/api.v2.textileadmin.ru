@@ -30,7 +30,7 @@ class SlsOrder extends GiiSlsOrder
         self::s0_del => 'Удален',
         self::s0_preorder => 'Предзаказ',
         self::s1_client_prep => 'Подготовка клиентом',
-        self::s1_prep => 'Подготовка менеджером',
+        self::s1_prep => 'Подготовка', // Менеджером
         self::s1_wait_assembl => 'На сборке',
         self::s5_assembl => 'Собран',
         self::s2_wait => 'Акцептование',
