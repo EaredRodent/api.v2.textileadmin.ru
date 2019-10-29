@@ -12,6 +12,7 @@ namespace app\modules\v1\controllers;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefBlankTheme;
+use app\modules\v1\models\ref\RefProductPrint;
 
 class RefBlankThemeController extends ActiveControllerExtended
 {
@@ -28,11 +29,21 @@ class RefBlankThemeController extends ActiveControllerExtended
             ->where(['flag_price' => 1])
             ->all();
 
+        $prodsPrint = RefProductPrint::find()
+            ->where(['flag_price' => 1])
+            ->all();
+
         $themeIDs = [];
 
         foreach ($prods as $prod) {
             if (!in_array($prod->theme_fk, $themeIDs)) {
                 $themeIDs[] = $prod->theme_fk;
+            }
+        }
+
+        foreach ($prodsPrint as $prodPrint) {
+            if (!in_array($prodPrint->blankFk->theme_fk, $themeIDs)) {
+                $themeIDs[] = $prodPrint->blankFk->theme_fk;
             }
         }
 

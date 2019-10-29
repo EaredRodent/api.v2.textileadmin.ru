@@ -57,4 +57,16 @@ class CardProd
 
     }
 
+
+    static function sort(&$arrCards) {
+        usort($arrCards, function ($a, $b) {
+            if ($a->art < $b->art) {
+                return -1;
+            }
+            if ($a->art > $b->art) {
+                return 1;
+            }
+            return 0;
+        });
+    }
 }

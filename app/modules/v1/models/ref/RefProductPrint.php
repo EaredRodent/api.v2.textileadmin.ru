@@ -147,7 +147,7 @@ class RefProductPrint extends GiiRefProductPrint
 
         $newProds = self::find()
             ->where(['flag_price' => 1])
-            ->orderBy(['ts_create' => SORT_DESC])
+            ->orderBy('ts_create DESC')
             ->limit($count)
             ->all();
 

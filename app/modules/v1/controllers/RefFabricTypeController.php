@@ -12,6 +12,7 @@ namespace app\modules\v1\controllers;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefFabricType;
+use app\modules\v1\models\ref\RefProductPrint;
 
 class RefFabricTypeController extends ActiveControllerExtended
 {
@@ -28,9 +29,24 @@ class RefFabricTypeController extends ActiveControllerExtended
         $prods = RefArtBlank::find()
             ->where(['flag_price' => 1])
             ->all();
+
+        /** @var RefProductPrint[] $prodsPrint */
+        $prodsPrint = RefProductPrint::find()
+            ->where(['flag_price' => 1])
+            ->all();
+
         $fabTypeIDs = [];
+
         foreach ($prods as $prod) {
-            $fabTypeIDs[] = $prod->fabric_type_fk;
+            if (!in_array($prod->fabric_type_fk, $fabTypeIDs)) {
+                $fabTypeIDs[] = $prod->fabric_type_fk;
+            }
+        }
+
+        foreach ($prodsPrint as $prodPrint) {
+            if (!in_array($prodPrint->blankFk->fabric_type_fk, $fabTypeIDs)) {
+                $fabTypeIDs[] = $prodPrint->blankFk->fabric_type_fk;
+            }
         }
 
         return RefFabricType::find()

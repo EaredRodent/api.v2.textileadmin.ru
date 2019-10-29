@@ -12,6 +12,8 @@ use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\classes\CardProd;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefBlankSex;
+use app\modules\v1\models\ref\RefBlankTheme;
+use app\modules\v1\models\ref\RefFabricType;
 use app\modules\v1\models\ref\RefProductPrint;
 
 class CardProdController extends ActiveControllerExtended
@@ -58,36 +60,77 @@ class CardProdController extends ActiveControllerExtended
             $newProdIDs = RefArtBlank::calcNewProdIDs(30);
         }
 
-        $filteredProds = RefArtBlank::readFilterProds(
-            $newProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
+        $filteredProds = [];
+        $filteredProdsPrint = [];
+
+        if ($print === 'all') {
+            $filteredProds = RefArtBlank::readFilterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
+            $filteredProdsPrint = RefProductPrint::readFilterProds($newPrintProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
+        }
+        if ($print === 'yes') {
+            $filteredProdsPrint = RefProductPrint::readFilterProds($newPrintProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
+        }
+        if ($print === 'no') {
+            $filteredProds = RefArtBlank::readFilterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
+        }
 
         $arrCards = [];
-        foreach ($filteredProds as $prod) {
+        foreach (array_merge($filteredProds, $filteredProdsPrint) as $prod) {
             $arrCards[] = new CardProd($prod);
         }
 
-        $filteredProdsPrint = RefProductPrint::readFilterProds(
-            $newPrintProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
-        foreach ($filteredProdsPrint as $prodPrint) {
-            $arrCards[] = new CardProd($prodPrint);
+        CardProd::sort($arrCards);
+
+        // Вычисление доступных цветов и тканей для текущих фильтров
+        // * Фильтрует игнорируя установленные пользоватеелем фильтры цвет/ткань, иначе доступными будут только они
+
+        $filteredProds2 = [];
+        $filteredProdsPrint2 = [];
+
+        if ($print === 'all') {
+            $filteredProds2 = RefArtBlank::readFilterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, [], []);
+            $filteredProdsPrint2 = RefProductPrint::readFilterProds($newPrintProdIDs, $sexTitles, $groupIDs, $classTags, [], []);
+        }
+        if ($print === 'yes') {
+            $filteredProdsPrint2 = RefProductPrint::readFilterProds($newPrintProdIDs, $sexTitles, $groupIDs, $classTags, [], []);
+        }
+        if ($print === 'no') {
+            $filteredProds2 = RefArtBlank::readFilterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, [], []);
         }
 
-        usort($arrCards, function ($a, $b) {
-            if($a->art < $b->art) {
-                return -1;
-            }
-            if($a->art > $b->art) {
-                return 1;
-            }
-            return 0;
-        });
+        /** @var CardProd[] $arrCards2 */
+        $arrCards2 = [];
+        foreach (array_merge($filteredProds2, $filteredProdsPrint2) as $prod) {
+            $arrCards2[] = new CardProd($prod);
+        }
 
-//        $prods = [];
-//        foreach (array_merge($filteredProds, $filteredProdsPrint) as $prod) {
-//            $prods[] = new CardProd($prod);
-//        }
+        $availableRefBlankTheme = [];
+        $availableRefFabricType = [];
 
-        return $arrCards;
+        foreach ($arrCards2 as $card) {
+            if ($card->themeFk && !in_array($card->themeFk->id, $availableRefBlankTheme)) {
+                $availableRefBlankTheme[] = $card->themeFk->id;
+            }
+            if ($card->fabricTypeFk && !in_array($card->fabricTypeFk->id, $availableRefFabricType)) {
+                $availableRefFabricType[] = $card->fabricTypeFk->id;
+            }
+        }
+
+        $availableRefBlankTheme = RefBlankTheme::find()
+            ->where(['id' => $availableRefBlankTheme])
+            ->groupBy('title_price')
+            ->all();
+
+        $availableRefFabricType = RefFabricType::find()
+            ->where(['id' => $availableRefFabricType])
+            ->groupBy('type_price')
+            ->all();
+
+        return [
+            'filteredProds' => $arrCards,
+            'availableRefBlankTheme' => $availableRefBlankTheme,
+            'availableRefFabricType' => $availableRefFabricType
+        ];
 
     }
 }
