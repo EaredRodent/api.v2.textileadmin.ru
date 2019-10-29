@@ -37,7 +37,6 @@ class CardProd
      */
     function __construct($objProd)
     {
-        $prod = isset($objProd->blank_fk) ? $objProd->blankFk : $objProd;
 
         $this->prodId = $objProd->calcProdId();
         $this->titleStr = $objProd->fields()['titleStr']();
@@ -47,6 +46,8 @@ class CardProd
         $this->minPrice = $objProd->fields()['minPrice']();
         $this->sizes = $objProd->fields()['sizes']();
 
+
+        $prod = isset($objProd->blank_fk) ? $objProd->blankFk : $objProd;
 
         $this->fabricTypeFk = $prod->fabricTypeFk;
         $this->modelFk = $prod->modelFk;

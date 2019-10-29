@@ -6,6 +6,7 @@ namespace app\rbac;
 
 use app\modules\v1\controllers\AnxUserController;
 use app\modules\v1\controllers\BaseController;
+use app\modules\v1\controllers\CardProdController;
 use app\modules\v1\controllers\PrStorProdController;
 use app\modules\v1\controllers\RefArtBlankController;
 use app\modules\v1\controllers\RefBlankClassController;
@@ -270,6 +271,7 @@ class Permissions
             RefFabricTypeController::actionGetFabricTypes,
             RefArtBlankController::actionGetByFilters,
             RefArtBlankController::actionGetByFilters2,
+            CardProdController::actionGetByFilters,
 
             // Карта товара
 
