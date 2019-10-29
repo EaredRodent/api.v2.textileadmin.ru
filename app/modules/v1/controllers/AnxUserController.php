@@ -288,4 +288,21 @@ class AnxUserController extends ActiveControllerExtended
 
         return ['_result_' => 'success'];
     }
+
+    const actionGetContacts = 'GET /v1/anx-user/get-contacts';
+
+    /**
+     * Возвращает все контактные лица, состоящие у того же клиента, что и текущее контактное лицо (b2b)
+     * @return array|\yii\db\ActiveRecord[]
+     * @throws \Throwable
+     */
+    function actionGetContacts()
+    {
+        /** @var AnxUser $contact */
+        $contact = Yii::$app->getUser()->getIdentity();
+
+        return AnxUser::find()
+            ->where(['org_fk' => $contact->org_fk])
+            ->all();
+    }
 }
