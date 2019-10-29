@@ -16,6 +16,7 @@ use app\modules\v1\models\sls\SlsItem;
 use app\modules\v1\models\sls\SlsMessage;
 use app\modules\v1\models\sls\SlsOrder;
 use app\modules\v1\models\sls\SlsOrg;
+use tests\unit\models\ContactFormTest;
 use Yii;
 use yii\web\HttpException;
 
@@ -155,19 +156,40 @@ class SlsOrgController extends ActiveControllerExtended
         return ['_result_' => 'success'];
     }
 
+
     const actionGetForContact = 'GET /v1/sls-org/get-for-contact';
 
     /**
      * Возвращает организацию, в которой состоит текущее контактное лицо
+     * @param string $userId [currentUser|57]
      * @return SlsOrg
+     * @throws HttpException
      * @throws \Throwable
      */
-    public function actionGetForContact()
+    public function actionGetForContact($userId = 'currentUser')
     {
-        /** @var AnxUser $contact */
-        $contact = Yii::$app->getUser()->getIdentity();
+        if (!$userId) {
+            $userId = 'currentUser';
+        }
 
-        return SlsOrg::findOne(['id' => $contact->org_fk]);
+        /** @var AnxUser $contact */
+        if ($userId === 'currentUser') {
+            $contact = Yii::$app->getUser()->getIdentity();
+        } else {
+            if (YII_ENV_PROD) {
+                throw new HttpException(200, "Не надо шалить", 200);
+            }
+            $contact = AnxUser::findOne((int)$userId);
+        }
+
+        $orgId = $contact->org_fk;
+
+        $org = SlsOrg::findOne($orgId);
+        if ($org) {
+            return $org;
+        } else {
+            throw new HttpException(200, "Нет организации для \$userId = {$userId}", 200);
+        }
     }
 
     const actionDeleteOrg = 'POST /v1/sls-org/delete-org';

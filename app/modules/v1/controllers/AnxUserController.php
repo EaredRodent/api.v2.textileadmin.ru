@@ -293,16 +293,36 @@ class AnxUserController extends ActiveControllerExtended
 
     /**
      * Возвращает все контактные лица, состоящие у того же клиента, что и текущее контактное лицо (b2b)
+     * @param string $userId [currentUser|57]
      * @return array|\yii\db\ActiveRecord[]
+     * @throws HttpException
      * @throws \Throwable
      */
-    function actionGetContacts()
+    function actionGetContacts($userId = 'currentUser')
     {
-        /** @var AnxUser $contact */
-        $contact = Yii::$app->getUser()->getIdentity();
+        if (!$userId) {
+            $userId = 'currentUser';
+        }
 
-        return AnxUser::find()
-            ->where(['org_fk' => $contact->org_fk])
-            ->all();
+        /** @var AnxUser $contact */
+        if ($userId === 'currentUser') {
+            $contact = Yii::$app->getUser()->getIdentity();
+        } else {
+            if (YII_ENV_PROD) {
+                throw new HttpException(200, "Не надо шалить", 200);
+            }
+            $contact = AnxUser::findOne((int)$userId);
+        }
+
+        $orgId = $contact->org_fk;
+
+        if ($orgId > 0) {
+            return AnxUser::find()
+                ->where(['org_fk' => $orgId])
+                ->all();
+        } else {
+            throw new HttpException(200, "Не найдены контактные лица для \$userId = $userId", 200);
+        }
+
     }
 }

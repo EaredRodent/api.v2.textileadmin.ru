@@ -25,6 +25,8 @@ use Yii;
  *
  * @property AnxUser[] $anxUsers
  * @property SlsClient[] $slsClients
+ * @property SlsMessage[] $slsMessages
+ * @property AnxUser $managerFk
  */
 class GiiSlsOrg extends ActiveRecordExtended
 {
@@ -49,6 +51,7 @@ class GiiSlsOrg extends ActiveRecordExtended
             [['discount'], 'number'],
             [['name'], 'string', 'max' => 100],
             [['location'], 'string', 'max' => 255],
+            [['manager_fk'], 'exist', 'skipOnError' => true, 'targetClass' => AnxUser::className(), 'targetAttribute' => ['manager_fk' => 'id']],
         ];
     }
 
@@ -87,5 +90,21 @@ class GiiSlsOrg extends ActiveRecordExtended
     public function getSlsClients()
     {
         return $this->hasMany(SlsClient::className(), ['org_fk' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSlsMessages()
+    {
+        return $this->hasMany(SlsMessage::className(), ['org_fk' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getManagerFk()
+    {
+        return $this->hasOne(AnxUser::className(), ['id' => 'manager_fk']);
     }
 }

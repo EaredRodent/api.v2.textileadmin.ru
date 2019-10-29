@@ -113,16 +113,38 @@ class SlsClientController extends ActiveControllerExtended
 
     /**
      * Возвращает юр.лиц для организации текущего контакта (B2B)
+     * @param string $userId [currentUser|57]
      * @return array|\yii\db\ActiveRecord[]
+     * @throws HttpException
      * @throws \Throwable
      */
-    function actionGetLegalEntities()
+    function actionGetLegalEntities($userId = 'currentUser')
     {
-        /** @var AnxUser $contact */
-        $contact = Yii::$app->getUser()->getIdentity();
 
-        return SlsClient::find()
-            ->where(['org_fk' => $contact->org_fk])
-            ->all();
+        if (!$userId) {
+            $userId = 'currentUser';
+        }
+
+        /** @var AnxUser $contact */
+        if ($userId === 'currentUser') {
+            $contact = Yii::$app->getUser()->getIdentity();
+        } else {
+            if (YII_ENV_PROD) {
+                throw new HttpException(200, "Не надо шалить", 200);
+            }
+            $contact = AnxUser::findOne((int)$userId);
+        }
+
+        $orgId = $contact->org_fk;
+
+        if ($orgId > 0) {
+            return SlsClient::find()
+                ->where(['org_fk' => $orgId])
+                ->all();
+        } else {
+            throw new HttpException(200, "Не найдены юридические лица для \$userId = $userId", 200);
+        }
+
+
     }
 }
