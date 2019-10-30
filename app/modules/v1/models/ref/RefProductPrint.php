@@ -103,15 +103,6 @@ class RefProductPrint extends GiiRefProductPrint
                 }
                 return $resp;
             },
-
-
-        ]);
-    }
-
-
-    public function extraFields()
-    {
-        return array_merge(parent::extraFields(), [
             'blankFk',
             'printFk'
         ]);

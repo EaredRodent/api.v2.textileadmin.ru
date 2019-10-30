@@ -165,7 +165,7 @@ class CardProdController extends ActiveControllerExtended
 
         $sexType = $prod->calcSizeType();
 
-        $rest = new ProdRest([$prodId]);
+        $prodRest = new ProdRest([$prodId]);
         $weight = RefWeight::readRec($prod->model_fk, $prod->fabric_type_fk);
 
         $resp = [];
@@ -175,13 +175,16 @@ class CardProdController extends ActiveControllerExtended
         foreach (Sizes::prices as $fSize => $fPrice) {
             if ($priceModel->$fPrice > 0) {
 
-                $restVal = $rest->getRestPrint($prodId, $printId, $fSize);
-                if ($restVal == 0) {
-                    $restStr = '#d4000018';
-                } elseif ($restVal > 0 && $restVal <= 10) {
-                    $restStr = '#d4d40018';
+                $rest = $prodRest->getRestPrint($prodId, $printId, $fSize);
+                if ($rest == 0) {
+                    $restColor = '#d4000018';
+                    $restStr = $rest;
+                } elseif ($rest > 0 && $rest <= 10) {
+                    $restColor = '#d4d40018';
+                    $restStr = $rest;
                 } else {
-                    $restStr = '#00d40018';
+                    $restColor = '#00d40018';
+                    $restStr = '> 10';
                 }
 
                 $resp[] = [
@@ -189,7 +192,8 @@ class CardProdController extends ActiveControllerExtended
                     'sizeStr' => Sizes::typeCompare[$sexType][$fSize],
                     'size' => $fSize,
                     'price' => $priceModel->$fPrice,
-                    'rest' => $restStr,
+                    'restStr' => $restStr,
+                    'restColor' => $restColor,
                     'weight' => $weight->$fSize,
                 ];
             }

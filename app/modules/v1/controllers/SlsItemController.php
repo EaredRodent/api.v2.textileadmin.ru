@@ -9,9 +9,11 @@
 namespace app\modules\v1\controllers;
 
 
+use app\extension\ProdRest;
 use app\extension\Sizes;
 use app\models\AnxUser;
 use app\modules\v1\classes\ActiveControllerExtended;
+use app\modules\v1\models\pr\PrStorProd;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefProductPrint;
 use app\modules\v1\models\sls\SlsClient;
@@ -68,8 +70,20 @@ class SlsItemController extends ActiveControllerExtended
                 ->one();
         }
 
+        $prodRest = new ProdRest([$item->blank_fk]);
+
         foreach (Sizes::prices as $size => $price) {
             if (isset($form[$size])) {
+                // Проверка наличия на складе
+
+                $rest = $prodRest->getRestPrint($item->blank_fk, $item->print_fk, $size);
+
+                if($rest < $form[$size]) {
+                    throw new HttpException(200, 'Изделие в таком кол-ве отсутствует на складе.', 200);
+                }
+
+                // ===
+
                 $item->$size = $form[$size];
                 $item->$price = $priceModel->$price;
             }
@@ -129,8 +143,20 @@ class SlsItemController extends ActiveControllerExtended
                 ->one();
         }
 
+        $prodRest = new ProdRest([$item->blank_fk]);
+
         foreach (Sizes::prices as $size => $price) {
             if (isset($form[$size])) {
+                // Проверка наличия на складе
+
+                $rest = $prodRest->getRestPrint($item->blank_fk, $item->print_fk, $size);
+
+                if($rest < $form[$size]) {
+                    throw new HttpException(200, 'Изделие в таком кол-ве отсутствует на складе.', 200);
+                }
+
+                // ===
+
                 $item->$size = $form[$size];
                 $item->$price = $priceModel->$price;
             }

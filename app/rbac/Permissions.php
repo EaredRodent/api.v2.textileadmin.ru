@@ -65,6 +65,7 @@ class Permissions
             AnxUserController::postCreateUser,
             BaseController::actionPostTestData,
             SlsOrgController::actionDeleteOrg,
+            RefProductPrintController::actionGetWithoutOxouno,
         ],
         self::roleEdush => [
             self::taskRegPaysPageAccess,

@@ -66,25 +66,30 @@ class RefBlankSexController extends ActiveControllerExtended
         foreach ($sexObjectToRealSexIDs as $sexObjectIndex => $sexIds) {
             $sexObjects[$sexObjectIndex]['groups'] = (new Query())
                 ->select('ref_blank_group.*')
-                ->orderBy('sort')
                 ->distinct()
-                ->from('ref_blank_model')
+                ->from('ref_art_blank')
+                ->innerJoin('ref_blank_model', 'ref_art_blank.model_fk = ref_blank_model.id')
                 ->innerJoin('ref_blank_class', 'ref_blank_model.class_fk = ref_blank_class.id')
                 ->innerJoin('ref_blank_group', 'ref_blank_class.group_fk = ref_blank_group.id')
                 ->innerJoin('ref_blank_sex', 'ref_blank_model.sex_fk = ref_blank_sex.id')
-                ->where(['ref_blank_sex.id' => $sexIds])
+                ->where(['ref_art_blank.flag_price' => 1])
+                ->andWhere(['ref_blank_sex.id' => $sexIds])
+                ->orderBy('ref_blank_group.sort')
                 ->all();
             foreach ($sexObjects[$sexObjectIndex]['groups'] as &$group) {
                 $group['classes'] = (new Query())
                     ->select('ref_blank_class.*')
                     ->distinct()
-                    ->from('ref_blank_model')
+                    ->from('ref_art_blank')
+                    ->innerJoin('ref_blank_model', 'ref_art_blank.model_fk = ref_blank_model.id')
                     ->innerJoin('ref_blank_class', 'ref_blank_model.class_fk = ref_blank_class.id')
                     ->innerJoin('ref_blank_group', 'ref_blank_class.group_fk = ref_blank_group.id')
                     ->innerJoin('ref_blank_sex', 'ref_blank_model.sex_fk = ref_blank_sex.id')
-                    ->where(['ref_blank_sex.id' => $sexIds])
+                    ->where(['ref_art_blank.flag_price' => 1])
+                    ->andWhere(['ref_blank_sex.id' => $sexIds])
                     ->andWhere(['ref_blank_group.id' => $group['id']])
                     ->groupBy('ref_blank_class.oxouno')
+                    ->orderBy('ref_blank_class.oxouno')
                     ->all();
             }
         }
