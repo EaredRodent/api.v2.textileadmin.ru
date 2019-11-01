@@ -144,7 +144,11 @@ class SlsClientController extends ActiveControllerExtended
         } else {
             throw new HttpException(200, "Не найдены юридические лица для \$userId = $userId", 200);
         }
+    }
 
+    const actionUploadDoc = 'POST /v1/sls-client/upload-doc';
 
+    public function actionUploadDoc($type) {
+        $lol = $_FILES;
     }
 }

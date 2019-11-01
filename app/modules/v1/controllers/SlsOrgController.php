@@ -74,8 +74,7 @@ class SlsOrgController extends ActiveControllerExtended
         foreach ($clients as $client) {
             $client->status = 1;
 
-            $password = chr(random_int(0x61, 0x7A)) . chr(random_int(0x61, 0x7A)) . chr(random_int(0x61, 0x7A));
-            $password .= random_int(100, 999);
+            $password = AnxUser::createPasswordForB2BContact();
             $hash = Yii::$app->security->generatePasswordHash($password);
             $accesstoken = Yii::$app->security->generateRandomString(32);
 
