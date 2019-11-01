@@ -102,4 +102,13 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
         }
         return $resp;
     }
+
+    public static function createPasswordForB2BContact()
+    {
+        $password = '';
+        for($i = 0; $i < 6; $i++){
+            $password .= random_int(0, 1) ? chr(random_int(0x61, 0x7A)) : random_int(0, 9);
+        }
+        return $password;
+    }
 }

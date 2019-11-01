@@ -158,10 +158,14 @@ class AnxUserController extends ActiveControllerExtended
      * @return array
      * @throws HttpException
      */
-    public function actionB2bRegister($client, $contact, $legalEntities, $reCaptchaToken)
+    public function actionB2bRegister($client, $contact, $legalEntities, $offer, $reCaptchaToken)
     {
         if (!ServReCAPTCHA::verify($reCaptchaToken)) {
             throw new HttpException(200, 'Вы робот!', 200);
+        }
+
+        if(!$offer) {
+            throw new HttpException(200, 'Для регистрации требуется ваше соглашение с офертой.', 200);
         }
 
         $client = json_decode($client, true);
