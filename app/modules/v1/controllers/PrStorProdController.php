@@ -11,6 +11,7 @@ namespace app\modules\v1\controllers;
 use app\extension\Sizes;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\pr\PrStorProd;
+use app\modules\v1\models\sls\SlsOrder;
 use app\objects\Prices;
 use app\objects\ProdMoveReport;
 
@@ -177,6 +178,86 @@ class PrStorProdController extends ActiveControllerExtended
             $resp[] = $item;
         }
 
+
+        return $resp;
+    }
+
+    const actionGetReportOrderOut = 'GET /v1/pr-stor-prod/get-report-order-out';
+
+    /**
+     * Вернуть отчет помесяцам по отгрузке заказов
+     */
+    public function actionGetReportOrderOut()
+    {
+        $mounts = [
+            '2017-11',
+            '2017-12',
+            '2018-01',
+            '2018-02',
+            '2018-03',
+            '2018-04',
+            '2018-05',
+            '2018-06',
+            '2018-07',
+            '2018-08',
+            '2018-09',
+            '2018-10',
+            '2018-11',
+            '2018-12',
+            '2019-01',
+            '2019-02',
+            '2019-03',
+            '2019-04',
+            '2019-05',
+            '2019-06',
+            '2019-07',
+            '2019-08',
+            '2019-09',
+            '2019-10',
+            '2019-11',
+        ];
+
+        $resp = [];
+
+        foreach ($mounts as $mount) {
+            $startSql = "$mount-01 00:00:00";
+            $endSql = date("Y-m-t 23:59:59", strtotime($startSql));
+
+            $orders = PrStorProd::find()
+                ->select('order_fk')
+                ->where(['direct' => 'out'])
+                ->andWhere('order_fk > 0' )
+                ->andWhere('dt_move >= :dateStart', [':dateStart' => $startSql])
+                ->andWhere('dt_move <= :dateEnd', [':dateEnd' => $endSql])
+                ->orderBy('dt_move')
+                ->groupBy('order_fk')
+                ->all();
+
+            $orderIds = [];
+            foreach ($orders as $order) {
+                $orderIds[] = $order->order_fk;
+            }
+
+
+            $summ = 0;
+            $orderRecs = SlsOrder::find()
+                ->select('summ_order')
+                ->where(['id' => $orderIds])
+                ->all();
+            foreach ($orderRecs as $orderRec) {
+                $summ += $orderRec->summ_order;
+            }
+
+
+
+            $resp[] = [
+                'month' => $mount,
+                'Y' => explode('-', $mount)[0],
+                'M' => explode('-', $mount)[1],
+                'summ' => $summ,
+                'orders' => $orderIds,
+            ];
+        }
 
         return $resp;
     }

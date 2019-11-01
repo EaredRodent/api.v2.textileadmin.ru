@@ -18,6 +18,11 @@ class PrStorProd extends GiiPrStorProd
     // ENUM('in-balance','in-manual','in-production','in-return','in-invent','out-sale','out-print','out-pack','out-order','out-invent','out-prod')
     public $totalSum;
 
+    /**
+     * Вернуть остатки по склад для заданных артикулов. Если артикулы не заданы - вернуть весь склад
+     * @param $prodIds
+     * @return self[]
+     */
     public static function readRest($prodIds)
     {
         return self::find()

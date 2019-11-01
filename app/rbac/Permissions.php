@@ -341,6 +341,7 @@ class Permissions
             PrStorProdController::actionGetReportStorIncomAll,
             PrStorProdController::actionGetReportStorIncomMonth,
             PrStorProdController::actionGetReportStorOutMonth,
+            PrStorProdController::actionGetReportOrderOut,
         ],
     ];
 

@@ -33,4 +33,20 @@ class SlsItem extends GiiSlsItem
             }
         ]);
     }
+
+    /**
+     * Вернуть резерв
+     * @param $prodIds
+     * @return self[]
+     */
+    public static function readReserv($prodIds = null)
+    {
+        return self::find()
+            ->select(array_merge(['{{sls_item}}.*'], Sizes::selectSum))
+            ->joinWith(['orderFk'], false)
+            ->where(['NOT IN', 'sls_order.status', [SlsOrder::s7_send, SlsOrder::s0_del, SlsOrder::s0_preorder]])
+            ->andFilterWhere(['blank_fk' => $prodIds])
+            ->groupBy('blank_fk, print_fk, pack_fk')
+            ->all();
+    }
 }
