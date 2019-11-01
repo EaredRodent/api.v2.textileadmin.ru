@@ -9,6 +9,7 @@
 namespace app\modules\v1\controllers;
 
 use app\models\AnxUser;
+use app\modules\AppMod;
 use app\services\ServReCAPTCHA;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\sls\SlsClient;
@@ -146,9 +147,74 @@ class SlsClientController extends ActiveControllerExtended
         }
     }
 
-    const actionUploadDoc = 'POST /v1/sls-client/upload-doc';
+    const actionUploadDocs = 'POST /v1/sls-client/upload-docs';
 
-    public function actionUploadDoc($type) {
-        $lol = $_FILES;
+    /**
+     * Загружает документы для юр.лица с id $legalEntityID и типом документа $docType
+     * @param $legalEntityID
+     * @param $docType
+     * @return array
+     * @throws HttpException
+     * @throws \Throwable
+     */
+    public function actionUploadDocs($legalEntityID, $docType)
+    {
+        $slsClient = SlsClient::findOne($legalEntityID);
+
+        if (!$slsClient) {
+            throw new HttpException(200, "Юр. лицо с этим ID не существует.", 200);
+        }
+
+        /** @var AnxUser $contact */
+        $contact = Yii::$app->getUser()->getIdentity();
+
+        if ($contact->org_fk !== $slsClient->org_fk) {
+            throw new HttpException(200, "Юр. лицо с этим ID не состоит в вашей организации.", 200);
+        }
+
+        $files = [];
+        if (!isset($_FILES['files'])) {
+            throw new HttpException(200, "Файлы отсутствуют.", 200);
+        }
+        $files = $_FILES['files'];
+
+        for ($i = 0; $i < isset($files['name']) ? count($files['name']) : 0; $i++) {
+            $dest = Yii::getAlias(AppMod::filesRout[$docType]);
+
+            if (!$dest) {
+                throw new HttpException(200, "Этот тип документа не обрабатывается.", 200);
+            }
+
+            $fileName = $slsClient->id . '_' . rawurlencode($files['name'][$i]);
+            $dest = $dest . '/' . $fileName;
+
+            move_uploaded_file($files['tmp_name'][$i], $dest);
+        }
+
+        return ['_result_' => 'success'];
+    }
+
+    const actionGetDocs = 'GET /v1/sls-client/get-docs';
+
+    public function actionGetDocs()
+    {
+        /** @var AnxUser $contact */
+        $contact = Yii::$app->getUser()->getIdentity();
+
+        $slsClients = SlsClient::findAll(['org_fk' => $contact->org_fk]);
+
+        $response = [];
+
+        foreach ($slsClients as $slsClient) {
+            foreach (AppMod::filesB2BDocTypes as $docType) {
+                $files = glob(Yii::getAlias(AppMod::filesRout[$docType]) . '/' . $slsClient->id . '_*');
+                foreach ($files as $file) {
+                    $filename = pathinfo($file)['filename'];
+                    $basename = pathinfo($file)['basename'];
+                    $response[$slsClient->id][$docType][$filename] = AppMod::domain . '/v1/files/get/6spdsd4d44fsdaf89034/' . $docType . '/' . $basename;
+                }
+            }
+        }
+        return $response;
     }
 }

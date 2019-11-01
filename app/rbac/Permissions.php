@@ -304,7 +304,8 @@ class Permissions
             // Карта клиента
 
             AnxUserController::actionGetContacts,
-
+            SlsClientController::actionUploadDocs,
+            SlsClientController::actionGetDocs
         ],
 
         self::taskTest => [

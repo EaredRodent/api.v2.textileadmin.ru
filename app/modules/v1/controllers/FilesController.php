@@ -52,8 +52,11 @@ class FilesController extends Controller
      * http://api.textileadmin.loc/v1/files/get?key=6spdsd4d44fsdaf89034&dir=filesInvoiceAttachement&name=1068-01082019molodcova.jpeg
      * http://api.textileadmin.loc/v1/files/get/6spdsd4d44fsdaf89034/filesInvoiceAttachement/1068-01082019molodcova.jpeg
      * Вернуть в браузер файл прикрепленный к счету
+     * @param $key
+     * @param $dir
      * @param $name
      * @return string
+     * @throws HttpException
      */
     public function actionGet($key, $dir, $name)
     {
