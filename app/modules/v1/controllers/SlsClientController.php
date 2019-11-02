@@ -203,10 +203,33 @@ class SlsClientController extends ActiveControllerExtended
 
     const actionGetDocs = 'GET /v1/sls-client/get-docs';
 
-    public function actionGetDocs()
+    /**
+     * Возвращает документы для всех юр.лиц, состоящих в той организации, что контактное лицо $contactLogin
+     * @param string $contactLogin
+     * @return array
+     * @throws HttpException
+     * @throws \Throwable
+     */
+    public function actionGetDocs($contactLogin = 'CurrentUser')
     {
-        /** @var AnxUser $contact */
-        $contact = Yii::$app->getUser()->getIdentity();
+        if(YII_ENV_PROD && ($contactLogin !== 'CurrentUser')) {
+            throw new HttpException(200, "Только текущий пользователь.", 200);
+        }
+
+        if($contactLogin === 'CurrentUser') {
+            /** @var AnxUser $contact */
+            $contact = Yii::$app->getUser()->getIdentity();
+        } else {
+            $contact = AnxUser::findOne(['login' => $contactLogin]);
+        }
+
+        if(!$contact) {
+            throw new HttpException(200, "Пользователь не получен.", 200);
+        }
+
+        if(!$contact->org_fk) {
+            throw new HttpException(200, "Пользователь не состоит в организации.", 200);
+        }
 
         $slsClients = SlsClient::findAll(['org_fk' => $contact->org_fk]);
 
