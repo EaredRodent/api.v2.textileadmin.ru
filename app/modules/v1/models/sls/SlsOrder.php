@@ -9,6 +9,7 @@
 namespace app\modules\v1\models\sls;
 
 
+use app\extension\Sizes;
 use app\gii\GiiSlsOrder;
 use yii\db\ActiveRecord;
 
@@ -52,6 +53,20 @@ class SlsOrder extends GiiSlsOrder
             'userFk',
             'statusStr' => function () {
                 return self::statuses[$this->status];
+            },
+            'sum' => function() {
+                $slsItems = SlsItem::findAll(['order_fk' => $this->id]);
+                $sum = 0;
+
+                foreach ($slsItems as $slsItem) {
+                    foreach (Sizes::prices as $size => $price) {
+                        if ($slsItem->$size) {
+                            $sum += $slsItem->$size * $slsItem->$price;
+                        }
+                    }
+                }
+
+                return $sum;
             }
         ]);
     }

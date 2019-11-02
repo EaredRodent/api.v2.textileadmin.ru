@@ -305,7 +305,7 @@ class Permissions
 
             AnxUserController::actionGetContacts,
             SlsClientController::actionUploadDocs,
-            SlsClientController::actionGetDocs
+            SlsClientController::actionGetDocs,
         ],
 
         self::taskTest => [
@@ -322,7 +322,7 @@ class Permissions
             SlsClientController::actionGetLegalEntitiesByOrgId,
             AnxUserController::actionGetManagers,
             SlsClientController::actionGetOutdatedLegalEntities,
-            SlsMessageController::actionGetMessagesForOrg
+            SlsMessageController::actionGetMessagesForOrg,
         ],
 
         self::taskSalesClientsWrite => [
@@ -335,6 +335,8 @@ class Permissions
             AnxUserController::actionCreateUpdateForOrg,
             SlsClientController::actionCreateUpdateForOrg,
             SlsMessageController::actionSendFromManager,
+
+            AnxUserController::actionChangeContactStatus,
         ],
 
         self::taskReportProduction => [

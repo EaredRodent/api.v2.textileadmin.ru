@@ -177,17 +177,25 @@ class SlsClientController extends ActiveControllerExtended
         if (!isset($_FILES['files'])) {
             throw new HttpException(200, "Файлы отсутствуют.", 200);
         }
+
         $files = $_FILES['files'];
 
-        for ($i = 0; $i < isset($files['name']) ? count($files['name']) : 0; $i++) {
-            $dest = Yii::getAlias(AppMod::filesRout[$docType]);
+        $destDir = Yii::getAlias(AppMod::filesRout[$docType]);
 
-            if (!$dest) {
-                throw new HttpException(200, "Этот тип документа не обрабатывается.", 200);
-            }
+        $rmFiles = glob($destDir . '/' . $slsClient->id . '_*');
 
-            $fileName = $slsClient->id . '_' . rawurlencode($files['name'][$i]);
-            $dest = $dest . '/' . $fileName;
+        foreach ($rmFiles as $rmFile) {
+            unlink($rmFile);
+        }
+
+        if (!$destDir) {
+            throw new HttpException(200, "Этот тип документа не обрабатывается.", 200);
+        }
+
+        $filesCount = isset($files['name']) ? count($files['name']) : 0;
+        for ($i = 0; $i < $filesCount; $i++) {
+            $fileName = $slsClient->id . '_' . $i;
+            $dest = $destDir . '/' . $fileName;
 
             move_uploaded_file($files['tmp_name'][$i], $dest);
         }
@@ -253,7 +261,7 @@ class SlsClientController extends ActiveControllerExtended
                     $basename = pathinfo($file)['basename'];
                     $response[$slsClient->id][$docTypeDir]['files'][] = [
                         'name' => $filename,
-                        'url' => AppMod::domain . '/v1/files/get/6spdsd4d44fsdaf89034/' . $docTypeDir . '/' . urlencode($basename)
+                        'url' => AppMod::domain . '/v1/files/get/6spdsd4d44fsdaf89034/' . $docTypeDir . '/' . $basename
                     ];
                 }
             }

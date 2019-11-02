@@ -329,4 +329,17 @@ class AnxUserController extends ActiveControllerExtended
         }
 
     }
+
+    const actionChangeContactStatus = 'POST /v1/anx-user/change-contact-status';
+
+    public function actionChangeContactStatus($id) {
+        $contact = AnxUser::findOne($id);
+        $contact->status = $contact->status ? 0 : 1;
+
+        if (!$contact->save()) {
+            throw new HttpException(200, 'Внутренняя ошибка.', 200);
+        }
+
+        return ['_result_' => 'success'];
+    }
 }
