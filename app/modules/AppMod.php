@@ -24,31 +24,49 @@ class AppMod
     // Файлы миниатюр для продуктов с пост обработкой
     const filesImageProdsPrints = 'filesImageProdsPrints';
 
+    // Файлы AAA юр.лиц
+    const filesB2B_AAA = 'filesB2B_AAA';
 
-    // Типы документов для юр.лиц
-    const filesB2BDocTypes = [
-        self::filesB2BInnDocs,
-        self::filesB2BInn2Docs,
-        self::filesB2BInn3Docs,
+    // Файлы BBB юр.лиц
+    const filesB2B_BBB = 'filesB2B_BBB';
+
+    // Файлы CCC юр.лиц
+    const filesB2B_CCC = 'filesB2B_CCC';
+
+    // Файлы DDD юр.лиц
+    const filesB2B_DDD = 'filesB2B_DDD';
+
+    // Файлы EEE юр.лиц
+    const filesB2B_EEE = 'filesB2B_EEE';
+
+    // Файлы FFF юр.лиц
+    const filesB2B_FFF = 'filesB2B_FFF';
+
+    // Типы документов для ИП
+    const filesB2B_DocTypes_IP = [
+        self::filesB2B_AAA => 'ААА',
+        self::filesB2B_BBB => 'BBB',
+        self::filesB2B_CCC => 'CCC'
     ];
 
-    // Файлы ИНН юр.лиц
-    const filesB2BInnDocs = 'filesB2BInnDocs';
-
-    // Файлы ИНН2 юр.лиц
-    const filesB2BInn2Docs = 'filesB2BInn2Docs';
-
-    // Файлы ИНН3 юр.лиц
-    const filesB2BInn3Docs = 'filesB2BInn3Docs';
+    // Типы документов для ООО
+    const filesB2B_DocTypes_OOO = [
+        self::filesB2B_DDD => 'DDD',
+        self::filesB2B_EEE => 'EEE',
+        self::filesB2B_FFF => 'FFF'
+    ];
 
     const filesRout = [
         self::filesInvoiceAttachement => '@app/../../textile/files/mail-doc',
         self::filesInvoiceSlsDep => '@app/../../textile/files/sls/invoices',
         self::filesImageBaseProds => '@app/../../textile/files/ref/prod',
         self::filesImageProdsPrints => '@app/../../textile/files/ref/prod-print',
-        self::filesB2BInnDocs => '@app/../../textile/files/b2b-docs/inn',
-        self::filesB2BInn2Docs => '@app/../../textile/files/b2b-docs/inn2',
-        self::filesB2BInn3Docs => '@app/../../textile/files/b2b-docs/inn3'
+        self::filesB2B_AAA => '@app/../../textile/files/b2b-docs/aaa',
+        self::filesB2B_BBB => '@app/../../textile/files/b2b-docs/bbb',
+        self::filesB2B_CCC => '@app/../../textile/files/b2b-docs/ccc',
+        self::filesB2B_DDD => '@app/../../textile/files/b2b-docs/ddd',
+        self::filesB2B_EEE => '@app/../../textile/files/b2b-docs/eee',
+        self::filesB2B_FFF => '@app/../../textile/files/b2b-docs/fff',
     ];
 
     const pathProdPhoto = "@app/../../textile/files/ref/prod";

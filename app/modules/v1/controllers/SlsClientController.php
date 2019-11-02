@@ -10,6 +10,7 @@ namespace app\modules\v1\controllers;
 
 use app\models\AnxUser;
 use app\modules\AppMod;
+use app\modules\v1\V1Mod;
 use app\services\ServReCAPTCHA;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\sls\SlsClient;
@@ -191,6 +192,12 @@ class SlsClientController extends ActiveControllerExtended
             move_uploaded_file($files['tmp_name'][$i], $dest);
         }
 
+        // Модель не обновлялась, но нужно уведомить о загруженном файле для юр. лица
+
+        Yii::$app->getModule('v1')->cmdTables[] = 'sls_client';
+
+        //
+
         return ['_result_' => 'success'];
     }
 
@@ -206,12 +213,25 @@ class SlsClientController extends ActiveControllerExtended
         $response = [];
 
         foreach ($slsClients as $slsClient) {
-            foreach (AppMod::filesB2BDocTypes as $docType) {
-                $files = glob(Yii::getAlias(AppMod::filesRout[$docType]) . '/' . $slsClient->id . '_*');
+            $docTypes = strpos($slsClient->short_name, 'ООО') === false ? AppMod::filesB2B_DocTypes_IP : AppMod::filesB2B_DocTypes_OOO;
+
+
+            foreach ($docTypes as $docTypeDir => $docTypeName) {
+                $files = glob(Yii::getAlias(AppMod::filesRout[$docTypeDir]) . '/' . $slsClient->id . '_*');
+
+                $response[$slsClient->id][$docTypeDir] = [
+                    'dir' => $docTypeDir,
+                    'name' => $docTypeName,
+                    'files' => []
+                ];
+
                 foreach ($files as $file) {
                     $filename = pathinfo($file)['filename'];
                     $basename = pathinfo($file)['basename'];
-                    $response[$slsClient->id][$docType][$filename] = AppMod::domain . '/v1/files/get/6spdsd4d44fsdaf89034/' . $docType . '/' . $basename;
+                    $response[$slsClient->id][$docTypeDir]['files'][] = [
+                        'name' => $filename,
+                        'url' => AppMod::domain . '/v1/files/get/6spdsd4d44fsdaf89034/' . $docTypeDir . '/' . urlencode($basename)
+                    ];
                 }
             }
         }
