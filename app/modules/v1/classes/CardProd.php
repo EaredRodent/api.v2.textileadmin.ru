@@ -9,8 +9,8 @@
 namespace app\modules\v1\classes;
 
 use app\modules\v1\models\ref\RefArtBlank;
+use app\modules\v1\models\ref\RefEan;
 use app\modules\v1\models\ref\RefProductPrint;
-use Yii;
 
 
 class CardProd
@@ -30,6 +30,7 @@ class CardProd
     public $modelFk;
     public $themeFk;
     public $printFk;
+    public $packFk;
 
     /**
      * CardProd constructor.
@@ -55,10 +56,19 @@ class CardProd
 
         $this->printFk = isset($objProd->print_fk) ? $objProd->printFk : null;
 
+        /** @var  RefEan $ean */
+        $ean = RefEan::find()
+            ->where(['blank_fk' => $prod->id])
+            ->andWhere(['print_fk' => $this->printFk ? $this->printFk->id : 1])
+            ->one();
+
+        $this->packFk = $ean ? $ean->packFk : null;
+
     }
 
 
-    static function sort(&$arrCards) {
+    static function sort(&$arrCards)
+    {
         usort($arrCards, function ($a, $b) {
             if ($a->art < $b->art) {
                 return -1;
@@ -70,8 +80,9 @@ class CardProd
         });
     }
 
-    static function search(&$arrCards, $search) {
-        if(!$search) {
+    static function search(&$arrCards, $search)
+    {
+        if (!$search) {
             return;
         }
 

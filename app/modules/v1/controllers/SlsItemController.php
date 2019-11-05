@@ -78,7 +78,7 @@ class SlsItemController extends ActiveControllerExtended
 
                 $rest = $prodRest->getRestPrint($item->blank_fk, $item->print_fk, $size);
 
-                if($rest < $form[$size]) {
+                if ($rest < $form[$size]) {
                     throw new HttpException(200, 'Изделие в таком кол-ве отсутствует на складе.', 200);
                 }
 
@@ -143,15 +143,26 @@ class SlsItemController extends ActiveControllerExtended
                 ->one();
         }
 
+        foreach (Sizes::prices as $size => $price) {
+            if ($item->$size) {
+                $item->$size = 0;
+            }
+        }
+
+        if (!$item->save()) {
+            throw new HttpException(200, 'Внутренняя ошибка #1.', 200);
+        }
+
         $prodRest = new ProdRest([$item->blank_fk]);
 
         foreach (Sizes::prices as $size => $price) {
+
             if (isset($form[$size])) {
                 // Проверка наличия на складе
 
                 $rest = $prodRest->getRestPrint($item->blank_fk, $item->print_fk, $size);
 
-                if($rest < $form[$size]) {
+                if ($rest < $form[$size]) {
                     throw new HttpException(200, 'Изделие в таком кол-ве отсутствует на складе.', 200);
                 }
 
@@ -172,7 +183,7 @@ class SlsItemController extends ActiveControllerExtended
         }
 
         if (!$item->save()) {
-            throw new HttpException(200, 'Внутренняя ошибка.', 200);
+            throw new HttpException(200, 'Внутренняя ошибка #2.', 200);
         }
 
         return ['_result_' => 'success'];
