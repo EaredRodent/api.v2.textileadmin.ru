@@ -69,4 +69,17 @@ class CardProd
             return 0;
         });
     }
+
+    static function search(&$arrCards, $search) {
+        if(!$search) {
+            return;
+        }
+
+        $search = mb_strtolower($search);
+
+        $arrCards = array_filter($arrCards, function ($el) use ($search) {
+            $jsonCard = mb_strtolower(json_encode($el, JSON_UNESCAPED_UNICODE));
+            return strpos($jsonCard, $search) !== false;
+        });
+    }
 }

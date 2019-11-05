@@ -148,17 +148,17 @@ class SlsClientController extends ActiveControllerExtended
         }
     }
 
-    const actionUploadDocs = 'POST /v1/sls-client/upload-docs';
+    const actionUploadDocsFromContact = 'POST /v1/sls-client/upload-docs-from-contact';
 
     /**
-     * Загружает документы для юр.лица с id $legalEntityID и типом документа $docType
+     * Загрузка документов контактным лицом для юр.лица $legalEntityID и типом документа $docType
      * @param $legalEntityID
      * @param $docType
      * @return array
      * @throws HttpException
      * @throws \Throwable
      */
-    public function actionUploadDocs($legalEntityID, $docType)
+    public function actionUploadDocsFromContact($legalEntityID, $docType)
     {
         $slsClient = SlsClient::findOne($legalEntityID);
 
@@ -173,6 +173,39 @@ class SlsClientController extends ActiveControllerExtended
             throw new HttpException(200, "Юр. лицо с этим ID не состоит в вашей организации.", 200);
         }
 
+        return $this->uploadDocs($slsClient, $docType);
+    }
+
+    const actionUploadDocsFromManager = 'POST /v1/sls-client/upload-docs-from-manager';
+
+    /**
+     * Загрузка документов менеджером для юр.лица $legalEntityID и типом документа $docType
+     * @param $legalEntityID
+     * @param $docType
+     * @return array
+     * @throws HttpException
+     * @throws \Throwable
+     */
+    public function actionUploadDocsFromManager($legalEntityID, $docType)
+    {
+        $slsClient = SlsClient::findOne($legalEntityID);
+
+        if (!$slsClient) {
+            throw new HttpException(200, "Юр. лицо с этим ID не существует.", 200);
+        }
+
+        return $this->uploadDocs($slsClient, $docType);
+    }
+
+    /**
+     * Загружает документы для юр.лица $slsClient и типом документа $docType
+     * @param SlsClient $slsClient
+     * @param $docType
+     * @return array
+     * @throws HttpException
+     */
+    private function uploadDocs($slsClient, $docType)
+    {
         $files = [];
         if (!isset($_FILES['files'])) {
             throw new HttpException(200, "Файлы отсутствуют.", 200);
@@ -194,7 +227,9 @@ class SlsClientController extends ActiveControllerExtended
 
         $filesCount = isset($files['name']) ? count($files['name']) : 0;
         for ($i = 0; $i < $filesCount; $i++) {
-            $fileName = $slsClient->id . '_' . $i;
+            $pathInfo = pathinfo($files['name'][$i]);
+
+            $fileName = $slsClient->id . '_' . $i . '.' . $pathInfo['extension'];
             $dest = $destDir . '/' . $fileName;
 
             move_uploaded_file($files['tmp_name'][$i], $dest);
@@ -209,38 +244,68 @@ class SlsClientController extends ActiveControllerExtended
         return ['_result_' => 'success'];
     }
 
-    const actionGetDocs = 'GET /v1/sls-client/get-docs';
+    const actionGetDocsForContact = 'GET /v1/sls-client/get-docs-for-contact';
 
     /**
-     * Возвращает документы для всех юр.лиц, состоящих в той организации, что контактное лицо $contactLogin
+     * Возвращает документы для всех юр.лиц, состоящих в той же организации, что и контактное лицо $contactLogin
      * @param string $contactLogin
      * @return array
      * @throws HttpException
      * @throws \Throwable
      */
-    public function actionGetDocs($contactLogin = 'CurrentUser')
+    public function actionGetDocsForContact($contactLogin = 'CurrentUser')
     {
-        if(YII_ENV_PROD && ($contactLogin !== 'CurrentUser')) {
+        if (YII_ENV_PROD && ($contactLogin !== 'CurrentUser')) {
             throw new HttpException(200, "Только текущий пользователь.", 200);
         }
 
-        if($contactLogin === 'CurrentUser') {
+        if ($contactLogin === 'CurrentUser') {
             /** @var AnxUser $contact */
             $contact = Yii::$app->getUser()->getIdentity();
         } else {
             $contact = AnxUser::findOne(['login' => $contactLogin]);
         }
 
-        if(!$contact) {
+        if (!$contact) {
             throw new HttpException(200, "Пользователь не получен.", 200);
         }
 
-        if(!$contact->org_fk) {
+        if (!$contact->org_fk) {
             throw new HttpException(200, "Пользователь не состоит в организации.", 200);
         }
 
         $slsClients = SlsClient::findAll(['org_fk' => $contact->org_fk]);
 
+        return $this->getDocs($slsClients);
+    }
+
+    const actionGetDocsForManager = 'GET /v1/sls-client/get-docs-for-manager';
+
+    /**
+     * Возвращает документы для всех юр.лиц, состоящих в организации $orgID
+     * @param $orgID
+     * @return array
+     * @throws HttpException
+     */
+    public function actionGetDocsForManager($orgID)
+    {
+        if (!$orgID) {
+            throw new HttpException(200, "Укажите организацию.", 200);
+        }
+
+        $slsClients = SlsClient::findAll(['org_fk' => $orgID]);
+
+        return $this->getDocs($slsClients);
+    }
+
+
+    /**
+     * Возвращает документы для юр.лиц $slsClients
+     * @param SlsClient[] $slsClients
+     * @return array
+     */
+    private function getDocs($slsClients)
+    {
         $response = [];
 
         foreach ($slsClients as $slsClient) {
@@ -250,7 +315,7 @@ class SlsClientController extends ActiveControllerExtended
             foreach ($docTypes as $docTypeDir => $docTypeName) {
                 $files = glob(Yii::getAlias(AppMod::filesRout[$docTypeDir]) . '/' . $slsClient->id . '_*');
 
-                $response[$slsClient->id][$docTypeDir] = [
+                $docTypeObj = [
                     'dir' => $docTypeDir,
                     'name' => $docTypeName,
                     'files' => []
@@ -259,11 +324,13 @@ class SlsClientController extends ActiveControllerExtended
                 foreach ($files as $file) {
                     $filename = pathinfo($file)['filename'];
                     $basename = pathinfo($file)['basename'];
-                    $response[$slsClient->id][$docTypeDir]['files'][] = [
+                    $docTypeObj['files'][] = [
                         'name' => $filename,
                         'url' => AppMod::domain . '/v1/files/get/6spdsd4d44fsdaf89034/' . $docTypeDir . '/' . $basename
                     ];
                 }
+
+                $response[$slsClient->id][] = $docTypeObj;
             }
         }
         return $response;

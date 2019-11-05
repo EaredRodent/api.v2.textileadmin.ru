@@ -28,7 +28,7 @@ class CardProdController extends ActiveControllerExtended
 
     /**
      * Вернуть все изделия соответствующие фильтрам
-     * @param $form - {"sexTags":["Мужчинам"],"groupIDs":[],"classTags":["Футболка"],"themeTags":[],"fabTypeTags":[],"newOnly":false,"print":"all"}
+     * @param $form - {search: "", "sexTags":["Мужчинам"],"groupIDs":[],"classTags":["Футболка"],"themeTags":[],"fabTypeTags":[],"newOnly":false,"print":"all"}
      * @return array
      */
     public function actionGetByFilters($form)
@@ -38,11 +38,12 @@ class CardProdController extends ActiveControllerExtended
         $sexTags = isset($form['sexTags']) ? $form['sexTags'] : [];
         $sexTitles = RefBlankSex::calcSexTagsToRealTitles($sexTags);
 
+        $search = isset($form['search']) ? $form['search'] : '';
+        $newOnly = isset($form['newOnly']) ? $form['newOnly'] : false;
         $groupIDs = isset($form['groupIDs']) ? $form['groupIDs'] : [];
         $classTags = isset($form['classTags']) ? $form['classTags'] : [];
         $themeTags = isset($form['themeTags']) ? $form['themeTags'] : [];
         $fabTypeTags = isset($form['fabTypeTags']) ? $form['fabTypeTags'] : [];
-        $newOnly = isset($form['newOnly']) ? $form['newOnly'] : false;
 
         // yes - только принт
         // no - без принта
@@ -81,6 +82,8 @@ class CardProdController extends ActiveControllerExtended
         foreach (array_merge($filteredProds, $filteredProdsPrint) as $prod) {
             $arrCards[] = new CardProd($prod);
         }
+
+        CardProd::search($arrCards, $search);
 
         CardProd::sort($arrCards);
 

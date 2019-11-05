@@ -304,8 +304,8 @@ class Permissions
             // Карта клиента
 
             AnxUserController::actionGetContacts,
-            SlsClientController::actionUploadDocs,
-            SlsClientController::actionGetDocs,
+            SlsClientController::actionUploadDocsFromContact,
+            SlsClientController::actionGetDocsForContact,
         ],
 
         self::taskTest => [
@@ -337,6 +337,8 @@ class Permissions
             SlsMessageController::actionSendFromManager,
 
             AnxUserController::actionChangeContactStatus,
+            SlsClientController::actionGetDocsForManager,
+            SlsClientController::actionUploadDocsFromManager,
         ],
 
         self::taskReportProduction => [
