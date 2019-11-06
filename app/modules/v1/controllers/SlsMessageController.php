@@ -65,6 +65,7 @@ class SlsMessageController extends ActiveControllerExtended
      * Возвращает сообщения для менеджера B2B
      * @param $org_fk
      * @return SlsMessage[]
+     * @throws HttpException
      */
     function actionGetMessagesForOrg($org_fk)
     {
