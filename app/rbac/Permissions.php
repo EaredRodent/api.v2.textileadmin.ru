@@ -21,6 +21,7 @@ use app\modules\v1\controllers\SlsCurrencyController;
 use app\modules\v1\controllers\SlsInvoiceController;
 use app\modules\v1\controllers\SlsItemController;
 use app\modules\v1\controllers\SlsMessageController;
+use app\modules\v1\controllers\SlsMessageStateController;
 use app\modules\v1\controllers\SlsMoneyController;
 use app\modules\v1\controllers\SlsOrderController;
 use app\modules\v1\controllers\SlsOrgController;
@@ -262,6 +263,7 @@ class Permissions
         self::taskB2BUser => [
             // Аппбар
             RefBlankSexController::actionGetAppBarTree,
+            SlsMessageStateController::actionGetForContact,
 
             // Фильтры
 
@@ -323,6 +325,7 @@ class Permissions
             AnxUserController::actionGetManagers,
             SlsClientController::actionGetOutdatedLegalEntities,
             SlsMessageController::actionGetMessagesForOrg,
+            SlsMessageStateController::actionGetForManager,
         ],
 
         self::taskSalesClientsWrite => [
