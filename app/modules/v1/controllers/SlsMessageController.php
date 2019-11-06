@@ -30,7 +30,7 @@ class SlsMessageController extends ActiveControllerExtended
     {
         /** @var AnxUser $contact */
         $contact = Yii::$app->getUser()->getIdentity();
-        return SlsMessage::findAll(['org_fk' => $contact->org_fk]);
+        return SlsMessage::getMessages($contact->org_fk);
     }
 
     const actionSendFromClient = 'POST /v1/sls-message/send-from-client';
@@ -68,7 +68,7 @@ class SlsMessageController extends ActiveControllerExtended
      */
     function actionGetMessagesForOrg($org_fk)
     {
-        return SlsMessage::findAll(['org_fk' => $org_fk]);
+        return SlsMessage::getMessages($org_fk);
     }
 
     const actionSendFromManager = 'POST /v1/sls-message/send-from-manager';
