@@ -24,7 +24,8 @@ class SlsMessageStateController extends ActiveControllerExtended
 
     /**
      * Возвращает информацию о сообщениях организации для контактного лица
-     * @return array [unreadCount: x] - unreadCount кол-во непрочитанных сообщений
+     * @return array
+     * unreadCount - кол-во непрочитанных сообщений
      * @throws \Throwable
      */
     public function actionGetForContact()
@@ -58,7 +59,8 @@ class SlsMessageStateController extends ActiveControllerExtended
 
     /**
      * Возвращает информацию о сообщениях всех организаций для менеджера
-     * @return array [unreadCount: x] - unreadCount кол-во непрочитанных сообщений
+     * @return array
+     * unreadCount - кол-во непрочитанных сообщений
      * @throws \Throwable
      */
     public function actionGetForManager()
