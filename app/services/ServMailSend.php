@@ -89,7 +89,7 @@ class ServMailSend
 
         } catch (Exception $e) {
             $str = $e->getMessage();
-            return ['resp' => 'fail:' . $str];
+            return ['resp' => $str];
         }
 
 

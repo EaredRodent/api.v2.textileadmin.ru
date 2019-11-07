@@ -10,12 +10,14 @@ namespace app\modules\v1\controllers;
 
 
 use app\models\AnxUser;
+use app\modules\AppMod;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\sls\SlsClient;
 use app\modules\v1\models\sls\SlsItem;
 use app\modules\v1\models\sls\SlsMessage;
 use app\modules\v1\models\sls\SlsOrder;
 use app\modules\v1\models\sls\SlsOrg;
+use app\services\ServTelegramSend;
 use tests\unit\models\ContactFormTest;
 use Yii;
 use yii\web\HttpException;
@@ -67,33 +69,22 @@ class SlsOrgController extends ActiveControllerExtended
             throw new HttpException(200, 'Внутренняя ошибка.', 200);
         }
 
-        $result = ['_result_' => 'success', 'accounts' => []];
+        /** @var AnxUser[] $contacts */
+        $contacts = AnxUser::findAll(['org_fk' => $org->id]);
+        foreach ($contacts as $contact) {
+            $password = $contact->fillAuthData();
 
-        /** @var AnxUser[] $clients */
-        $clients = AnxUser::findAll(['org_fk' => $org->id]);
-        foreach ($clients as $client) {
-            $client->status = 1;
-
-            $password = AnxUser::createPasswordForB2BContact();
-            $hash = Yii::$app->security->generatePasswordHash($password);
-            $accesstoken = Yii::$app->security->generateRandomString(32);
-
-            $client->hash = $hash;
-            $client->accesstoken = $accesstoken;
-
-            if (!$client->save()) {
+            if (!$contact->save()) {
                 throw new HttpException(200, 'Ошибка при обновлении статуса клиента.', 200);
             }
 
-
-            // temp (замена почты)
-            $result['accounts'][] = [
-                'login' => $client->login,
-                'password' => $password
-            ];
+            $contact->sendSuccessEmail($password);
         }
 
-        return $result;
+        ServTelegramSend::send(AppMod::tgBotOxounoB2b, AppMod::tgGroupOxounoB2b,
+            "Регистрация Клиента {$org->name} {$org->location} одобрена");
+
+        return ['_result_' => 'success'];
     }
 
 

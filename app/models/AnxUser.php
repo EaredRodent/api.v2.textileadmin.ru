@@ -3,7 +3,9 @@
 namespace app\models;
 
 use app\gii\GiiAnxUser;
+use app\services\ServMailSend;
 use Yii;
+use yii\web\HttpException;
 
 class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
 {
@@ -111,4 +113,36 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
         }
         return $password;
     }
+
+    /**
+     * Активация контактного лица B2B кабинета.
+     * Заполнить данные пользователя необходимые для авторизации и вернуть пароль для этого пользователя
+     */
+    public function fillAuthData() {
+        $password = AnxUser::createPasswordForB2BContact();
+        $hash = Yii::$app->security->generatePasswordHash($password);
+        $accesstoken = Yii::$app->security->generateRandomString(32);
+
+        $this->hash = $hash;
+        $this->accesstoken = $accesstoken;
+
+        return $password;
+    }
+
+    public function sendSuccessEmail($password) {
+        $email = $this->login;
+        $body =
+            "<p>Ваша учетная запись активирована. " .
+            "Для входа в <a href='b2b.oxouno.ru'>B2B-кабинет</a> используйте:" .
+            "<br>Логин: {$email}" .
+            "<br>Пароль: <b>{$password}</b></p>";
+
+        $result = ServMailSend::send($this->login, 'Доступ к B2B-кабинету OXOUNO', $body);
+
+        if ($result['resp'] !== 'ok') {
+            throw new HttpException(200, 'Ошибка отправки почты "' . $result['resp'] . '"', 200);
+        }
+    }
+
+
 }

@@ -8,6 +8,7 @@
 
 namespace app\modules\v1\controllers;
 
+use app\services\ServMailSend;
 use app\services\ServReCAPTCHA;
 use app\models\AnxUser;
 use app\modules\AppMod;
@@ -164,7 +165,7 @@ class AnxUserController extends ActiveControllerExtended
             throw new HttpException(200, 'Вы робот!', 200);
         }
 
-        if(!$offer) {
+        if (!$offer) {
             throw new HttpException(200, 'Для регистрации требуется ваше соглашение с офертой.', 200);
         }
 
@@ -273,7 +274,7 @@ class AnxUserController extends ActiveControllerExtended
     {
         $form = json_decode($form, true);
 
-        if(isset($form['id'])) {
+        if (isset($form['id'])) {
             $user = AnxUser::get($form['id']);
             $user->attributes = $form;
         } else {
@@ -332,12 +333,29 @@ class AnxUserController extends ActiveControllerExtended
 
     const actionChangeContactStatus = 'POST /v1/anx-user/change-contact-status';
 
-    public function actionChangeContactStatus($id) {
+    /**
+     * Изменить статус контактного лица. Если активируется - выслать
+     * @param $id
+     * @return array
+     * @throws HttpException
+     */
+    public function actionChangeContactStatus($id)
+    {
         $contact = AnxUser::findOne($id);
-        $contact->status = $contact->status ? 0 : 1;
+
+        if ($contact->status) {
+            $contact->status = 0;
+        } else {
+            $contact->status = 1;
+            $password = $contact->fillAuthData();
+        }
 
         if (!$contact->save()) {
             throw new HttpException(200, 'Внутренняя ошибка.', 200);
+        }
+
+        if ($contact->status) {
+            $contact->sendSuccessEmail($password);
         }
 
         return ['_result_' => 'success'];
