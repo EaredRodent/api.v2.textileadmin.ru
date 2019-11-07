@@ -23,6 +23,7 @@ use Yii;
  * @property string $phone
  * @property string $hash
  * @property string $auth_key
+ * @property string $url_key
  * @property string $accesstoken
  * @property int $org_fk если юзер контактное лицо клиента b2b - то тут ссылка на свмого клиента
  *
@@ -35,12 +36,15 @@ use Yii;
  * @property PrTsdItem[] $prTsdItems
  * @property SlsClient[] $slsClients
  * @property SlsInvoice[] $slsInvoices
+ * @property SlsMessage[] $slsMessages
+ * @property SlsMessageState[] $slsMessageStates
  * @property SlsMoney[] $slsMoneys
  * @property SlsOrder[] $slsOrders
+ * @property SlsOrg[] $slsOrgs
  * @property SlsPreorder[] $slsPreorders
  * @property SlsStatPrice[] $slsStatPrices
  */
-class GiiAnxUser extends ActiveRecordExtended
+class GiiAnxUser extends \app\modules\v1\classes\ActiveRecordExtended
 {
     /**
      * {@inheritdoc}
@@ -61,6 +65,7 @@ class GiiAnxUser extends ActiveRecordExtended
             [['status', 'org_fk'], 'integer'],
             [['login', 'name', 'role', 'phone', 'auth_key'], 'string', 'max' => 45],
             [['hash'], 'string', 'max' => 60],
+            [['url_key'], 'string', 'max' => 16],
             [['accesstoken'], 'string', 'max' => 128],
             [['login'], 'unique'],
             [['org_fk'], 'exist', 'skipOnError' => true, 'targetClass' => SlsOrg::className(), 'targetAttribute' => ['org_fk' => 'id']],
@@ -82,6 +87,7 @@ class GiiAnxUser extends ActiveRecordExtended
             'phone' => 'Phone',
             'hash' => 'Hash',
             'auth_key' => 'Auth Key',
+            'url_key' => 'Url Key',
             'accesstoken' => 'Accesstoken',
             'org_fk' => 'Org Fk',
         ];
@@ -162,6 +168,22 @@ class GiiAnxUser extends ActiveRecordExtended
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getSlsMessages()
+    {
+        return $this->hasMany(SlsMessage::className(), ['user_fk' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSlsMessageStates()
+    {
+        return $this->hasMany(SlsMessageState::className(), ['user_fk' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getSlsMoneys()
     {
         return $this->hasMany(SlsMoney::className(), ['user_fk' => 'id']);
@@ -173,6 +195,14 @@ class GiiAnxUser extends ActiveRecordExtended
     public function getSlsOrders()
     {
         return $this->hasMany(SlsOrder::className(), ['user_fk' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSlsOrgs()
+    {
+        return $this->hasMany(SlsOrg::className(), ['manager_fk' => 'id']);
     }
 
     /**

@@ -79,5 +79,7 @@ class AppMod
 
     //const groupSales      = YII_ENV_DEV ? '-303512568' : '-237367400';
 
+    const pathDocInvoice = "@app/../../textile/files/sls/invoices";
+    const pathDocWaybill = "@app/../../textile/files/sls/torg12";
 
 }

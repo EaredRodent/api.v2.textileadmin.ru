@@ -11,7 +11,10 @@ namespace app\modules\v1\controllers;
 use app\modules\AppMod;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\sls\SlsClient;
+use app\modules\v1\models\sls\SlsOrder;
+use app\modules\v1\models\sls\SlsOrg;
 use tests\unit\models\ContactFormTest;
+use Yii;
 use yii\web\Controller;
 use yii\web\HttpException;
 
@@ -66,6 +69,44 @@ class FilesController extends Controller
             throw new HttpException(403, 'Нет доступа');
         }
 
+    }
+
+    /**
+     * Вернуть документы для контактных лиц Клиента b2b-кабинета
+     * @param $dir
+     * @param $urlKey
+     * @param $id
+     * @return \yii\console\Response|\yii\web\Response
+     * @throws HttpException
+     */
+    public function actionGetOrderDoc($urlKey, $dir, $id)
+    {
+
+        if ($dir === 'invoice') $path = Yii::getAlias(AppMod::pathDocInvoice) . "/invoice";
+        if ($dir === 'waybill') $path = Yii::getAlias(AppMod::pathDocWaybill) . "/torg12";
+
+        /** @var $order SlsOrder */
+        $order = SlsOrder::get((int)$id);
+        $ownerUrlKey = $order->contactFk->url_key;
+
+        if ($urlKey === $ownerUrlKey) {
+
+            $name = "{$id}.pdf";
+            $fullPath = $path . "-" . $name;
+
+            if (!file_exists($fullPath)) {
+                throw new HttpException(200, 'Файл не найден', 200);
+            } else {
+                $contentType = mime_content_type($fullPath);
+                return \Yii::$app->response->sendFile($fullPath, $name, [
+                    'fileSize' => filesize($fullPath),
+                    'mimeType' => $contentType,
+                    'inline' => true,
+                ]);
+            }
+        } else {
+            throw new HttpException(403, 'Нет доступа');
+        }
     }
 
 }

@@ -146,16 +146,24 @@ class SlsOrderController extends ActiveControllerExtended
 
     /**
      * Возарвщает все заказы для клиента, с которым связан текущий пользователь
+     * @param null $orgFk [9 Иванов Холдинг]
      * @return array|\yii\db\ActiveRecord[]
      * @throws \Throwable
      */
-    public function actionGetForClient()
+    public function actionGetForClient($orgFk = null)
     {
-        /** @var AnxUser $contact */
-        $contact = Yii::$app->getUser()->getIdentity();
+        // todo не потестируешь на DEV
+        if ($orgFk > 0 && YII_ENV_DEV) {
+            // Для тестирования
+            $legalEntities = SlsClient::findAll(['org_fk' => $orgFk]);
+        } else {
+            // Для текущего юзера
+            /** @var AnxUser $contact */
+            $contact = Yii::$app->getUser()->getIdentity();
+            /** @var SlsClient[] $legalEntities */
+            $legalEntities = SlsClient::findAll(['org_fk' => $contact->org_fk]);
+        }
 
-        /** @var SlsClient[] $legalEntities */
-        $legalEntities = SlsClient::findAll(['org_fk' => $contact->org_fk]);
         $legalEntitiesIds = [];
 
         foreach ($legalEntities as $legalEntity) {

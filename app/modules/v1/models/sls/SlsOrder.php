@@ -11,6 +11,8 @@ namespace app\modules\v1\models\sls;
 
 use app\extension\Sizes;
 use app\gii\GiiSlsOrder;
+use app\modules\AppMod;
+use Yii;
 use yii\db\ActiveRecord;
 
 class SlsOrder extends GiiSlsOrder
@@ -54,7 +56,7 @@ class SlsOrder extends GiiSlsOrder
             'statusStr' => function () {
                 return self::statuses[$this->status];
             },
-            'sum' => function() {
+            'sum' => function () {
                 $slsItems = SlsItem::findAll(['order_fk' => $this->id]);
                 $sum = 0;
 
@@ -67,6 +69,25 @@ class SlsOrder extends GiiSlsOrder
                 }
 
                 return $sum;
+            },
+            'docInvoice' => function () {
+
+                $path = Yii::getAlias(AppMod::pathDocInvoice) . "/invoice-{$this->id}.pdf";
+                if (file_exists($path)) {
+                    $urlKey = $this->contactFk->url_key;
+                    return AppMod::domain . "/v1/files/get-order-doc/{$urlKey}/invoice/{$this->id}";
+                } else {
+                    return '';
+                }
+            },
+            'docWaybill' => function () {
+                $path = Yii::getAlias(AppMod::pathDocWaybill) . "/torg12-{$this->id}.pdf";
+                if (file_exists($path)) {
+                    $urlKey = $this->contactFk->url_key;
+                    return AppMod::domain . "/v1/files/get-order-doc/{$urlKey}/waybill/{$this->id}";
+                } else {
+                    return '';
+                }
             }
         ]);
     }
