@@ -227,7 +227,7 @@ class SlsOrderController extends ActiveControllerExtended
         $order->transp_comp = $form['transp_comp'];
         $order->addr_delivery = $form['addr_delivery'];
         $order->pact_date = $form['pact_date'];
-        $order->pact_other = $form['pact_other'];
+        $order->pact_other = isset($form['pact_other']) ? $form['pact_other'] : '';
 
         if (!$order->save()) {
             throw new HttpException(200, 'Внутренняя ошибка.', 200);
