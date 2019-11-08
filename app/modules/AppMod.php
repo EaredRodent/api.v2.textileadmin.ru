@@ -8,7 +8,7 @@ use Yii;
 
 class AppMod
 {
-
+    const ean13Prefix = '4563721';
 
     const domain = YII_ENV_PROD ? 'https://api.textileadmin.ru' : 'http://api.textileadmin.loc';
 

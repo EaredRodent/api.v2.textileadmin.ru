@@ -83,11 +83,12 @@ class ProdRest
      * Вернуть остатки для указанного изделия без учета упаковки
      * @param $prodId
      * @param $printId
-     * @param $fSize
+     * @param $size
      * @return int|mixed
      */
-    public function getRestPrint($prodId, $printId, $fSize)
+    public function getRestPrint($prodId, $printId, $size)
     {
+        $fSize = Sizes::getFieldSize($size);
         return (isset ($this->prodPrint[$prodId][$printId][$fSize])) ?
             $this->prodPrint[$prodId][$printId][$fSize] : 0;
     }

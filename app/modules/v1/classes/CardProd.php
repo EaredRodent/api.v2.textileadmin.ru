@@ -80,6 +80,11 @@ class CardProd
         });
     }
 
+    /**
+     * todo что это?
+     * @param $arrCards
+     * @param $search
+     */
     static function search(&$arrCards, $search)
     {
         if (!$search) {

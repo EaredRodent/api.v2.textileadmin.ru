@@ -44,9 +44,19 @@ class Prices
         }
     }
 
-    public function getPrice($prodId, $printId, $fSize)
+    /**
+     * Вернуть цену по продукт/принт/размер
+     * @param $prodId
+     * @param $printId
+     * @param $size
+     * @return int
+     * @throws \Exception
+     */
+    public function getPrice($prodId, $printId, $size)
     {
-        return (isset($this->matrix[$prodId][$printId][$fSize])) ? $this->matrix[$prodId][$printId][$fSize] : 0;
+        $fSize = Sizes::getFieldSize($size);
+        return (isset($this->matrix[$prodId][$printId][$fSize])) ?
+            $this->matrix[$prodId][$printId][$fSize] : 0;
     }
 
 }

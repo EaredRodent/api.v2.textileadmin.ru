@@ -7,6 +7,7 @@ namespace app\rbac;
 use app\modules\v1\controllers\AnxUserController;
 use app\modules\v1\controllers\BaseController;
 use app\modules\v1\controllers\CardProdController;
+use app\modules\v1\controllers\OxounoApiController;
 use app\modules\v1\controllers\PrStorProdController;
 use app\modules\v1\controllers\RefArtBlankController;
 use app\modules\v1\controllers\RefBlankClassController;
@@ -43,6 +44,7 @@ class Permissions
     const roleB2bClient = 'roleB2bClient';
     const roleSaller = 'roleSaller'; // Менеджер отдела продаж
     const roleSallerMain = 'roleSallerMain'; // Руководитель отдела продаж
+    const roleOxouno = 'roleOxouno'; // Пользователь розничного магазина oxouno
 
 
     const roles = [
@@ -62,6 +64,7 @@ class Permissions
             self::taskTest,
             self::taskSalesClientsAccess,
             self::taskSalesClientsWrite,
+            self::taskOxounoApi,
             ///
             AnxUserController::postCreateUser,
             BaseController::actionPostTestData,
@@ -94,6 +97,9 @@ class Permissions
         self::roleSallerMain => [
             self::taskSalesClientsAccess,
             self::taskSalesClientsWrite,
+        ],
+        self::roleOxouno => [
+            self::taskOxounoApi,
         ],
 
 
@@ -185,6 +191,11 @@ class Permissions
      * Доступ к странице pageManagamentProduction и все ее API
      */
     const taskReportProduction = 'taskReportProduction';
+
+    /**
+     * Доступ к API для магазина oxouno.ru
+     */
+    const taskOxounoApi = 'taskOxounoApi';
 
     const tasks = [
 
@@ -350,6 +361,11 @@ class Permissions
             PrStorProdController::actionGetReportStorIncomMonth,
             PrStorProdController::actionGetReportStorOutMonth,
             PrStorProdController::actionGetReportOrderOut,
+        ],
+
+        self::taskOxounoApi => [
+            OxounoApiController::actionGetProductCatalog,
+            OxounoApiController::actionGetStorRest,
         ],
     ];
 

@@ -37,10 +37,36 @@ class RefProductPrint extends GiiRefProductPrint
                 return 'OXO-' . str_pad($this->blank_fk, 4, '0', STR_PAD_LEFT) . '-' .
                     str_pad($this->print_fk, 3, '0', STR_PAD_LEFT);
             },
+            'group' => function () {
+                return $this->blankFk->modelFk->classFk->groupFk->title;
+            },
             'class' => function () {
                 return $this->blankFk->modelFk->classFk->title;
             },
-
+            'classOxo' => function () {
+                return $this->blankFk->modelFk->classFk->oxouno;
+            },
+            'sex' => function () { //
+                return $this->blankFk->modelFk->sexFk->title;
+            },
+            'colorOxo' => function () {
+                return $this->blankFk->themeFk->title_price;
+            },
+            'printProd' => function () { //
+                return $this->printFk->title;
+            },
+            'printOxo' => function () { //
+                return $this->printFk->oxouno;
+            },
+            'flagInPrice' => function () { //
+                return $this->flag_price;
+            },
+            'fabric' => function () { //
+                return $this->blankFk->fabricTypeFk->struct;
+            },
+            'modelDescription' => function () { //
+                return $this->blankFk->modelFk->descript;
+            },
             'photos' => function () {
                 $resp['large'] = [];
                 $resp['medium'] = [];

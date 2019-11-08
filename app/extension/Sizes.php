@@ -186,5 +186,23 @@ class Sizes
 		') AS totalSum',
 	];
 
+    /**
+     * Преобразовать переданный размер в формат self::fields
+     * @param $sizeStr
+     * @return mixed
+     * @throws \Exception
+     */
+	static function getFieldSize($sizeStr) {
+
+        if (in_array($sizeStr, self::fields)) {
+            return $sizeStr;
+        } else {
+            if (isset(self::revers[$sizeStr])) {
+                return self::revers[$sizeStr];
+            } else {
+                throw new \Exception("Странный размер {$sizeStr}");
+            }
+        }
+    }
 
 }

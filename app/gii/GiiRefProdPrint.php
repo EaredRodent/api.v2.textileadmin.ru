@@ -11,6 +11,7 @@ use Yii;
  * @property int $id
  * @property string $dt_create
  * @property string $title
+ * @property string $oxouno название для магазина
  *
  * @property PrInventItem[] $prInventItems
  * @property PrLot[] $prLots
@@ -25,7 +26,7 @@ use Yii;
  * @property SlsPreorderItem[] $slsPreorderItems
  * @property SlsPreorderReserv[] $slsPreorderReservs
  */
-class GiiRefProdPrint extends ActiveRecordExtended
+class GiiRefProdPrint extends \app\modules\v1\classes\ActiveRecordExtended
 {
     /**
      * {@inheritdoc}
@@ -43,7 +44,7 @@ class GiiRefProdPrint extends ActiveRecordExtended
         return [
             [['dt_create'], 'safe'],
             [['title'], 'required'],
-            [['title'], 'string', 'max' => 45],
+            [['title', 'oxouno'], 'string', 'max' => 45],
         ];
     }
 
@@ -56,6 +57,7 @@ class GiiRefProdPrint extends ActiveRecordExtended
             'id' => 'ID',
             'dt_create' => 'Dt Create',
             'title' => 'Title',
+            'oxouno' => 'Oxouno',
         ];
     }
 

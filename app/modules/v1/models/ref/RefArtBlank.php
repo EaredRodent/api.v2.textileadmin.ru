@@ -22,6 +22,7 @@ class RefArtBlank extends GiiRefArtBlank
      */
     public function fields()
     {
+        // todo рефакторинг - выбор fields
         return array_merge(parent::fields(), [
             'titleStr' => function () {
                 // ':' . $this->modelFk->sexFk->code_ru . ' ' .
@@ -30,8 +31,35 @@ class RefArtBlank extends GiiRefArtBlank
 
                 return $this->modelFk->fashion;
             },
+            'group' => function () { //
+                return $this->modelFk->classFk->groupFk->title;
+            },
             'class' => function () {
                 return $this->modelFk->classFk->title;
+            },
+            'classOxo' => function () { //
+                return $this->modelFk->classFk->oxouno;
+            },
+            'sex' => function () { //
+                return $this->modelFk->sexFk->title;
+            },
+            'colorOxo' => function () { //
+                return $this->themeFk->title_price;
+            },
+            'printProd' => function () { //
+                return 'Без принта';
+            },
+            'printOxo' => function () { //
+                return 'Без принта';
+            },
+            'flagInPrice' => function () { //
+                return $this->flag_price;
+            },
+            'fabric' => function () { //
+                return $this->fabricTypeFk->struct;
+            },
+            'modelDescription' => function () { //
+                return $this->modelFk->descript;
             },
             'art' => function () {
                 return 'OXO-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);

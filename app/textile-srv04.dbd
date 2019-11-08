@@ -3744,11 +3744,27 @@
             </PortAnchors>
             <BendPoints>
               <PointD>
-                <X>7153.73095703125 px</X>
-                <Y>2818.66650390625 px</Y>
+                <X>7788 px</X>
+                <Y>2818.66660798921 px</Y>
+              </PointD>
+              <PointD>
+                <X>7788 px</X>
+                <Y>3212 px</Y>
+              </PointD>
+              <PointD>
+                <X>6886 px</X>
+                <Y>3212 px</Y>
+              </PointD>
+              <PointD>
+                <X>6886 px</X>
+                <Y>1160.66662597656 px</Y>
+              </PointD>
+              <PointD>
+                <X>7153.7311650884 px</X>
+                <Y>1160.66662597656 px</Y>
               </PointD>
             </BendPoints>
-            <IsManuallyRouted>false</IsManuallyRouted>
+            <IsManuallyRouted>true</IsManuallyRouted>
             <DbOid>
               <Path>textile.sls_stat_price.FK_sls_stat_price_anx_user_id</Path>
               <TypeName>ForeignKey</TypeName>
@@ -3764,8 +3780,8 @@
             <PortAnchors>
               <Port xsi:type="LinkPort">
                 <Location>
-                  <X>650.26904296875 px</X>
-                  <Y>1105.33335603608 px</Y>
+                  <X>918 px</X>
+                  <Y>632.333111895457 px</Y>
                 </Location>
                 <Anchors>None</Anchors>
                 <Align>Left</Align>
@@ -11175,7 +11191,7 @@
               <Port xsi:type="LinkPort">
                 <Location>
                   <X>140 px</X>
-                  <Y>5.13391582899203E-05 px</Y>
+                  <Y>5.1339157835173E-05 px</Y>
                 </Location>
                 <Anchors>None</Anchors>
                 <Align>Left</Align>
@@ -11757,10 +11773,10 @@
         <GridSize>22 px</GridSize>
         <ViewPort>
           <ScaleMode>Free</ScaleMode>
-          <Scale>0.63</Scale>
+          <Scale>0.6</Scale>
           <Location>
-            <X>6320.6349862431 px</X>
-            <Y>1341.26983827979 px</Y>
+            <X>5283.33308226533 px</X>
+            <Y>1224.99994168017 px</Y>
           </Location>
         </ViewPort>
       </Model>
