@@ -122,9 +122,11 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
         $password = AnxUser::createPasswordForB2BContact();
         $hash = Yii::$app->security->generatePasswordHash($password);
         $accesstoken = Yii::$app->security->generateRandomString(32);
+        $url_key = Yii::$app->security->generateRandomString(16);
 
         $this->hash = $hash;
         $this->accesstoken = $accesstoken;
+        $this->url_key = $url_key;
 
         return $password;
     }

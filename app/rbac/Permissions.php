@@ -76,6 +76,7 @@ class Permissions
             self::taskRegPaysInvoiceManage,
             self::taskReferenceAccess,
             self::taskReportProduction,
+            self::taskSalesClientsAccess,
         ],
         self::roleBuhMain => [
             self::taskRegPaysPageAccess,
