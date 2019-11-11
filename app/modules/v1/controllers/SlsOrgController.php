@@ -73,6 +73,7 @@ class SlsOrgController extends ActiveControllerExtended
         $contacts = AnxUser::findAll(['org_fk' => $org->id]);
         foreach ($contacts as $contact) {
             $password = $contact->fillAuthData();
+            $contact->status = 1;
 
             if (!$contact->save()) {
                 throw new HttpException(200, 'Ошибка при обновлении статуса клиента.', 200);

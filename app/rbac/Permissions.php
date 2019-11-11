@@ -76,6 +76,8 @@ class Permissions
             self::taskRegPaysInvoiceManage,
             self::taskReferenceAccess,
             self::taskReportProduction,
+            self::taskSalesClientsAccess,
+            SlsMessageStateController::getMessagesForOtherManagers,
         ],
         self::roleBuhMain => [
             self::taskRegPaysPageAccess,
@@ -98,6 +100,7 @@ class Permissions
         self::roleSallerMain => [
             self::taskSalesClientsAccess,
             self::taskSalesClientsWrite,
+            SlsMessageStateController::getMessagesForOtherManagers,
         ],
         self::roleOxouno => [
             self::taskOxounoApi,
