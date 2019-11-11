@@ -57,6 +57,9 @@ class SlsMessageStateController extends ActiveControllerExtended
 
     const actionGetForManager = 'GET /v1/sls-message-state/get-for-manager';
 
+    // Если пользователь обладает этим правом, то ему видны уведомления о новых сообщениях организаций, закрепленных за другими менеджерами
+    const getMessagesForOtherManagers = 'getMessagesForOtherManagers';
+
     /**
      * Возвращает информацию о сообщениях всех организаций для менеджера
      * @return array
@@ -90,7 +93,9 @@ class SlsMessageStateController extends ActiveControllerExtended
                 ->where(['org_fk' => $org->id])
                 ->andWhere(['>', 'id', $last_message_fk])
                 ->all();
-            $unreadCount = count($unreadMessages);
+
+            $unreadCount = Yii::$app->getUser()->can(self::getMessagesForOtherManagers) ||
+            ($org->manager_fk === $contact->id) ? count($unreadMessages) : 0;
 
             $result[$org->id] = [
                 'unreadCount' => $unreadCount
