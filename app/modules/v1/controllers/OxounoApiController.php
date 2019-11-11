@@ -16,6 +16,7 @@ use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefEan;
 use app\modules\v1\models\ref\RefProductPrint;
 use app\objects\Prices;
+use app\objects\ProdWeight;
 
 class OxounoApiController extends ActiveControllerExtended
 {
@@ -31,9 +32,13 @@ class OxounoApiController extends ActiveControllerExtended
     {
         /** @var $eans RefEan[] */
         $eans = RefEan::find()
+            //->limit(500)
+            //->offset(3000)
+            ->with('blankFk')
             ->all();
 
         $prices = new Prices();
+        $weight = new ProdWeight();
 
         $prodArr = [];
 
@@ -67,16 +72,25 @@ class OxounoApiController extends ActiveControllerExtended
 
             $item['group'] = $prodObj->fields()['group']();
             $item['class'] = $prodObj->fields()['classOxo']();
-            $item['modelDescription'] = $prodObj->fields()['modelDescription']();
             $item['sex'] = $prodObj->fields()['sex']();
+            $item['modelId'] = $prodObj->fields()['modelId']();
+            $item['modelProdName'] = $prodObj->fields()['modelProdName']();
+            $item['modelDescription'] = $prodObj->fields()['modelDescription']();
+            $item['modelEpithets'] = $prodObj->fields()['modelEpithets']();
             $item['name'] = $prodObj->fields()['titleStr']();
             $item['color'] = $prodObj->fields()['colorOxo']();
             $item['print'] = $prodObj->fields()['printOxo']();
             $item['article'] = $prodObj->fields()['art']();
             $item['size'] = $ean->size;
             $item['fabric'] = $prodObj->fields()['fabric']();
+            $item['fabricDensity'] = $prodObj->fields()['fabricDensity']();
+            $item['fabricEpithets'] = $prodObj->fields()['fabricEpithets']();
+            $item['fabricCare'] = $prodObj->fields()['fabricCare']();
             $item['flagInPrice'] = $prodObj->fields()['flagInPrice']();
             $item['price'] = $prices->getPrice($ean->blank_fk, $ean->print_fk, $ean->size);
+            $item['weight'] = $weight->getWeight(
+                $ean->blankFk->model_fk, $ean->blankFk->fabric_type_fk, $ean->size
+            );
 
             $item['photos'] = $prodObj->fields()['photos']();
 

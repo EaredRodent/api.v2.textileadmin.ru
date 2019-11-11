@@ -64,8 +64,26 @@ class RefProductPrint extends GiiRefProductPrint
             'fabric' => function () { //
                 return $this->blankFk->fabricTypeFk->struct;
             },
+            'fabricDensity' => function () { //
+                return $this->blankFk->fabricTypeFk->desity;
+            },
+            'fabricEpithets' => function () { //
+                return $this->blankFk->fabricTypeFk->epithets;
+            },
+            'fabricCare' => function () { //
+                return $this->blankFk->fabricTypeFk->calcCare();
+            },
+            'modelId' => function () { //
+                return $this->blankFk->model_fk;
+            },
+            'modelProdName' => function () { //
+                return $this->blankFk->modelFk->title;
+            },
             'modelDescription' => function () { //
                 return $this->blankFk->modelFk->descript;
+            },
+            'modelEpithets' => function () { //
+                return $this->blankFk->modelFk->epithets;
             },
             'photos' => function () {
                 $resp['large'] = [];

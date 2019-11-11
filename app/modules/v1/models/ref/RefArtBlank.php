@@ -13,6 +13,7 @@ use app\extension\Sizes;
 use app\gii\GiiRefArtBlank;
 use app\modules\AppMod;
 use app\modules\v1\classes\CardProd;
+use app\objects\ProdWeight;
 
 class RefArtBlank extends GiiRefArtBlank
 {
@@ -58,8 +59,26 @@ class RefArtBlank extends GiiRefArtBlank
             'fabric' => function () { //
                 return $this->fabricTypeFk->struct;
             },
+            'fabricDensity' => function () { //
+                return $this->fabricTypeFk->desity;
+            },
+            'fabricEpithets' => function () { //
+                return $this->fabricTypeFk->epithets;
+            },
+            'fabricCare' => function () { //
+                return $this->fabricTypeFk->calcCare();
+            },
+            'modelId' => function () { //
+                return $this->model_fk;
+            },
+            'modelProdName' => function () { //
+                return $this->modelFk->title;
+            },
             'modelDescription' => function () { //
                 return $this->modelFk->descript;
+            },
+            'modelEpithets' => function () { //
+                return $this->modelFk->epithets;
             },
             'art' => function () {
                 return 'OXO-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
