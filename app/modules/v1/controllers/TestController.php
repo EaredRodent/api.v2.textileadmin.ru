@@ -27,6 +27,25 @@ class TestController extends ActiveControllerExtended
 
     public $modelClass = '';
 
+    const actionTestCode = 'POST /v1/test/test-code';
+
+    /**
+     * Тестирование всякой хуйни
+     * @param $text
+     * @return array
+     */
+    public function actionTestCode()
+    {
+        $resp = [];
+        $resp[] = $accesstoken = Yii::$app->security->generateRandomString(16);
+        $resp[] = $accesstoken = Yii::$app->security->generateRandomString(16);
+        $resp[] = $accesstoken = Yii::$app->security->generateRandomString(16);
+
+        return $resp;
+    }
+
+
+
     const actionSendMail = 'POST /v1/test/send-mail';
 
     /**

@@ -93,6 +93,7 @@ class Permissions
         ],
         self::roleSaller => [
             self::taskSalesClientsAccess,
+            SlsMessageController::actionSendFromManager,
         ],
         self::roleSallerMain => [
             self::taskSalesClientsAccess,
@@ -322,7 +323,7 @@ class Permissions
         ],
 
         self::taskTest => [
-
+            TestController::actionTestCode,
             TestController::actionSendMail,
             TestController::actionSendTelegram,
             TestController::actionObjPrices,

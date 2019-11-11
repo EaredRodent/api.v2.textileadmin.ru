@@ -234,7 +234,7 @@ class SlsOrderController extends ActiveControllerExtended
         }
 
         ServTelegramSend::send(AppMod::tgBotOxounoB2b, AppMod::tgGroupOxounoB2b,
-            "Поступил новый заказ от клиента B2B-кабинета: {$order->clientFk->orgFk->name}");
+            "Поступил новый заказ №{$order->id} от клиента B2B-кабинета: {$order->clientFk->orgFk->name}");
 
         return ['_result_' => 'success'];
     }
