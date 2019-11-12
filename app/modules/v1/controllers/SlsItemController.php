@@ -61,6 +61,7 @@ class SlsItemController extends ActiveControllerExtended
         $item->pack_fk = 1;
 
 
+        // todo объект для цен
         if ($item->print_fk === 1) {
             $priceModel = RefArtBlank::findOne(['id' => $item->blank_fk]);
         } else {
@@ -70,32 +71,35 @@ class SlsItemController extends ActiveControllerExtended
                 ->one();
         }
 
-        $prodRest = new ProdRest([$item->blank_fk]);
-
-        foreach (Sizes::prices as $size => $price) {
-            if (isset($form[$size])) {
-                // Проверка наличия на складе
-
-                $rest = $prodRest->getRestPrint($item->blank_fk, $item->print_fk, $size);
-
-                if ($rest < $form[$size]) {
-                    throw new HttpException(200, 'Изделие в таком кол-ве отсутствует на складе.', 200);
-                }
-
-                // ===
-
-                $item->$size = $form[$size];
-                $item->$price = $priceModel->$price;
-            }
-        }
-
+        // todo 29 линий
+        // Скидка
         $legalEntity = SlsClient::findOne(['id' => $order->client_fk]);
-
         if ($legalEntity->discount) {
             $item->discount = $legalEntity->discount;
         } else {
             $org = SlsOrg::findOne(['id' => $legalEntity->org_fk]);
             $item->discount = $org->discount;
+        }
+
+        $prodRest = new ProdRest([$item->blank_fk]);
+        foreach (Sizes::prices as $size => $price) {
+            if (isset($form[$size])) {
+
+                // Отрицательные числа
+                if ($form[$size] < 0) {
+                    throw new HttpException(200, 'Заказ не может быть отрицательным.', 200);
+                }
+
+                // Проверка наличия на складе
+                $rest = $prodRest->getRestPrint($item->blank_fk, $item->print_fk, $size);
+                if ($rest < $form[$size]) {
+                    throw new HttpException(200, 'Изделие в таком кол-ве отсутствует на складе.', 200);
+                }
+
+                // Запись заказа
+                $item->$size = $form[$size];
+                $item->$price = round($priceModel->$price * (1 - $item->discount / 100));
+            }
         }
 
         if (!$item->save()) {
@@ -109,7 +113,7 @@ class SlsItemController extends ActiveControllerExtended
 
     /**
      * Редактирует количество единиц изделия в заказе (B2B)
-     * @param $form
+     * @param $form {"sls_item_id":19926,"size_m":-1,"size_l":1,"size_xl":1,"size_2xl":1}
      * @return array
      * @throws HttpException
      * @throws \Throwable
@@ -153,33 +157,32 @@ class SlsItemController extends ActiveControllerExtended
             throw new HttpException(200, 'Внутренняя ошибка #1.', 200);
         }
 
-        $prodRest = new ProdRest([$item->blank_fk]);
-
-        foreach (Sizes::prices as $size => $price) {
-
-            if (isset($form[$size])) {
-                // Проверка наличия на складе
-
-                $rest = $prodRest->getRestPrint($item->blank_fk, $item->print_fk, $size);
-
-                if ($rest < $form[$size]) {
-                    throw new HttpException(200, 'Изделие в таком кол-ве отсутствует на складе.', 200);
-                }
-
-                // ===
-
-                $item->$size = $form[$size];
-                $item->$price = $priceModel->$price;
-            }
-        }
-
+        // Скидки
         $legalEntity = SlsClient::findOne(['id' => $order->client_fk]);
-
         if ($legalEntity->discount) {
             $item->discount = $legalEntity->discount;
         } else {
             $org = SlsOrg::findOne(['id' => $legalEntity->org_fk]);
             $item->discount = $org->discount;
+        }
+
+        // Запись кол-ва в заказе
+        $prodRest = new ProdRest([$item->blank_fk]);
+        foreach (Sizes::prices as $size => $price) {
+            if (isset($form[$size])) {
+                // Отрицательные числа
+                if ($form[$size] < 0) {
+                    throw new HttpException(200, 'Заказ не может быть отрицательным.', 200);
+                }
+                // Проверка наличия на складе
+                $rest = $prodRest->getRestPrint($item->blank_fk, $item->print_fk, $size);
+                if ($rest < $form[$size]) {
+                    throw new HttpException(200, 'Изделие в таком кол-ве отсутствует на складе.', 200);
+                }
+                // Запись заказа
+                $item->$size = $form[$size];
+                $item->$price = round($priceModel->$price * (1 - $item->discount / 100));
+            }
         }
 
         if (!$item->save()) {
