@@ -60,6 +60,11 @@ class SlsOrgController extends ActiveControllerExtended
         if (!$org) {
             throw new HttpException(200, 'Такой организации не существует.', 200);
         }
+
+        if($discount < 0) {
+            throw new HttpException(200, 'Скидка не может быть отрицательной.', 200);
+        }
+
         $org->state = 'accept';
         $org->ts_accept = date('Y-m-d H:i:s');
         $org->manager_fk = $manager_fk;
@@ -133,12 +138,16 @@ class SlsOrgController extends ActiveControllerExtended
 
         if (isset($form['id'])) {
             $org = SlsOrg::get($form['id']);
-            $org->attributes = $form;
         } else {
             $org = new SlsOrg();
-            $org->attributes = $form;
             $org->state = 'wait';
         }
+
+        if(isset($form['discount']) && $form['discount'] < 0) {
+            throw new HttpException(200, 'Скидка не может быть отрицательной.', 200);
+        }
+
+        $org->attributes = $form;
 
         if (!$org->save()) {
             throw new HttpException(200, 'Внутренняя ошибка.', 200);

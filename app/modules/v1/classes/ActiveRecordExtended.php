@@ -45,6 +45,7 @@ class ActiveRecordExtended extends ActiveRecord
         $module = Yii::$app->getModule('v1');
         if (parent::delete()) {
             $module->cmdTables[] = static::tableName();
+            return true;
         } else {
             $errorStr = json_encode(static::getFirstErrors(), JSON_UNESCAPED_UNICODE);
             throw new HttpException(200, $errorStr, 200);

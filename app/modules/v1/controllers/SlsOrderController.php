@@ -8,6 +8,7 @@
 
 namespace app\modules\v1\controllers;
 
+use app\extension\Helper;
 use app\extension\Sizes;
 use app\models\AnxUser;
 use app\modules\AppMod;
@@ -235,6 +236,47 @@ class SlsOrderController extends ActiveControllerExtended
 
         ServTelegramSend::send(AppMod::tgBotOxounoB2b, AppMod::tgGroupOxounoB2b,
             "Поступил новый заказ №{$order->id} от клиента B2B-кабинета: {$order->clientFk->orgFk->name}");
+
+        return ['_result_' => 'success'];
+    }
+
+    const actionDeleteOrder = 'POST /v1/sls-order/delete-order';
+
+    public function actionDeleteOrder($orderID)
+    {
+        /** @var AnxUser $contact */
+        $contact = Yii::$app->getUser()->getIdentity();
+
+        /** @var SlsOrder $order */
+        $order = SlsOrder::findOne(['id' => $orderID]);
+
+        if (!$order) {
+            throw new HttpException(200, 'Попытка удалить несуществующий заказ.', 200);
+        }
+
+        if ($order->contact_fk !== $contact->id) {
+            throw new HttpException(200, 'Попытка удалить заказ созданный другим контактным лицом.', 200);
+        }
+
+        $order->status = SlsOrder::s0_del;
+
+        if (!$order->save()) {
+            throw new HttpException(200, 'Внутренняя ошибка.', 200);
+        }
+
+//        $slsItems = SlsItem::find()
+//            ->where(['order_fk' => $order->id])
+//            ->all();
+
+//        foreach ($slsItems as $slsItem) {
+//            if(!$slsItem->delete()) {
+//                throw new HttpException(200, 'Внутренняя ошибка #1.', 200);
+//            }
+//        }
+//
+//        if(!$order->delete()) {
+//            throw new HttpException(200, 'Внутренняя ошибка #2.', 200);
+//        }
 
         return ['_result_' => 'success'];
     }

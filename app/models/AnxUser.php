@@ -3,6 +3,7 @@
 namespace app\models;
 
 use app\gii\GiiAnxUser;
+use app\modules\v1\models\log\LogEvent;
 use app\services\ServMailSend;
 use Yii;
 use yii\web\HttpException;
@@ -108,7 +109,7 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
     public static function createPasswordForB2BContact()
     {
         $password = '';
-        for($i = 0; $i < 6; $i++){
+        for ($i = 0; $i < 6; $i++) {
             $password .= random_int(0, 1) ? chr(random_int(0x61, 0x7A)) : random_int(0, 9);
         }
         return $password;
@@ -118,7 +119,8 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
      * Активация контактного лица B2B кабинета.
      * Заполнить данные пользователя необходимые для авторизации и вернуть пароль для этого пользователя
      */
-    public function fillAuthData() {
+    public function fillAuthData()
+    {
         $password = AnxUser::createPasswordForB2BContact();
         $hash = Yii::$app->security->generatePasswordHash($password);
         $accesstoken = Yii::$app->security->generateRandomString(32);
@@ -131,7 +133,8 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
         return $password;
     }
 
-    public function sendSuccessEmail($password) {
+    public function sendSuccessEmail($password)
+    {
         $email = $this->login;
         $body =
             "<p>Ваша учетная запись активирована. " .
@@ -143,6 +146,15 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
 
         if ($result['resp'] !== 'ok') {
             throw new HttpException(200, 'Ошибка отправки почты "' . $result['resp'] . '"', 200);
+        } else {
+            $logEvent = new LogEvent();
+            $logEvent->event = 'sendEmailToClientAfterActivation';
+            $logEvent->params = json_encode([
+                'email' => $this->login,
+                'anx_user.name' => $this->name,
+                'sls_org.name' => $this->orgFk->name
+            ], JSON_UNESCAPED_UNICODE);
+            $logEvent->save();
         }
     }
 

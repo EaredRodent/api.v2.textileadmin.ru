@@ -87,6 +87,10 @@ class AnxUserController extends ActiveControllerExtended
                 }
             }
 
+            if(!$user->org_fk) {
+                throw new HttpException(200, "Вход доступен только для аккаунтов, созданных для B2B-кабинета.", 200);
+            }
+
             if (!$user->accesstoken) {
                 throw new HttpException(200, "Токен для этого аккаунта не создан.", 200);
             }
