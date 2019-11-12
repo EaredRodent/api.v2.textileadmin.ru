@@ -10,6 +10,7 @@ namespace app\modules\v1\controllers;
 
 use app\extension\ProdRest;
 use app\extension\Sizes;
+use app\models\AnxUser;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\classes\CardProd;
 use app\modules\v1\models\ref\RefArtBlank;
@@ -18,6 +19,10 @@ use app\modules\v1\models\ref\RefBlankTheme;
 use app\modules\v1\models\ref\RefFabricType;
 use app\modules\v1\models\ref\RefProductPrint;
 use app\modules\v1\models\ref\RefWeight;
+use app\modules\v1\models\sls\SlsClient;
+use app\modules\v1\models\sls\SlsOrg;
+use Yii;
+use yii\web\HttpException;
 
 class CardProdController extends ActiveControllerExtended
 {
@@ -144,21 +149,44 @@ class CardProdController extends ActiveControllerExtended
 
     /**
      * Вернуть размеры и остатки по складу
+     * @param $legalEntityID
      * @param $prodId
      * @param int $printId
      * @return array
+     * @throws HttpException
+     * @throws \Throwable
      */
-    public function actionGetDetails($prodId, $printId = 1)
+    public function actionGetDetails($prodId, $printId = 1, $legalEntityID = 0)
     {
-        $prodId = (int) $prodId;
-        $printId = (int) $printId;
+        $prodId = (int)$prodId;
+        $printId = (int)$printId;
+
+        // Скидка
+
+        $discount = 0;
+        /** @var AnxUser $contact */
+        $contact = Yii::$app->getUser()->getIdentity();
+        $legalEntity = SlsClient::findOne(['id' => $legalEntityID]);
+
+        if ($legalEntity && $legalEntity->discount) {
+            if ($contact->org_fk !== $legalEntity->org_fk) {
+                throw new HttpException(200, "Юр. лицо с этим ID не состоит в вашей организации.", 200);
+            }
+
+            $discount = $legalEntity->discount;
+        } else {
+            $org = SlsOrg::findOne(['id' => $contact->org_fk]);
+            $discount = $org->discount;
+        }
+
+        // Получение информации
 
         /** @var $prod RefArtBlank */
         $prod = RefArtBlank::get($prodId);
 
         $postProd = null;
 
-        if($printId !== 1) {
+        if ($printId !== 1) {
             /** @var RefProductPrint $postProd */
             $postProd = RefProductPrint::find()
                 ->where(['blank_fk' => $prodId])
@@ -195,6 +223,7 @@ class CardProdController extends ActiveControllerExtended
                     'sizeStr' => Sizes::typeCompare[$sexType][$fSize],
                     'size' => $fSize,
                     'price' => $priceModel->$fPrice,
+                    'priceDiscount' => round($priceModel->$fPrice * (1 - $discount / 100)),
                     'restStr' => $restStr,
                     'restColor' => $restColor,
                     'weight' => $weight->$fSize,

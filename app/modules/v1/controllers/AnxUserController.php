@@ -66,6 +66,11 @@ class AnxUserController extends ActiveControllerExtended
      */
     function actionLogin($username, $password)
     {
+        // Убрать обрамляющие пробелы
+
+        $username = trim($username);
+        $password = trim($password);
+
         /** @var $user AnxUser */
         $user = AnxUser::find()
             ->where(['login' => $username])

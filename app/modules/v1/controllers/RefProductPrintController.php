@@ -66,6 +66,7 @@ class RefProductPrintController extends ActiveControllerExtended
                 $resp[] = [
                     // 'fSize' => $fSize,
                     'sizeStr' => Sizes::typeCompare[$sexType][$fSize],
+                    'size' => $fSize,
                     'price' => $postProd->$fPrice,
                     'rest' => $restStr,
                     'weight' => $weight->$fSize,
