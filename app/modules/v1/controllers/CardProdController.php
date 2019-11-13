@@ -83,20 +83,12 @@ class CardProdController extends ActiveControllerExtended
             $filteredProds = RefArtBlank::readFilterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
         }
 
-        $rests = new ProdRest();
+        $prodRests = new ProdRest();
 
         /** @var $arrCards CardProd[] */
         $arrCards = [];
         foreach (array_merge($filteredProds, $filteredProdsPrint) as $prod) {
-            $_card = new CardProd($prod);
-            $restsCount = 0;
-            foreach (Sizes::fields as $fSize) {
-                $restsCount += $rests->getAvailForOrder($_card->prodId, $_card->getPrintId(), 1, $fSize);
-            }
-            // Стреднее
-            $_card->flagRest = ($restsCount > 0) ? 1 : 0;
-            $arrCards[] = $_card;
-
+            $arrCards[] = new CardProd($prod, $prodRests);
         }
 
         CardProd::search($arrCards, $search);
