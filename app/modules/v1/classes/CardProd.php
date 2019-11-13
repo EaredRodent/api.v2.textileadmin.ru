@@ -8,9 +8,12 @@
 
 namespace app\modules\v1\classes;
 
+use app\extension\ProdRest;
+use app\extension\Sizes;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefEan;
 use app\modules\v1\models\ref\RefProdPack;
+use app\modules\v1\models\ref\RefProdPrint;
 use app\modules\v1\models\ref\RefProductPrint;
 
 
@@ -37,10 +40,11 @@ class CardProd
     /**
      * CardProd constructor.
      * @param RefArtBlank|RefProductPrint $objProd
+     * @param ProdRest $prodRest
+     * @throws \Exception
      */
-    function __construct($objProd)
+    function __construct($objProd, $prodRest = null)
     {
-
         $this->prodId = $objProd->calcProdId();
         $this->titleStr = $objProd->fields()['titleStr']();
         $this->art = $objProd->fields()['art']();
@@ -56,7 +60,7 @@ class CardProd
         $this->modelFk = $prod->modelFk;
         $this->themeFk = $prod->themeFk;
 
-        $this->printFk = isset($objProd->print_fk) ? $objProd->printFk : null;
+        $this->printFk = isset($objProd->print_fk) ? $objProd->printFk : RefProdPrint::findOne(['id' => 1]);
 
         /** @var  RefEan $ean */
 //        $ean = RefEan::find()
@@ -67,6 +71,17 @@ class CardProd
         // Всегда полиэтилен
         $this->packFk = RefProdPack::findOne(1);
 
+        // Установка flagRest
+
+        $this->flagRest = 0;
+        if ($prodRest) {
+            foreach (Sizes::fields as $fSize) {
+                if(0 < $prodRest->getAvailForOrder($this->prodId, $this->printFk->id, 1, $fSize)) {
+                    $this->flagRest = 1;
+                    break;
+                }
+            }
+        }
     }
 
 
@@ -100,14 +115,5 @@ class CardProd
             $jsonCard = mb_strtolower(json_encode($el, JSON_UNESCAPED_UNICODE));
             return strpos($jsonCard, $search) !== false;
         });
-    }
-
-    public function getPrintId()
-    {
-        if (isset($this->printFk)) {
-            return $this->printFk->id;
-        } else {
-            return 1;
-        }
     }
 }
