@@ -8,6 +8,8 @@
 
 namespace app\modules\v1\controllers;
 
+use app\extension\ProdRest;
+use app\extension\Sizes;
 use app\models\AnxUser;
 use app\modules\AppMod;
 use app\modules\v1\classes\ActiveControllerExtended;
@@ -37,9 +39,13 @@ class TestController extends ActiveControllerExtended
     public function actionTestCode()
     {
         $resp = [];
-        $resp[] = $accesstoken = Yii::$app->security->generateRandomString(16);
-        $resp[] = $accesstoken = Yii::$app->security->generateRandomString(16);
-        $resp[] = $accesstoken = Yii::$app->security->generateRandomString(16);
+
+        $rest = new ProdRest();
+
+        foreach (Sizes::fields as $fSize) {
+            $resp[$fSize] = $rest->getAvailForOrder(63, 1, 3, $fSize);
+
+        }
 
         return $resp;
     }

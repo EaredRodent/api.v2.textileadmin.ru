@@ -83,9 +83,20 @@ class CardProdController extends ActiveControllerExtended
             $filteredProds = RefArtBlank::readFilterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
         }
 
+        $rests = new ProdRest();
+
+        /** @var $arrCards CardProd[] */
         $arrCards = [];
         foreach (array_merge($filteredProds, $filteredProdsPrint) as $prod) {
-            $arrCards[] = new CardProd($prod);
+            $_card = new CardProd($prod);
+            $restsCount = 0;
+            foreach (Sizes::fields as $fSize) {
+                $restsCount += $rests->getAvailForOrder($_card->prodId, $_card->getPrintId(), 1, $fSize);
+            }
+            // Стреднее
+            $_card->flagRest = ($restsCount > 0) ? 1 : 0;
+            $arrCards[] = $_card;
+
         }
 
         CardProd::search($arrCards, $search);
@@ -206,10 +217,10 @@ class CardProdController extends ActiveControllerExtended
         foreach (Sizes::prices as $fSize => $fPrice) {
             if ($priceModel->$fPrice > 0) {
 
-                $rest = $prodRest->getRestPrint($prodId, $printId, $fSize);
-                if ($rest == 0) {
+                $rest = $prodRest->getAvailForOrder($prodId, $printId, 1, $fSize);
+                if ($rest <= 0) {
                     $restColor = '#d4000018';
-                    $restStr = $rest;
+                    $restStr = 0;
                 } elseif ($rest > 0 && $rest <= 10) {
                     $restColor = '#d4d40018';
                     $restStr = $rest;

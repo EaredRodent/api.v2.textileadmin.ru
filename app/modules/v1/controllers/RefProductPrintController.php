@@ -54,7 +54,7 @@ class RefProductPrintController extends ActiveControllerExtended
         foreach (Sizes::prices as $fSize => $fPrice) {
             if ($postProd->$fPrice > 0) {
 
-                $restVal = $rest->getRestPrint($postProd->blank_fk, $printId, $fSize);
+                $restVal = $rest->getAvailForOrder($postProd->blank_fk, $printId, 1, $fSize);
                 if ($restVal === 0) {
                     $restStr = '#d4000018';
                 } elseif ($restVal > 0 && $restVal <= 10) {

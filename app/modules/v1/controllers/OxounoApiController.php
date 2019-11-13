@@ -120,7 +120,7 @@ class OxounoApiController extends ActiveControllerExtended
 
         foreach ($eans as $ean) {
             $item['id'] = $ean->id;
-            $item['rest'] = $rest->getRestPrint($ean->blank_fk, $ean->print_fk, $ean->size);
+            $item['rest'] = $rest->getAvailForOrder($ean->blank_fk, $ean->print_fk, 1, $ean->size);
             $resp[] =$item;
         }
 

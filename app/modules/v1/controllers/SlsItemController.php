@@ -91,7 +91,7 @@ class SlsItemController extends ActiveControllerExtended
                 }
 
                 // Проверка наличия на складе
-                $rest = $prodRest->getRestPrint($item->blank_fk, $item->print_fk, $size);
+                $rest = $prodRest->getAvailForOrder($item->blank_fk, $item->print_fk, 1, $size);
                 if ($rest < $form[$size]) {
                     throw new HttpException(200, 'Изделие в таком кол-ве отсутствует на складе.', 200);
                 }
@@ -175,7 +175,7 @@ class SlsItemController extends ActiveControllerExtended
                     throw new HttpException(200, 'Заказ не может быть отрицательным.', 200);
                 }
                 // Проверка наличия на складе
-                $rest = $prodRest->getRestPrint($item->blank_fk, $item->print_fk, $size);
+                $rest = $prodRest->getAvailForOrder($item->blank_fk, $item->print_fk, 1, $size);
                 if ($rest < $form[$size]) {
                     throw new HttpException(200, 'Изделие в таком кол-ве отсутствует на складе.', 200);
                 }

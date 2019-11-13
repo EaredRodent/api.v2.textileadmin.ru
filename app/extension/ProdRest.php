@@ -17,14 +17,14 @@ class ProdRest
 {
 
     /**
-     * @var array - Матрица результатов
+     * @var array - Матрица результатов [$blankId][$printId][$packId][$fSize]
      */
-    private $prodPrintPack = [];
+    private $matrix = [];
 
     /**
      * @var array - Матрица результатов не учитывая упаковку
      */
-    private $prodPrint = [];
+    private $matrixWithoutPack = [];
 
     /**
      * Массив с id продуктов
@@ -43,12 +43,12 @@ class ProdRest
                     //if (!isset($this->prodPrintPack[$blankId][$printId][$packId][$fSize])) {
                     //    $this->prodPrintPack[$blankId][$printId][$packId][$fSize] = 0;
                     //}
-                    $this->prodPrintPack[$blankId][$printId][$packId][$fSize] = $rest->$fSize;
+                    $this->matrix[$blankId][$printId][$packId][$fSize] = $rest->$fSize;
 
-                    //if (!isset($this->prodPrint[$blankId][$printId][$fSize])) {
-                    //    $this->prodPrint[$blankId][$printId][$fSize] = 0;
-                    //}
-                    $this->prodPrint[$blankId][$printId][$fSize] = $rest->$fSize;
+//                    if (!isset($this->prodPrint[$blankId][$printId][$fSize])) {
+//                        $this->prodPrint[$blankId][$printId][$fSize] = 0;
+//                    }
+//                    $this->matrixWithoutPack[$blankId][$printId][$fSize] = $rest->$fSize;
 
                 }
             }
@@ -62,15 +62,15 @@ class ProdRest
                     $printId = $reserve->print_fk;
                     $packId = $reserve->pack_fk;
 
-                    if (!isset($this->prodPrintPack[$blankId][$printId][$packId][$fSize])) {
-                        $this->prodPrintPack[$blankId][$printId][$packId][$fSize] = 0;
+                    if (!isset($this->matrix[$blankId][$printId][$packId][$fSize])) {
+                        $this->matrix[$blankId][$printId][$packId][$fSize] = 0;
                     }
-                    $this->prodPrintPack[$blankId][$printId][$packId][$fSize] -= $reserve->$fSize;
+                    $this->matrix[$blankId][$printId][$packId][$fSize] -= $reserve->$fSize;
 
-                    if (!isset($this->prodPrint[$blankId][$printId][$fSize])) {
-                        $this->prodPrint[$blankId][$printId][$fSize] = 0;
-                    }
-                    $this->prodPrint[$blankId][$printId][$fSize] -= $reserve->$fSize;
+//                    if (!isset($this->matrixWithoutPack[$blankId][$printId][$fSize])) {
+//                        $this->matrixWithoutPack[$blankId][$printId][$fSize] = 0;
+//                    }
+//                    $this->matrixWithoutPack[$blankId][$printId][$fSize] -= $reserve->$fSize;
 
                 }
             }
@@ -79,18 +79,19 @@ class ProdRest
     }
 
     /**
-     * todo переименовать в getAvailProdPrint
-     * Вернуть остатки для указанного изделия без учета упаковки
+     * Вернуть кол-во достпуное для заказа
      * @param $prodId
      * @param $printId
+     * @param $packId (1 - без кпаковки)
      * @param $size
      * @return int|mixed
+     * @throws \Exception
      */
-    public function getRestPrint($prodId, $printId, $size)
+    public function getAvailForOrder($prodId, $printId, $packId, $size)
     {
         $fSize = Sizes::getFieldSize($size);
-        return (isset ($this->prodPrint[$prodId][$printId][$fSize])) ?
-            $this->prodPrint[$prodId][$printId][$fSize] : 0;
+        return (isset ($this->matrix[$prodId][$printId][$packId][$fSize])) ?
+            $this->matrix[$prodId][$printId][$packId][$fSize] : 0;
     }
 
 }

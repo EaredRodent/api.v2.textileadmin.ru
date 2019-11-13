@@ -159,7 +159,7 @@ class RefArtBlankController extends ActiveControllerExtended
         foreach (Sizes::prices as $fSize => $fPrice) {
             if ($prod->$fPrice > 0) {
 
-                $restVal = $rest->getRestPrint($id, 1, $fSize);
+                $restVal = $rest->getAvailForOrder($id, 1, 1, $fSize);
                 if ($restVal == 0) {
                     $restStr = '#d4000018';
                 } elseif ($restVal > 0 && $restVal <= 10) {

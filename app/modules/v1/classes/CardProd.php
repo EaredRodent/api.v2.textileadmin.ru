@@ -10,6 +10,7 @@ namespace app\modules\v1\classes;
 
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefEan;
+use app\modules\v1\models\ref\RefProdPack;
 use app\modules\v1\models\ref\RefProductPrint;
 
 
@@ -31,6 +32,7 @@ class CardProd
     public $themeFk;
     public $printFk;
     public $packFk;
+    public $flagRest; // 1 - если есть остатки на складе по этому изделию
 
     /**
      * CardProd constructor.
@@ -57,12 +59,13 @@ class CardProd
         $this->printFk = isset($objProd->print_fk) ? $objProd->printFk : null;
 
         /** @var  RefEan $ean */
-        $ean = RefEan::find()
-            ->where(['blank_fk' => $prod->id])
-            ->andWhere(['print_fk' => $this->printFk ? $this->printFk->id : 1])
-            ->one();
+//        $ean = RefEan::find()
+//            ->where(['blank_fk' => $prod->id])
+//            ->andWhere(['print_fk' => $this->printFk ? $this->printFk->id : 1])
+//            ->one();
 
-        $this->packFk = $ean ? $ean->packFk : null;
+        // Всегда полиэтилен
+        $this->packFk = RefProdPack::findOne(1);
 
     }
 
@@ -97,5 +100,14 @@ class CardProd
             $jsonCard = mb_strtolower(json_encode($el, JSON_UNESCAPED_UNICODE));
             return strpos($jsonCard, $search) !== false;
         });
+    }
+
+    public function getPrintId()
+    {
+        if (isset($this->printFk)) {
+            return $this->printFk->id;
+        } else {
+            return 1;
+        }
     }
 }
