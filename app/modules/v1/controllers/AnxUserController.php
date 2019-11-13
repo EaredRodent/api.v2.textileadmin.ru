@@ -61,10 +61,11 @@ class AnxUserController extends ActiveControllerExtended
      * Попытка логина
      * @param $username
      * @param $password string
+     * @param string $project
      * @return array
      * @throws HttpException
      */
-    function actionLogin($username, $password)
+    function actionLogin($username, $password, $project = 'ta')
     {
         // Убрать обрамляющие пробелы
 
@@ -87,7 +88,7 @@ class AnxUserController extends ActiveControllerExtended
                 }
             }
 
-            if(!$user->org_fk) {
+            if(($project === 'b2b') && (!$user->org_fk)) {
                 throw new HttpException(200, "Вход доступен только для аккаунтов, созданных для B2B-кабинета.", 200);
             }
 
