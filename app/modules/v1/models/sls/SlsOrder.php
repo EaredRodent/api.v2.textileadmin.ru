@@ -125,4 +125,24 @@ class SlsOrder extends GiiSlsOrder
         }
         return $result;
     }
+
+    /**
+     * todo тупая денормализаци - при переносе журнала заказов на ТА2 - удалить
+     * @return int
+     */
+    public function calcSummItems()
+    {
+        $summ = 0;
+        foreach ($this->slsItems as $item) {
+
+            $summItem = 0;
+            foreach (Sizes::prices as $size => $price) {
+                $summItem += $item->$size * $item->$price;
+            }
+
+            $summ += $summItem;
+        }
+        return $summ;
+    }
+
 }

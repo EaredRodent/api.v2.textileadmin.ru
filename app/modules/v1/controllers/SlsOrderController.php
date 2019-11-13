@@ -230,6 +230,8 @@ class SlsOrderController extends ActiveControllerExtended
         $order->pact_date = $form['pact_date'];
         $order->pact_other = isset($form['pact_other']) ? $form['pact_other'] : '';
 
+        $order->summ_order = $order->calcSummItems();
+
         if (!$order->save()) {
             throw new HttpException(200, 'Внутренняя ошибка.', 200);
         }
