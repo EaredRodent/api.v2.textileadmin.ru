@@ -313,6 +313,7 @@ class Permissions
             // Журнал заказов
             SlsOrderController::actionGetForClient,
             SlsOrderController::actionGetDetails,
+            SlsOrderController::actionDeleteOrder,
 
             //Главная
 

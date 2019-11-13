@@ -61,10 +61,11 @@ class AnxUserController extends ActiveControllerExtended
      * Попытка логина
      * @param $username
      * @param $password string
+     * @param string $project
      * @return array
      * @throws HttpException
      */
-    function actionLogin($username, $password)
+    function actionLogin($username, $password, $project = 'ta')
     {
         // Убрать обрамляющие пробелы
 
@@ -85,6 +86,10 @@ class AnxUserController extends ActiveControllerExtended
                 if (!Yii::$app->security->validatePassword($password, $user->hash)) {
                     throw new HttpException(200, "Неверный пароль.", 200);
                 }
+            }
+
+            if(($project === 'b2b') && (!$user->org_fk)) {
+                throw new HttpException(200, "Вход доступен только для аккаунтов, созданных для B2B-кабинета.", 200);
             }
 
             if (!$user->accesstoken) {
