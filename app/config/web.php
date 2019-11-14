@@ -70,6 +70,11 @@ $config = [
                 [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
+                    // Игнорировать дружелюбные ошибки с кодом 2хх и ошибки клиента 4хх
+                    'except' => [
+                        'yii\web\HttpException:2*',
+                        'yii\web\HttpException:4*'
+                    ],
                 ],
 //                [
 //                    'class' => 'yii\log\FileTarget',
