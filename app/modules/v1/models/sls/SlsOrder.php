@@ -11,6 +11,7 @@ namespace app\modules\v1\models\sls;
 
 use app\extension\Sizes;
 use app\gii\GiiSlsOrder;
+use app\models\AnxUser;
 use app\modules\AppMod;
 use Yii;
 use yii\db\ActiveRecord;
@@ -73,9 +74,10 @@ class SlsOrder extends GiiSlsOrder
             'docInvoice' => function () {
 
                 $path = Yii::getAlias(AppMod::pathDocInvoice) . "/invoice-{$this->id}.pdf";
-                if (file_exists($path) && $this->contact_fk > 0) {
-
-                    $urlKey = $this->contactFk->url_key;
+                if (file_exists($path)) {
+                    /** @var AnxUser $contact */
+                    $contact = Yii::$app->getUser()->getIdentity();
+                    $urlKey = $contact->url_key;
                     return AppMod::domain . "/v1/files/get-order-doc/{$urlKey}/invoice/{$this->id}";
                 } else {
                     return '';
@@ -83,8 +85,10 @@ class SlsOrder extends GiiSlsOrder
             },
             'docWaybill' => function () {
                 $path = Yii::getAlias(AppMod::pathDocWaybill) . "/torg12-{$this->id}.pdf";
-                if (file_exists($path) && $this->contact_fk > 0) {
-                    $urlKey = $this->contactFk->url_key;
+                if (file_exists($path)) {
+                    /** @var AnxUser $contact */
+                    $contact = Yii::$app->getUser()->getIdentity();
+                    $urlKey = $contact->url_key;
                     return AppMod::domain . "/v1/files/get-order-doc/{$urlKey}/waybill/{$this->id}";
                 } else {
                     return '';

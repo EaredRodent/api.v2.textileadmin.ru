@@ -8,6 +8,7 @@
 
 namespace app\modules\v1\controllers;
 
+use app\models\AnxUser;
 use app\modules\AppMod;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\sls\SlsClient;
@@ -85,11 +86,23 @@ class FilesController extends Controller
         if ($dir === 'invoice') $path = Yii::getAlias(AppMod::pathDocInvoice) . "/invoice";
         if ($dir === 'waybill') $path = Yii::getAlias(AppMod::pathDocWaybill) . "/torg12";
 
+
+        $userByUrlKey = AnxUser::findOne(['url_key' => $urlKey]);
+
+        if(!$userByUrlKey) {
+            throw new HttpException(200, 'Внутренняя ошибка №1.', 200);
+        }
+
+        $orgFk = $userByUrlKey->org_fk;
+
         /** @var $order SlsOrder */
         $order = SlsOrder::get((int)$id);
-        $ownerUrlKey = $order->contactFk->url_key;
+        if(!$order) {
+            throw new HttpException(200, 'Внутренняя ошибка №2.', 200);
+        }
+        $ownerOrgFk = $order->clientFk->org_fk;
 
-        if ($urlKey === $ownerUrlKey) {
+        if ($orgFk === $ownerOrgFk) {
 
             $name = "{$id}.pdf";
             $fullPath = $path . "-" . $name;

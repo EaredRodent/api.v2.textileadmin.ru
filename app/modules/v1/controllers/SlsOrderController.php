@@ -173,6 +173,7 @@ class SlsOrderController extends ActiveControllerExtended
 
         return SlsOrder::find()
             ->where(['client_fk' => $legalEntitiesIds])
+            ->orderBy('ts_create DESC')
             ->all();
     }
 

