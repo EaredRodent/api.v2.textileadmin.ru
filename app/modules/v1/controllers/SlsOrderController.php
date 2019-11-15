@@ -13,6 +13,7 @@ use app\extension\Sizes;
 use app\models\AnxUser;
 use app\modules\AppMod;
 use app\modules\v1\classes\ActiveControllerExtended;
+use app\modules\v1\models\log\LogEvent;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\sls\SlsClient;
 use app\modules\v1\models\sls\SlsItem;
@@ -140,6 +141,8 @@ class SlsOrderController extends ActiveControllerExtended
             throw new HttpException(200, 'Внутренняя ошибка.', 200);
         }
 
+        LogEvent::log(LogEvent::createOrder, json_encode(['id' => $order->id]));
+
         return ['_result_' => 'success'];
     }
 
@@ -239,6 +242,8 @@ class SlsOrderController extends ActiveControllerExtended
 
         ServTelegramSend::send(AppMod::tgBotOxounoB2b, AppMod::tgGroupOxounoB2b,
             "Поступил новый заказ №{$order->id} от клиента B2B-кабинета: {$order->clientFk->orgFk->name}");
+
+        LogEvent::log(LogEvent::commitOrder, json_encode(['id' => $order->id, 'summ_order' => $order->summ_order]));
 
         return ['_result_' => 'success'];
     }

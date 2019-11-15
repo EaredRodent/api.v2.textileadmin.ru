@@ -8,6 +8,7 @@
 
 namespace app\modules\v1\controllers;
 
+use app\modules\v1\models\log\LogEvent;
 use app\services\ServMailSend;
 use app\services\ServReCAPTCHA;
 use app\models\AnxUser;
@@ -88,7 +89,7 @@ class AnxUserController extends ActiveControllerExtended
                 }
             }
 
-            if(($project === 'b2b') && (!$user->org_fk)) {
+            if (($project === 'b2b') && (!$user->org_fk)) {
                 throw new HttpException(200, "Вход доступен только для аккаунтов, созданных для B2B-кабинета.", 200);
             }
 
@@ -119,6 +120,8 @@ class AnxUserController extends ActiveControllerExtended
         $role = array_keys($roles)[0];
 
         $permissions = array_keys($am->getPermissionsByUser($user->getId()));
+
+        LogEvent::log(LogEvent::login);
 
         return [
             'id' => $user->id,
@@ -371,5 +374,37 @@ class AnxUserController extends ActiveControllerExtended
         }
 
         return ['_result_' => 'success'];
+    }
+
+    const actionGetAllContacts = 'GET /v1/anx-user/get-all-contacts';
+
+    /**
+     * Возвращает все контактные лица B2B кабинета
+     * @return mixed
+     */
+    function actionGetAllContacts()
+    {
+        $contacts = AnxUser::find()
+            ->where(['project' => 'b2b'])
+            ->all();
+
+        /**
+         * @param AnxUser $a
+         * @param AnxUser $b
+         * @return int
+         */
+        $compareCallback = function ($a, $b) {
+            if ($a->getLastActivity() < $b->getLastActivity()) {
+                return 1;
+            }
+            if ($b->getLastActivity() < $a->getLastActivity()) {
+                return -1;
+            }
+            return 0;
+        };
+
+        usort($contacts,  $compareCallback);
+
+        return $contacts;
     }
 }

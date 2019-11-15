@@ -13,6 +13,7 @@ use app\extension\Sizes;
 use app\models\AnxUser;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\classes\CardProd;
+use app\modules\v1\models\log\LogEvent;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefBlankSex;
 use app\modules\v1\models\ref\RefBlankTheme;
@@ -139,6 +140,8 @@ class CardProdController extends ActiveControllerExtended
             ->where(['id' => $availableRefFabricType])
             ->groupBy('type_price')
             ->all();
+
+        LogEvent::log(LogEvent::filterCatalog);
 
         return [
             'filteredProds' => $arrCards,

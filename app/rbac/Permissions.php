@@ -7,6 +7,7 @@ namespace app\rbac;
 use app\modules\v1\controllers\AnxUserController;
 use app\modules\v1\controllers\BaseController;
 use app\modules\v1\controllers\CardProdController;
+use app\modules\v1\controllers\LogEventController;
 use app\modules\v1\controllers\OxounoApiController;
 use app\modules\v1\controllers\PrStorProdController;
 use app\modules\v1\controllers\RefArtBlankController;
@@ -65,6 +66,8 @@ class Permissions
             self::taskSalesClientsAccess,
             self::taskSalesClientsWrite,
             self::taskOxounoApi,
+            self::taskSalesStatisticsB2BAccess,
+            self::taskSalesStatisticsB2BWrite,
             ///
             AnxUserController::postCreateUser,
             BaseController::actionPostTestData,
@@ -78,6 +81,7 @@ class Permissions
             self::taskReportProduction,
             self::taskSalesClientsAccess,
             SlsMessageStateController::getMessagesForOtherManagers,
+            self::taskSalesStatisticsB2BAccess,
         ],
         self::roleBuhMain => [
             self::taskRegPaysPageAccess,
@@ -96,11 +100,13 @@ class Permissions
         self::roleSaller => [
             self::taskSalesClientsAccess,
             SlsMessageController::actionSendFromManager,
+            self::taskSalesStatisticsB2BAccess,
         ],
         self::roleSallerMain => [
             self::taskSalesClientsAccess,
             self::taskSalesClientsWrite,
             SlsMessageStateController::getMessagesForOtherManagers,
+            self::taskSalesStatisticsB2BAccess,
         ],
         self::roleOxouno => [
             self::taskOxounoApi,
@@ -122,6 +128,9 @@ class Permissions
     const pageReferenceB2B = 'pageReferenceB2B';
 
     const pageSalesClients = 'pageSalesClients';
+
+    const pageSalesStatisticsB2B = 'pageSalesStatisticsB2B';
+
 
     // Отчеты (дашборды) по производству
     const pageManagamentProduction = 'pageManagamentProduction';
@@ -200,6 +209,16 @@ class Permissions
      * Доступ к API для магазина oxouno.ru
      */
     const taskOxounoApi = 'taskOxounoApi';
+
+    /**
+     * Экшены для доступа к странице sales/statistics-b2b
+     */
+    const taskSalesStatisticsB2BAccess = 'taskSalesStatisticsB2BAccess';
+
+    /**
+     * Экшены для изменений на странице sales/statistics-b2b
+     */
+    const taskSalesStatisticsB2BWrite = 'taskSalesStatisticsB2BWrite';
 
     const tasks = [
 
@@ -371,6 +390,16 @@ class Permissions
         self::taskOxounoApi => [
             OxounoApiController::actionGetProductCatalog,
             OxounoApiController::actionGetStorRest,
+        ],
+
+        self::taskSalesStatisticsB2BAccess => [
+            self::pageSalesStatisticsB2B,
+            AnxUserController::actionGetAllContacts,
+            LogEventController::actionGetEvents,
+        ],
+
+        self::taskSalesStatisticsB2BWrite => [
+
         ],
     ];
 
