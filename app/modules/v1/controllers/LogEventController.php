@@ -21,7 +21,8 @@ class LogEventController extends ActiveControllerExtended
     const actionGetEvents = 'GET /v1/log-event/get-events';
 
     /**
-     * Возвращает все события для контактного лица в B2B кабинете, если не указан contactID, то возвращает все события в B2B кабинете
+     * Вернуть все события для контактного лица в B2B кабинете,
+     * если не указан contactID, то вернуть все события в B2B кабинете
      * @param int $contactID
      * @return mixed
      */
