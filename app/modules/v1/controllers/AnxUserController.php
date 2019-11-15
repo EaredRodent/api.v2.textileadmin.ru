@@ -213,27 +213,31 @@ class AnxUserController extends ActiveControllerExtended
         $anxUser->project = 'b2b';
         $anxUser->org_fk = $slsOrg->id;
 
-        if (!$anxUser->save()) {
-            throw new HttpException(200, 'Внутренняя ошибка.', 200);
+        try {
+            if (!$anxUser->save()) {
+                throw new HttpException(200, 'Внутренняя ошибка.', 200);
+            }
+        }catch (\Exception $exception) {
+            throw new HttpException(200, 'Такой контакт уже зарегистрирован.', 200);
         }
 
+        sleep(50);
 
         // Юр лица
-
         foreach ($legalEntities as $legalEntity) {
 
-            // Вариант, когда инн совпадает - юр. лицо берется прежнее
+            // Если приходит ИНН существующего клиента - то приоритет у существующей карточки
             $slsClient = SlsClient::find()
                 ->where(['inn' => $legalEntity['inn']])
                 ->one();
 
             if (!$slsClient) {
-                // throw new HttpException(200, 'Такое юр. лицо уже зарегистрировано.', 200);
                 $slsClient = new SlsClient();
+                // todo безопасность
+                $slsClient->attributes = $legalEntity;
+                $slsClient->short_name = $slsClient->full_name;
             }
-            // todo безопасность
-            $slsClient->attributes = $legalEntity;
-            $slsClient->short_name = $slsClient->full_name;
+
             $slsClient->org_fk = $slsOrg->id;
 
             if (!$slsClient->save()) {
