@@ -13,6 +13,7 @@ use app\extension\ProdRest;
 use app\extension\Sizes;
 use app\models\AnxUser;
 use app\modules\v1\classes\ActiveControllerExtended;
+use app\modules\v1\models\log\LogEvent;
 use app\modules\v1\models\pr\PrStorProd;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefProductPrint;
@@ -106,6 +107,8 @@ class SlsItemController extends ActiveControllerExtended
             throw new HttpException(200, 'Внутренняя ошибка.', 200);
         }
 
+        LogEvent::log(LogEvent::editOrder);
+
         return ['_result_' => 'success'];
     }
 
@@ -189,6 +192,8 @@ class SlsItemController extends ActiveControllerExtended
             throw new HttpException(200, 'Внутренняя ошибка #2.', 200);
         }
 
+        LogEvent::log(LogEvent::editOrder);
+
         return ['_result_' => 'success'];
     }
 
@@ -220,6 +225,8 @@ class SlsItemController extends ActiveControllerExtended
         }
 
         $item->delete();
+
+        LogEvent::log(LogEvent::editOrder);
 
         return ['_result_' => 'success'];
     }

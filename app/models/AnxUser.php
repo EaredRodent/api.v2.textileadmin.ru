@@ -16,7 +16,13 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
 
     public function fields()
     {
-        $fields = parent::fields();
+        $fields = array_merge(parent::fields(), [
+            'orgFk',
+            'lastActivity' => function () {
+                return $this->getLastActivity();
+            }
+        ]);
+
 
         // удаляем небезопасные поля
         unset($fields['auth_key'], $fields['accesstoken'], $fields['hash']);
@@ -159,4 +165,20 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
     }
 
 
+    public function getLastActivity()
+    {
+        $lastActivity = '';
+
+        /** @var LogEvent[] $logEvents */
+        $logEvents = LogEvent::find()
+            ->where(['user_fk' => $this->id])
+            ->orderBy('ts_create DESC')
+            ->all();
+
+        if (count($logEvents)) {
+            $lastActivity = $logEvents[0]->ts_create;
+        }
+
+        return $lastActivity;
+    }
 }

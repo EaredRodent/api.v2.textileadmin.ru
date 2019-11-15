@@ -18,7 +18,6 @@ use app\modules\v1\models\sls\SlsMessage;
 use app\modules\v1\models\sls\SlsOrder;
 use app\modules\v1\models\sls\SlsOrg;
 use app\services\ServTelegramSend;
-use tests\unit\models\ContactFormTest;
 use Yii;
 use yii\web\HttpException;
 
@@ -30,16 +29,14 @@ class SlsOrgController extends ActiveControllerExtended
     const actionGetOrgs = 'GET /v1/sls-org/get-orgs';
 
     /**
-     * Получает список всех организаций
+     * Получает список всех организаций B2B кабинета
      * @return array|\yii\db\ActiveRecord[]
      */
     public function actionGetOrgs()
     {
-
-
-        return SlsOrg::find()->all();
-
-
+        return SlsOrg::find()
+            ->orderBy('name')
+            ->all();
     }
 
     const actionAccept = 'POST /v1/sls-org/accept';
