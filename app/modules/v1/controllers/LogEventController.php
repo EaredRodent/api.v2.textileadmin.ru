@@ -33,6 +33,7 @@ class LogEventController extends ActiveControllerExtended
         if ($contactID) {
             $events = LogEvent::find()
                 ->where(['user_fk' => $contactID])
+                ->orderBy('ts_create DESC')
                 ->all();
         } else {
             /** @var AnxUser[] $contacts */
@@ -48,6 +49,7 @@ class LogEventController extends ActiveControllerExtended
 
             $events = LogEvent::find()
                 ->where(['user_fk' => $contactIDs])
+                ->orderBy('ts_create DESC')
                 ->all();
         }
 

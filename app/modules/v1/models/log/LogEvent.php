@@ -24,7 +24,7 @@ class LogEvent extends GiiLogEvent
 
     const eventStr = [
         self::login => 'Авторизация',
-        self::filterCatalog => 'Фильтрация каталога',
+        self::filterCatalog => 'Работа с каталогом',
         self::createOrder => 'Создание заказа',
         self::editOrder => 'Формирование заказа',
         self::commitOrder => "Оформление заказа \u{2705}",
