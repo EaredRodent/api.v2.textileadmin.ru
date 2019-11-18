@@ -56,13 +56,15 @@ class TestController extends ActiveControllerExtended
 
     /**
      * Тестирование отправки емайла
+     * @param $email [accnotfake@gmail.com]
      * @param $text
      * @return array
      */
-    public function actionSendMail($text)
+    public function actionSendMail($email, $text)
     {
         //return ['ss' => $text];
-        $email = 'accnotfake@gmail.com';
+        //$email = 'accnotfake@gmail.com';
+        //$email = 'test-wea3q@mail-tester.com';
         $subject = 'Регистрация в B2B-кабинете OXOUNO';
         $body = '';
 
@@ -74,7 +76,7 @@ class TestController extends ActiveControllerExtended
         $body .= "<p><i>Сообщение создано автоматически</i></p>";
 
 
-        return ServMailSend::send($email, $text, $body);
+        return ServMailSend::send($email, $subject, $body);
     }
 
     const actionSendTelegram = 'POST /v1/test/send-telegram';

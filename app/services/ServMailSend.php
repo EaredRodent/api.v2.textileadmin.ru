@@ -45,23 +45,32 @@ class ServMailSend
 
 
             // Настройки SMTP 587 STARTTLS
+//            $mail->isSMTP();
+//            $mail->SMTPDebug = 0;
+//            $mail->CharSet = 'UTF-8';
+//            $mail->SMTPAuth = true;
+//            $mail->SMTPSecure = 'tls';
+//            $mail->Port = 587;
+//            $mail->SMTPOptions = [
+//                'ssl' => [
+//                    'verify_peer' => false,
+//                    'verify_peer_name' => false,
+//                    'allow_self_signed' => true
+//                ]
+//            ];
+//            $mail->Host = 'oxouno.ru';
+//            $mail->Username = 'b2b@oxouno.ru';
+//            $mail->Password = '876IwN61Lr';
+
+            // Настройки SMTP mail.nic.ru
             $mail->isSMTP();
-            $mail->SMTPDebug = 0;
             $mail->CharSet = 'UTF-8';
             $mail->SMTPAuth = true;
-            $mail->SMTPSecure = 'tls';
-            $mail->Port = 587;
-            $mail->SMTPOptions = [
-                'ssl' => [
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                    'allow_self_signed' => true
-                ]
-            ];
-            $mail->Host = 'oxouno.ru';
+            $mail->SMTPDebug = 0;
+            $mail->Host = 'ssl://mail.nic.ru';
+            $mail->Port = 465;
             $mail->Username = 'b2b@oxouno.ru';
-            $mail->Password = '876IwN61Lr';
-
+            $mail->Password = 'PenaLf45676+y';
 
             // От кого
 //            $mail->setFrom('invoice@textileadmin.ru', 'invoice@textileadmin.ru');
