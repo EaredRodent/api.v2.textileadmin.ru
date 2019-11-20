@@ -54,6 +54,7 @@ class Permissions
             AnxUserController::actionBootstrap,
             AnxUserController::actionIndex,
             AnxUserController::actionB2bRegister,
+            AnxUserController::actionReloadAllContacts,
         ],
         self::roleMaster => [
             self::pageTestApi,

@@ -82,4 +82,6 @@ class AppMod
     const pathDocInvoice = "@app/../../textile/files/sls/invoices";
     const pathDocWaybill = "@app/../../textile/files/sls/torg12";
 
+    // Секретный ключ для отправки сообщений по WS
+    const wsSenderSecretKey = '149509e79053e4e2af391c01ab56fb6d646f6b434b1a3350532c4065061e3748';
 }

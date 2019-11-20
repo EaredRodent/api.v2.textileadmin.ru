@@ -8,6 +8,7 @@
 
 namespace app\modules\v1\classes;
 
+use app\modules\AppMod;
 use app\modules\v1\V1Mod;
 use Exception;
 use Yii;
@@ -120,7 +121,10 @@ class ActiveControllerExtended extends ActiveController
             if (!empty($module->cmdTables)) {
                 $wsc = new Client($this->wssUrl);
                 try {
-                    $wsc->send(json_encode($module->cmdTables));
+                    $wsc->send(json_encode([
+                        'secret_key' => AppMod::wsSenderSecretKey,
+                        'message' => $module->cmdTables
+                    ]));
                 } catch (Exception $ee) {
 
                 }

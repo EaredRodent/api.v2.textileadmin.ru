@@ -9,6 +9,7 @@
 namespace app\modules\v1\controllers;
 
 use app\modules\v1\models\log\LogEvent;
+use app\modules\v1\V1Mod;
 use app\services\ServMailSend;
 use app\services\ServReCAPTCHA;
 use app\models\AnxUser;
@@ -18,6 +19,7 @@ use app\modules\v1\models\sls\SlsClient;
 use app\modules\v1\models\sls\SlsOrg;
 use app\rbac\Permissions;
 use app\services\ServTelegramSend;
+use WebSocket\Client;
 use Yii;
 use yii\web\HttpException;
 use yii\web\ServerErrorHttpException;
@@ -220,7 +222,7 @@ class AnxUserController extends ActiveControllerExtended
             if (!$anxUser->save()) {
                 throw new HttpException(200, 'Внутренняя ошибка.', 200);
             }
-        }catch (\Exception $exception) {
+        } catch (\Exception $exception) {
             throw new HttpException(200, 'Такой контакт уже зарегистрирован.', 200);
         }
 
@@ -407,8 +409,27 @@ class AnxUserController extends ActiveControllerExtended
             return 0;
         };
 
-        usort($contacts,  $compareCallback);
+        usort($contacts, $compareCallback);
 
         return $contacts;
+    }
+
+    const actionReloadAllContacts = 'POST /v1/anx-user/reload-all-contacts';
+
+    /**
+     * Рассылает сигнал о перезагрузке страницы всем контактным лицам
+     * @param $secret_key
+     */
+    function actionReloadAllContacts($secret_key)
+    {
+        $wsc = new Client($this->wssUrl);
+        try {
+            $wsc->send(json_encode([
+                'secret_key' => $secret_key,
+                'message' => ['ALL_CONTACTS_RELOAD_PAGE']
+            ]));
+        } catch (\Exception $ee) {
+
+        }
     }
 }
