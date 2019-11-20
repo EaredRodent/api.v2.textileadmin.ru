@@ -56,6 +56,12 @@ class RefArtBlank extends GiiRefArtBlank
             'flagInPrice' => function () { //
                 return $this->flag_price;
             },
+            'assortment' => function () { //
+                return $this->assortment;
+            },
+            'flagStopProd' => function () { //
+                return $this->flag_stop_prod;
+            },
             'fabric' => function () { //
                 return $this->fabricTypeFk->struct;
             },
