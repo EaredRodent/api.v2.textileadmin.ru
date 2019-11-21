@@ -23,7 +23,6 @@ use yii\web\HttpException;
 
 class ActiveControllerExtended extends ActiveController
 {
-    protected $wssUrl = 'ws://127.0.0.1:6001';
     protected $transaction;
 
     public function behaviors()
@@ -119,7 +118,7 @@ class ActiveControllerExtended extends ActiveController
             /** @var V1Mod $module */
             $module = Yii::$app->getModule('v1');
             if (!empty($module->cmdTables)) {
-                $wsc = new Client($this->wssUrl);
+                $wsc = new Client(AppMod::wssUrl);
                 try {
                     $wsc->send(json_encode([
                         'secret_key' => AppMod::wsSenderSecretKey,

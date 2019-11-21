@@ -45,6 +45,7 @@ use Yii;
  * @property string $transp_comp транспортная компания
  * @property string $addr_delivery адрес доставки
  * @property string $ts_send_manager время когда клиент отправляет заказ на согласование менеджеру
+ * @property string $ts_expire
  *
  * @property PrStorProd[] $prStorProds
  * @property PrTsdTask[] $prTsdTasks
@@ -72,7 +73,7 @@ class GiiSlsOrder extends ActiveRecordExtended
     {
         return [
             [['contact_fk', 'user_fk', 'preorder_fk', 'flag_return', 'flag_pre', 'flag_pre_prod', 'client_fk', 'nds', 'flag_pay'], 'integer'],
-            [['ts_create', 'pact_date', 'ts_preorder', 'ts_preorder_prod', 'ts_wait_assembl', 'ts_assembl', 'ts_wait', 'ts_result', 'ts_doc', 'ts_pay', 'ts_send', 'ts_send_manager'], 'safe'],
+            [['ts_create', 'pact_date', 'ts_preorder', 'ts_preorder_prod', 'ts_wait_assembl', 'ts_assembl', 'ts_wait', 'ts_result', 'ts_doc', 'ts_pay', 'ts_send', 'ts_send_manager', 'ts_expire'], 'safe'],
             [['status', 'pay_type', 'pact_pay', 'pact_deliv', 'pact_other'], 'string'],
             [['client_fk'], 'required'],
             [['summ_order', 'summ_pay'], 'number'],
@@ -121,6 +122,7 @@ class GiiSlsOrder extends ActiveRecordExtended
             'transp_comp' => 'Transp Comp',
             'addr_delivery' => 'Addr Delivery',
             'ts_send_manager' => 'Ts Send Manager',
+            'ts_expire' => 'Ts Expire',
         ];
     }
 

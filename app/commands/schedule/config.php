@@ -3,6 +3,7 @@
 namespace app\commands\schedule;
 
 use app\commands\schedule\tasks\CBR;
+use app\commands\schedule\tasks\OrderCleaner;
 use omnilight\scheduling\Schedule;
 
 
@@ -13,3 +14,7 @@ use omnilight\scheduling\Schedule;
 $schedule->call(function () {
    (new CBR())->init();
 })->hourly();
+
+$schedule->call(function () {
+   (new OrderCleaner())->init();
+})->everyMinute();
