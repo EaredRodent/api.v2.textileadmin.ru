@@ -22,7 +22,8 @@ class OrderCleaner
 
         /** @var SlsOrder[] $orders */
         $orders = SlsOrder::find()
-            ->where(['<=', 'ts_expire', date('Y-m-d H:i:s', time())])
+            ->where(['status' => SlsOrder::s1_client_prep])
+            ->andWhere(['<=', 'ts_expire', date('Y-m-d H:i:s', time())])
             ->all();
 
         foreach ($orders as $order) {

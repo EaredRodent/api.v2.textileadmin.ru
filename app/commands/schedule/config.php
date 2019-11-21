@@ -9,6 +9,7 @@ use omnilight\scheduling\Schedule;
 
 /**
  * TODO: В кроне добаивть '* * * * * php /projects/textile-api/app/yii schedule/run --scheduleFile=/projects/textile-api/app/commands/schedule/config.php'
+ * Тестирование для винды 'yii schedule/run --scheduleFile=commands/schedule/config.php'
  * @var Schedule $schedule
  */
 $schedule->call(function () {
