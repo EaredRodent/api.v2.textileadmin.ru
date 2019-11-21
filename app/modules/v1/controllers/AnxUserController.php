@@ -422,7 +422,7 @@ class AnxUserController extends ActiveControllerExtended
      */
     function actionReloadAllContacts($secret_key)
     {
-        $wsc = new Client($this->wssUrl);
+        $wsc = new Client(AppMod::wssUrl);
         try {
             $wsc->send(json_encode([
                 'secret_key' => $secret_key,
