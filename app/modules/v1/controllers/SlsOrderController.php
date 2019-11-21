@@ -136,6 +136,8 @@ class SlsOrderController extends ActiveControllerExtended
         $order->status = SlsOrder::s1_client_prep;
         $order->contact_fk = $contact->id;
         $order->user_fk = $org->manager_fk;
+        date_default_timezone_set('Europe/Moscow');
+        $order->ts_expire = date('Y-m-d H:i:s', time() + (60 * 60 * 1)); // На 1 час позже текщуго time()
 
         if (!$order->save()) {
             throw new HttpException(200, 'Внутренняя ошибка.', 200);
