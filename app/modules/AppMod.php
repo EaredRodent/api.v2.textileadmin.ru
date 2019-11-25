@@ -10,7 +10,7 @@ class AppMod
 {
     const ean13Prefix = '4563721';
 
-    const domain = YII_ENV_PROD ? 'https://api.textileadmin.ru' : 'http://api.textileadmin.loc';
+    const domain = YII_ENV_PROD ? 'https://api.b2b.oxouno.ru' : 'http://api.textileadmin.loc';
 
     // Прикрепленные файлы для счетов в реестре пладежей
     const filesInvoiceAttachement = 'filesInvoiceAttachement';
