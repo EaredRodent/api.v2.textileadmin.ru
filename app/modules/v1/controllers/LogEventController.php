@@ -29,10 +29,12 @@ class LogEventController extends ActiveControllerExtended
     function actionGetEvents($contactID = 0)
     {
         $events = [];
+        $timeStart = date('Y-m-d H:i:s', time() - 24 * 60 * 60 * 3);
 
         if ($contactID) {
             $events = LogEvent::find()
                 ->where(['user_fk' => $contactID])
+                ->andWhere(['>', 'ts_create', $timeStart])
                 ->orderBy('ts_create DESC')
                 ->all();
         } else {
@@ -49,6 +51,7 @@ class LogEventController extends ActiveControllerExtended
 
             $events = LogEvent::find()
                 ->where(['user_fk' => $contactIDs])
+                ->andWhere(['>', 'ts_create', $timeStart])
                 ->orderBy('ts_create DESC')
                 ->all();
         }
