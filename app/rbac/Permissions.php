@@ -29,6 +29,8 @@ use app\modules\v1\controllers\SlsOrderController;
 use app\modules\v1\controllers\SlsOrgController;
 use app\modules\v1\controllers\SlsPayItemController;
 use app\modules\v1\controllers\TestController;
+use app\modules\v1\controllers\V3InvoiceController;
+use app\modules\v1\controllers\V3InvoiceTypeController;
 
 class Permissions
 {
@@ -46,13 +48,16 @@ class Permissions
     const roleSaller = 'roleSaller'; // Менеджер отдела продаж
     const roleSallerMain = 'roleSallerMain'; // Руководитель отдела продаж
     const roleOxouno = 'roleOxouno'; // Пользователь розничного магазина oxouno
+    const roleV3Cashier = 'roleV3Cashier'; // V3 Кассир
+    const roleV3Client = 'roleV3Client'; // V3 Клиент
+    const roleV3Admin = 'roleV3Admin'; // V3 Администратор
 
 
     const roles = [
         self::roleGuest => [
             AnxUserController::actionLogin,
             AnxUserController::actionBootstrap,
-            AnxUserController::actionIndex,
+            AnxUserController::actionGetUsers,
             AnxUserController::actionB2bRegister,
             AnxUserController::actionReloadAllContacts,
         ],
@@ -113,7 +118,17 @@ class Permissions
             self::taskOxounoApi,
         ],
 
+        self::roleV3Cashier => [
 
+        ],
+
+        self::roleV3Client => [
+            self::taskV3Invoices
+        ],
+
+        self::roleV3Admin => [
+
+        ]
     ];
 
     ///
@@ -136,6 +151,8 @@ class Permissions
     // Отчеты (дашборды) по производству
     const pageManagamentProduction = 'pageManagamentProduction';
 
+    const pageV3Invoices = 'pageV3Invoices';
+
     const pages = [
         self::pageRegPays => 'Реестры платежей',
         self::pageTestApi => 'Тестирование API проекта',
@@ -143,6 +160,7 @@ class Permissions
         self::pageReferenceB2B => 'B2B',
         self::pageSalesClients => 'Отдел продаж / Клиенты',
         self::pageManagamentProduction => 'Производство',
+        self::pageV3Invoices => 'Счета',
     ];
 
 
@@ -220,6 +238,8 @@ class Permissions
      * Экшены для изменений на странице sales/statistics-b2b
      */
     const taskSalesStatisticsB2BWrite = 'taskSalesStatisticsB2BWrite';
+
+    const taskV3Invoices = 'taskV3Invoices';
 
     const tasks = [
 
@@ -402,6 +422,15 @@ class Permissions
         self::taskSalesStatisticsB2BWrite => [
 
         ],
+
+        self::taskV3Invoices => [
+            self::pageV3Invoices,
+            V3InvoiceController::actionGetForClient,
+            V3InvoiceTypeController::actionGetAll,
+            V3InvoiceController::actionCreateByClient,
+        ]
+
+
     ];
 
 

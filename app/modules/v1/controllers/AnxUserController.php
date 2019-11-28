@@ -40,16 +40,23 @@ class AnxUserController extends ActiveControllerExtended
         return $actions;
     }
 
-    const actionIndex = 'GET /v1/anx-user/index';
+    const actionGetUsers = 'GET /v1/anx-user/get-users';
 
     /**
-     * Получить список всех юзеров, у которые есть accesstoken
+     * Получить список всех юзеров из проекта $project, у которых есть accesstoken
+     * @param $project
      * @return AnxUser[]
+     * @throws HttpException
      */
-    function actionIndex()
+    function actionGetUsers($project)
     {
+        if (!YII_ENV_DEV) {
+            throw new HttpException(200, 'Forbidden.', 200);
+        }
+
         return AnxUser::find()
-            ->where('accesstoken IS NOT NULL')
+            ->where(['project' => $project])
+            ->andWhere('accesstoken IS NOT NULL')
             ->all();
     }
 
