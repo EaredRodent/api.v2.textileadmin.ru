@@ -15,11 +15,9 @@ use Yii;
  * @property int $type_fk
  * @property string $name
  * @property string $summ
- * @property string $state
  * @property string $ts_create
- * @property string $ts_accept
- * @property string $ts_full_pay
  * @property string $ts_del
+ * @property int $flag_del
  *
  * @property AnxUser $userFk
  * @property V3InvoiceType $typeFk
@@ -42,10 +40,9 @@ class GiiV3Invoice extends ActiveRecordExtended
     {
         return [
             [['user_fk', 'type_fk'], 'required'],
-            [['user_fk', 'type_fk'], 'integer'],
+            [['user_fk', 'type_fk', 'flag_del'], 'integer'],
             [['summ'], 'number'],
-            [['state'], 'string'],
-            [['ts_create', 'ts_accept', 'ts_full_pay', 'ts_del'], 'safe'],
+            [['ts_create', 'ts_del'], 'safe'],
             [['name'], 'string', 'max' => 80],
             [['user_fk'], 'exist', 'skipOnError' => true, 'targetClass' => AnxUser::className(), 'targetAttribute' => ['user_fk' => 'id']],
             [['type_fk'], 'exist', 'skipOnError' => true, 'targetClass' => V3InvoiceType::className(), 'targetAttribute' => ['type_fk' => 'id']],
@@ -63,11 +60,9 @@ class GiiV3Invoice extends ActiveRecordExtended
             'type_fk' => 'Type Fk',
             'name' => 'Name',
             'summ' => 'Summ',
-            'state' => 'State',
             'ts_create' => 'Ts Create',
-            'ts_accept' => 'Ts Accept',
-            'ts_full_pay' => 'Ts Full Pay',
             'ts_del' => 'Ts Del',
+            'flag_del' => 'Flag Del',
         ];
     }
 

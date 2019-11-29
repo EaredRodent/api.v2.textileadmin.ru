@@ -2,7 +2,7 @@
 
 namespace app\modules\v1\models\v3;
 
-use app\gii\GiiV3Invoice;
+use app\gii\GiiV3MoneyEvent;
 
 /**
  *  * Created by PhpStorm.
@@ -11,16 +11,12 @@ use app\gii\GiiV3Invoice;
  * Time: 2:39 PM
  */
 
-class V3Invoice extends GiiV3Invoice
+class V3MoneyEvent extends GiiV3MoneyEvent
 {
-    public $countEvent;
-
     public function fields()
     {
         return array_merge(parent::fields(), [
-            'userFk',
-            'typeFk',
-            'countEvent'
+            'invoiceFk'
         ]);
     }
 }

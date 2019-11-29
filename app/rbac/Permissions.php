@@ -124,11 +124,11 @@ class Permissions
         ],
 
         self::roleV3Client => [
-            self::taskV3Invoices
+            self::taskV3Invoices,
         ],
 
         self::roleV3Admin => [
-
+            self::taskV3RegPays,
         ],
 
         self::roleTechnolog => [
@@ -157,6 +157,8 @@ class Permissions
 
     const pageV3Invoices = 'pageV3Invoices';
 
+    const pageV3RegPays = 'pageV3RegPays';
+
     const pages = [
         self::pageRegPays => 'Реестры платежей',
         self::pageTestApi => 'Тестирование API проекта',
@@ -165,6 +167,7 @@ class Permissions
         self::pageSalesClients => 'Отдел продаж / Клиенты',
         self::pageReportsProduction => 'Отчеты / Производство',
         self::pageV3Invoices => 'Счета',
+        self::pageV3RegPays => 'Реестр платежей',
     ];
 
 
@@ -243,7 +246,17 @@ class Permissions
      */
     const taskSalesStatisticsB2BWrite = 'taskSalesStatisticsB2BWrite';
 
+    /**
+     * V3
+     * Экшены для страницы /invoices
+     */
     const taskV3Invoices = 'taskV3Invoices';
+
+    /**
+     * V3
+     * Экшены для страницы /reg-pays
+     */
+    const taskV3RegPays = 'taskV3RegPays';
 
     const tasks = [
 
@@ -429,12 +442,16 @@ class Permissions
 
         self::taskV3Invoices => [
             self::pageV3Invoices,
-            V3InvoiceController::actionGetForClient,
+            V3InvoiceController::actionGetPrepForClient,
             V3InvoiceTypeController::actionGetAll,
             V3InvoiceController::actionCreateByClient,
+            V3InvoiceController::actionDeleteByClient,
+        ],
+
+        self::taskV3RegPays => [
+            self::pageV3RegPays,
+            V3InvoiceController::actionGetPrepForAdmin,
         ]
-
-
     ];
 
 
