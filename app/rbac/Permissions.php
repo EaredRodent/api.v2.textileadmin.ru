@@ -149,7 +149,7 @@ class Permissions
 
 
     // Отчеты (дашборды) по производству
-    const pageManagamentProduction = 'pageManagamentProduction';
+    const pageManagementProduction = 'pageManagementProduction';
 
     const pageV3Invoices = 'pageV3Invoices';
 
@@ -159,7 +159,7 @@ class Permissions
         self::pageReference => 'Справочник изделий',
         self::pageReferenceB2B => 'B2B',
         self::pageSalesClients => 'Отдел продаж / Клиенты',
-        self::pageManagamentProduction => 'Производство',
+        self::pageManagementProduction => 'Производство',
         self::pageV3Invoices => 'Счета',
     ];
 
@@ -220,7 +220,7 @@ class Permissions
     const taskSalesClientsWrite = 'taskSalesClientsWrite';
 
     /**
-     * Доступ к странице pageManagamentProduction и все ее API
+     * Доступ к странице pageManagementProduction и все ее API
      */
     const taskReportProduction = 'taskReportProduction';
 
@@ -401,7 +401,7 @@ class Permissions
         ],
 
         self::taskReportProduction => [
-            self::pageManagamentProduction,
+            self::pageManagementProduction,
             PrStorProdController::actionGetReportStorIncomAll,
             PrStorProdController::actionGetReportStorIncomMonth,
             PrStorProdController::actionGetReportStorOutMonth,
