@@ -51,6 +51,7 @@ class Permissions
     const roleV3Cashier = 'roleV3Cashier'; // V3 Кассир
     const roleV3Client = 'roleV3Client'; // V3 Клиент
     const roleV3Admin = 'roleV3Admin'; // V3 Администратор
+    const roleTechnolog = 'roleTechnolog'; //
 
 
     const roles = [
@@ -128,6 +129,10 @@ class Permissions
 
         self::roleV3Admin => [
 
+        ],
+
+        self::roleTechnolog => [
+            self::taskReportProduction,
         ]
     ];
 
@@ -147,9 +152,8 @@ class Permissions
 
     const pageSalesStatisticsB2B = 'pageSalesStatisticsB2B';
 
-
     // Отчеты (дашборды) по производству
-    const pageManagementProduction = 'pageManagementProduction';
+    const pageReportsProduction = 'pageReportsProduction';
 
     const pageV3Invoices = 'pageV3Invoices';
 
@@ -159,7 +163,7 @@ class Permissions
         self::pageReference => 'Справочник изделий',
         self::pageReferenceB2B => 'B2B',
         self::pageSalesClients => 'Отдел продаж / Клиенты',
-        self::pageManagementProduction => 'Производство',
+        self::pageReportsProduction => 'Отчеты / Производство',
         self::pageV3Invoices => 'Счета',
     ];
 
@@ -401,7 +405,7 @@ class Permissions
         ],
 
         self::taskReportProduction => [
-            self::pageManagementProduction,
+            self::pageReportsProduction,
             PrStorProdController::actionGetReportStorIncomAll,
             PrStorProdController::actionGetReportStorIncomMonth,
             PrStorProdController::actionGetReportStorOutMonth,
