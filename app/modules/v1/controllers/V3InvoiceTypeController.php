@@ -26,4 +26,23 @@ class V3InvoiceTypeController extends ActiveControllerExtended
 
         return $invoiceTypes;
     }
+
+    const actionCreateEdit = 'POST /v1/v3-invoice-type/create-edit';
+
+    public function actionCreateEdit($form)
+    {
+        $form = json_decode($form, true);
+        $type = null;
+
+        if(isset($form['id'])) {
+            $type = V3InvoiceType::findOne(['id' => $form['id']]);
+        } else {
+            $type = new V3InvoiceType();
+        }
+
+        $type->name = $form['name'];
+        $type->save();
+
+        return ['_result_' => 'success'];
+    }
 }

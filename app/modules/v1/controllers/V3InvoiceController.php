@@ -33,6 +33,7 @@ class V3InvoiceController extends ActiveControllerExtended
 
         $invoices = V3Invoice::find()
             ->where(['user_fk' => $clientID])
+            ->andWhere(['flag_del' => 0])
             ->all();
 
         return $invoices;
@@ -63,9 +64,7 @@ class V3InvoiceController extends ActiveControllerExtended
         $invoice->summ = $form['summ'];
         $invoice->type_fk = $form['type_fk'];
 
-        if (!$invoice->save()) {
-            throw new HttpException(200, 'Внутренняя ошибка.', 200);
-        }
+        $invoice->save();
 
         return ['_result_' => 'success'];
     }
@@ -82,7 +81,9 @@ class V3InvoiceController extends ActiveControllerExtended
             throw new HttpException(200, 'Forbidden.', 200);
         }
 
-        $invoice->delete();
+        $invoice->flag_del = 1;
+
+        $invoice->save();
 
         return ['_result_' => 'success'];
     }

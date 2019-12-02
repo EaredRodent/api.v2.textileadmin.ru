@@ -23,5 +23,22 @@ class V3BoxController extends ActiveControllerExtended
         return V3Box::find()->all();
     }
 
+    const actionCreateEdit = 'POST /v1/v3-box/create-edit';
 
+    public function actionCreateEdit($form)
+    {
+        $form = json_decode($form, true);
+        $box = null;
+
+        if(isset($form['id'])) {
+            $box = V3Box::findOne(['id' => $form['id']]);
+        } else {
+            $box = new V3Box();
+        }
+
+        $box->load($form, '');
+        $box->save();
+
+        return ['_result_' => 'success'];
+    }
 }

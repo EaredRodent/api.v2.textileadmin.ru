@@ -122,7 +122,8 @@ class Permissions
         ],
 
         self::roleV3Cashier => [
-
+            self::taskV3Invoices,
+            self::taskV3Box,
         ],
 
         self::roleV3Client => [
@@ -131,6 +132,8 @@ class Permissions
 
         self::roleV3Admin => [
             self::taskV3RegPays,
+            self::taskV3Invoices,
+            self::taskV3Preferences
         ],
 
         self::roleTechnolog => [
@@ -161,6 +164,10 @@ class Permissions
 
     const pageV3RegPays = 'pageV3RegPays';
 
+    const pageV3Box = 'pageV3Box';
+
+    const pageV3Preferences = 'pageV3Preferences';
+
     const pages = [
         self::pageRegPays => 'Реестры платежей',
         self::pageTestApi => 'Тестирование API проекта',
@@ -170,6 +177,8 @@ class Permissions
         self::pageReportsProduction => 'Отчеты / Производство',
         self::pageV3Invoices => 'Счета',
         self::pageV3RegPays => 'Реестр платежей',
+        self::pageV3Box => 'Касса',
+        self::pageV3Preferences => 'Настройки',
     ];
 
 
@@ -256,9 +265,21 @@ class Permissions
 
     /**
      * V3
+     * Экшены для страницы /preferences
+     */
+    const taskV3Preferences = 'taskV3Preferences';
+
+    /**
+     * V3
      * Экшены для страницы /reg-pays
      */
     const taskV3RegPays = 'taskV3RegPays';
+
+    /**
+     * V3
+     * Экшены для страницы /box
+     */
+    const taskV3Box = 'taskV3Box';
 
     const tasks = [
 
@@ -456,6 +477,20 @@ class Permissions
             V3BoxController::actionGetForAdmin,
             V3MoneyEventController::actionCreateForPrepInvoice,
             V3InvoiceController::actionGetPartPayForAdmin,
+        ],
+
+        self::taskV3Box => [
+            self::pageV3Box,
+        ],
+
+        self::taskV3Preferences => [
+            self::pageV3Preferences,
+            V3InvoiceTypeController::actionGetAll,
+            V3BoxController::actionGetForAdmin,
+            V3InvoiceTypeController::actionCreateEdit,
+            V3InvoiceTypeController::actionCreateEdit,
+            AnxUserController::actionGetUsersFromV3,
+            V3BoxController::actionCreateEdit,
         ]
     ];
 
