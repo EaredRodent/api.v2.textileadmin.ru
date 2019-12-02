@@ -13,5 +13,10 @@ use app\gii\GiiV3Box;
 
 class V3Box extends GiiV3Box
 {
-
+    public function fields()
+    {
+        return array_merge(parent::fields(), [
+            'userFk'
+        ]);
+    }
 }

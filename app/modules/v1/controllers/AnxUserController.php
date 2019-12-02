@@ -439,4 +439,18 @@ class AnxUserController extends ActiveControllerExtended
 
         }
     }
+
+    const actionGetUsersFromV3 = 'GET /v1/anx-user/get-users-from-v3';
+
+    /**
+     * Получить список всех юзеров из проекта v3, у которых есть accesstoken
+     * @return AnxUser[]
+     */
+    function actionGetUsersFromV3()
+    {
+        return AnxUser::find()
+            ->where(['project' => 'v3'])
+            ->andWhere('accesstoken IS NOT NULL')
+            ->all();
+    }
 }
