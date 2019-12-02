@@ -29,8 +29,10 @@ use app\modules\v1\controllers\SlsOrderController;
 use app\modules\v1\controllers\SlsOrgController;
 use app\modules\v1\controllers\SlsPayItemController;
 use app\modules\v1\controllers\TestController;
+use app\modules\v1\controllers\V3BoxController;
 use app\modules\v1\controllers\V3InvoiceController;
 use app\modules\v1\controllers\V3InvoiceTypeController;
+use app\modules\v1\controllers\V3MoneyEventController;
 
 class Permissions
 {
@@ -451,6 +453,9 @@ class Permissions
         self::taskV3RegPays => [
             self::pageV3RegPays,
             V3InvoiceController::actionGetPrepForAdmin,
+            V3BoxController::actionGetForAdmin,
+            V3MoneyEventController::actionCreateForPrepInvoice,
+            V3InvoiceController::actionGetPartPayForAdmin,
         ]
     ];
 

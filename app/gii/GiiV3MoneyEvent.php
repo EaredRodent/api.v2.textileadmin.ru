@@ -5,6 +5,7 @@ namespace app\gii;
 use app\modules\v1\classes\ActiveRecordExtended;
 use app\modules\v1\models\sls\SlsOrder;
 use app\modules\v1\models\sls\SlsPreorder;
+use app\modules\v1\models\v3\V3Box;
 use app\modules\v1\models\v3\V3Invoice;
 use Yii;
 

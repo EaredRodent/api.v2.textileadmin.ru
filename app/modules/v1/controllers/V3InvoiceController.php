@@ -111,6 +111,35 @@ class V3InvoiceController extends ActiveControllerExtended
         $invoiceWithoutMoneyEventIDs = array_diff($invoiceIDs, $invoiceFromMoneyEventIDs);
 
         return V3Invoice::find()
-            ->where(['id' => $invoiceWithoutMoneyEventIDs]);
+            ->where(['id' => $invoiceWithoutMoneyEventIDs])
+            ->all();
+    }
+
+    const actionGetPartPayForAdmin = 'GET /v1/v3-invoice/get-part-pay-for-admin';
+
+    /**
+     * @return mixed
+     */
+    public function actionGetPartPayForAdmin()
+    {
+        $moneyEvents = V3MoneyEvent::find()
+            ->groupBy('invoice_fk')
+            ->all();
+
+        $invoiceFromMoneyEventIDs = array_map(function ($moneyEvent) {
+            return $moneyEvent->invoice_fk;
+        }, $moneyEvents);
+
+        $invoices = V3Invoice::find()->all();
+
+        $invoiceIDs = array_map(function ($invoice) {
+            return $invoice->id;
+        }, $invoices);
+
+        $invoiceWithoutMoneyEventIDs = array_diff($invoiceIDs, $invoiceFromMoneyEventIDs);
+
+        return V3Invoice::find()
+            ->where(['id' => $invoiceWithoutMoneyEventIDs])
+            ->all();
     }
 }
