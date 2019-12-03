@@ -28,6 +28,8 @@ class V3MoneyEventController extends ActiveControllerExtended
 
         $moneyEvent->load($form, '');
 
+        $moneyEvent->summ = -$moneyEvent->summ;
+
         $moneyEvent->direct = V3MoneyEvent::direct['out'];
         $moneyEvent->type = V3MoneyEvent::type['invoice'];
         $moneyEvent->state = V3MoneyEvent::state['prep'];
@@ -35,5 +37,31 @@ class V3MoneyEventController extends ActiveControllerExtended
         $moneyEvent->save();
 
         return ['_result_' => 'success'];
+    }
+
+    const actionGetPrepForAdmin = 'GET /v1/v3-money-event/get-prep-for-admin';
+
+    /**
+     * @return mixed
+     */
+    public function actionGetPrepForAdmin()
+    {
+        return V3MoneyEvent::find()
+            ->where(['type' => V3MoneyEvent::type['invoice']])
+            ->andWhere(['state' => V3MoneyEvent::state['prep']])
+            ->all();
+    }
+
+    const actionGetPayForAdmin = 'GET /v1/v3-money-event/get-pay-for-admin';
+
+    /**
+     * @return mixed
+     */
+    public function actionGetPayForAdmin()
+    {
+        return V3MoneyEvent::find()
+            ->where(['type' => V3MoneyEvent::type['invoice']])
+            ->andWhere(['state' => V3MoneyEvent::state['pay']])
+            ->all();
     }
 }

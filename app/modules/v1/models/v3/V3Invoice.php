@@ -13,6 +13,8 @@ use app\gii\GiiV3Invoice;
 
 class V3Invoice extends GiiV3Invoice
 {
+    public $sum_pay;
+
     public $countEvent;
 
     public function fields()
@@ -20,7 +22,8 @@ class V3Invoice extends GiiV3Invoice
         return array_merge(parent::fields(), [
             'userFk',
             'typeFk',
-            'countEvent'
+            'countEvent',
+            'sum_pay'
         ]);
     }
 }

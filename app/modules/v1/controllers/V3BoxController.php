@@ -11,6 +11,9 @@ namespace app\modules\v1\controllers;
 
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\v3\V3Box;
+use app\modules\v1\models\v3\V3MoneyEvent;
+use Yii;
+use yii\web\HttpException;
 
 class V3BoxController extends ActiveControllerExtended
 {
@@ -41,4 +44,38 @@ class V3BoxController extends ActiveControllerExtended
 
         return ['_result_' => 'success'];
     }
+
+    const actionGetBalance = 'GET /v1/v3-box/get-balance';
+
+    public function actionGetBalance($boxID = 'FromCurrentUser')
+    {
+        if ((!YII_ENV_DEV) && ($boxID !== 'FromCurrentUser')) {
+            throw new HttpException(200, 'Forbidden.', 200);
+        }
+
+        /** @var V3Box $box */
+        $box = null;
+
+        if ($boxID === 'FromCurrentUser') {
+            $userID = Yii::$app->getUser()->getIdentity()->getId();
+            $box = V3Box::findOne(['user_fk' => $userID]);
+        } else {
+            $box = V3Box::findOne(['id' => $boxID]);
+        }
+
+        /** @var V3MoneyEvent[] $moneyEvents */
+        $moneyEvents = V3MoneyEvent::find()
+            ->where(['box_fk' => $box->id])
+            ->andWhere(['state' => V3MoneyEvent::state['pay']])
+            ->all();
+
+        $balance = 0;
+
+        foreach ($moneyEvents as $moneyEvent) {
+            $balance += +$moneyEvent->summ;
+        }
+
+        return $balance;
+    }
+
 }

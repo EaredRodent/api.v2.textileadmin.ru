@@ -36,6 +36,7 @@ class V3MoneyEvent extends GiiV3MoneyEvent
     public function fields()
     {
         return array_merge(parent::fields(), [
+            'boxFk',
             'invoiceFk'
         ]);
     }

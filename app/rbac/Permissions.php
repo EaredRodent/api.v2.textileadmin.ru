@@ -495,10 +495,14 @@ class Permissions
             V3BoxController::actionGetForAdmin,
             V3MoneyEventController::actionCreateForPrepInvoice,
             V3InvoiceController::actionGetPartPayForAdmin,
+            V3MoneyEventController::actionGetPrepForAdmin,
+            V3MoneyEventController::actionGetPayForAdmin,
         ],
 
         self::taskV3Box => [
             self::pageV3Box,
+            V3BoxController::actionGetBalance,
+
         ],
 
         self::taskV3Preferences => [
