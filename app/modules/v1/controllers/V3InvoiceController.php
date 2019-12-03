@@ -111,36 +111,31 @@ class V3InvoiceController extends ActiveControllerExtended
 
         $invoiceWithoutMoneyEventIDs = array_diff($invoiceIDs, $invoiceFromMoneyEventIDs);
 
-        return V3Invoice::find()
+        /** @var V3Invoice[] $invoices */
+        $invoices = V3Invoice::find()
             ->where(['id' => $invoiceWithoutMoneyEventIDs])
             ->all();
+
+        $result = [];
+
+        foreach ($invoices as $invoice) {
+            $result[$invoice->userFk->name][] = $invoice;
+        }
+
+        return $result;
     }
 
     const actionGetPartPayForAdmin = 'GET /v1/v3-invoice/get-part-pay-for-admin';
 
-    /**
-     * @return mixed
-     */
     public function actionGetPartPayForAdmin()
     {
-        $moneyEvents = V3MoneyEvent::find()
-            ->groupBy('invoice_fk')
+        $invoices = V3Invoice::find()
+            ->select(['v3_invoice.*', '(SELECT SUM(v3_money_event.summ) FROM v3_money_event WHERE v3_money_event.invoice_fk = v3_invoice.id AND v3_money_event.state != \'del\') AS sum_pay'])
+            ->having('sum_pay IS NOT NULL')
+            ->andHaving('-sum_pay < summ')
             ->all();
 
-        $invoiceFromMoneyEventIDs = array_map(function ($moneyEvent) {
-            return $moneyEvent->invoice_fk;
-        }, $moneyEvents);
-
-        $invoices = V3Invoice::find()->all();
-
-        $invoiceIDs = array_map(function ($invoice) {
-            return $invoice->id;
-        }, $invoices);
-
-        $invoiceWithoutMoneyEventIDs = array_diff($invoiceIDs, $invoiceFromMoneyEventIDs);
-
-        return V3Invoice::find()
-            ->where(['id' => $invoiceWithoutMoneyEventIDs])
-            ->all();
+        return $invoices;
     }
+
 }
