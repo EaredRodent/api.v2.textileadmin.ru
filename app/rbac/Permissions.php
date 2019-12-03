@@ -497,11 +497,17 @@ class Permissions
             V3InvoiceController::actionGetPartPayForAdmin,
             V3MoneyEventController::actionGetPrepForAdmin,
             V3MoneyEventController::actionGetPayForAdmin,
+            V3InvoiceController::actionDeleteByAdmin,
+            V3MoneyEventController::actionSetDel,
+            V3MoneyEventController::actionGetIncomingForAdmin,
         ],
 
         self::taskV3Box => [
             self::pageV3Box,
-            V3BoxController::actionGetBalance,
+            V3BoxController::actionGetForCashier,
+            V3MoneyEventController::actionGetPrepForCashier,
+            V3MoneyEventController::actionSetPay,
+            V3MoneyEventController::actionGetPayForCashier,
 
         ],
 

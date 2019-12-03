@@ -16,7 +16,27 @@ class V3Box extends GiiV3Box
     public function fields()
     {
         return array_merge(parent::fields(), [
-            'userFk'
+            'userFk',
+            'balance' => function () {
+                return $this->getBalance();
+            }
         ]);
+    }
+
+    private function getBalance()
+    {
+        /** @var V3MoneyEvent[] $moneyEvents */
+        $moneyEvents = V3MoneyEvent::find()
+            ->where(['box_fk' => $this->id])
+            ->andWhere(['state' => V3MoneyEvent::state['pay']])
+            ->all();
+
+        $balance = 0;
+
+        foreach ($moneyEvents as $moneyEvent) {
+            $balance += +$moneyEvent->summ;
+        }
+
+        return $balance;
     }
 }
