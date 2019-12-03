@@ -50,11 +50,14 @@ class Permissions
     const roleSaller = 'roleSaller'; // Менеджер отдела продаж
     const roleSallerMain = 'roleSallerMain'; // Руководитель отдела продаж
     const roleOxouno = 'roleOxouno'; // Пользователь розничного магазина oxouno
-    const roleV3Cashier = 'roleV3Cashier'; // V3 Кассир
-    const roleV3Client = 'roleV3Client'; // V3 Клиент
-    const roleV3Admin = 'roleV3Admin'; // V3 Администратор
     const roleTechnolog = 'roleTechnolog'; //
 
+    const roleV3Alena = 'roleV3Alena';
+    const roleV3Edush = 'roleV3Edush';
+    const roleV3Larisa = 'roleV3Larisa'; // Кассир рнд
+    const roleV3Anna = 'roleV3Anna'; // Кассир тгн
+    const roleV3Krivinosova = 'roleV3Krivinosova'; //
+    const roleV3Yura = 'roleV3Yura'; //
 
     const roles = [
         self::roleGuest => [
@@ -120,25 +123,40 @@ class Permissions
         self::roleOxouno => [
             self::taskOxounoApi,
         ],
-
-        self::roleV3Cashier => [
-            self::taskV3Invoices,
-            self::taskV3Box,
-        ],
-
-        self::roleV3Client => [
-            self::taskV3Invoices,
-        ],
-
-        self::roleV3Admin => [
-            self::taskV3RegPays,
-            self::taskV3Invoices,
-            self::taskV3Preferences
-        ],
-
         self::roleTechnolog => [
             self::taskReportProduction,
-        ]
+        ],
+
+
+        // v3
+
+        self::roleV3Alena => [
+            self::taskV3Invoices,
+            self::taskV3Box,
+            self::taskV3RegPays,
+            self::taskV3Preferences,
+        ],
+        self::roleV3Edush => [
+            self::taskV3Invoices,
+            self::taskV3RegPays,
+        ],
+        self::roleV3Larisa => [
+            self::taskV3Invoices,
+            self::taskV3Box
+        ],
+        self::roleV3Anna => [
+            self::taskV3Invoices,
+            self::taskV3Box
+        ],
+        self::roleV3Krivinosova => [
+            self::taskV3Invoices,
+            self::taskV3Preferences,
+            self::taskV3RegPays,
+        ],
+        self::roleV3Yura => [
+            self::taskV3Invoices,
+        ],
+
     ];
 
     ///
