@@ -73,12 +73,26 @@ class V3InvoiceController extends ActiveControllerExtended
 
     public function actionDeleteByClient($id)
     {
-        $clientID = Yii::$app->getUser()->getIdentity()->getId();
+        self::deleteInvoice($id);
+    }
 
+    const actionDeleteByAdmin = 'POST /v1/v3-invoice/delete-by-admin';
+
+    public function actionDeleteByAdmin($id)
+    {
+        self::deleteInvoice($id, false);
+    }
+
+    static private function deleteInvoice($id, $compareAuthorAndInitiator = true)
+    {
         $invoice = V3Invoice::findOne(['id' => $id]);
 
-        if ($invoice->user_fk !== $clientID) {
-            throw new HttpException(200, 'Forbidden.', 200);
+        if ($compareAuthorAndInitiator) {
+            $clientID = Yii::$app->getUser()->getIdentity()->getId();
+
+            if ($invoice->user_fk !== $clientID) {
+                throw new HttpException(200, 'Forbidden.', 200);
+            }
         }
 
         $invoice->flag_del = 1;
@@ -96,6 +110,8 @@ class V3InvoiceController extends ActiveControllerExtended
     public function actionGetPrepForAdmin()
     {
         $moneyEvents = V3MoneyEvent::find()
+            ->where(['direct' => V3MoneyEvent::direct['out']])
+            ->andWhere(['!=', 'state', V3MoneyEvent::state['del']])
             ->groupBy('invoice_fk')
             ->all();
 
@@ -114,6 +130,7 @@ class V3InvoiceController extends ActiveControllerExtended
         /** @var V3Invoice[] $invoices */
         $invoices = V3Invoice::find()
             ->where(['id' => $invoiceWithoutMoneyEventIDs])
+            ->andWhere(['flag_del' => 0])
             ->all();
 
         $result = [];
@@ -137,5 +154,6 @@ class V3InvoiceController extends ActiveControllerExtended
 
         return $invoices;
     }
+
 
 }

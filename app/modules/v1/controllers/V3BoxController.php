@@ -45,9 +45,9 @@ class V3BoxController extends ActiveControllerExtended
         return ['_result_' => 'success'];
     }
 
-    const actionGetBalance = 'GET /v1/v3-box/get-balance';
+    const actionGetForCashier = 'GET /v1/v3-box/get-for-cashier';
 
-    public function actionGetBalance($boxID = 'FromCurrentUser')
+    public function actionGetForCashier($boxID = 'FromCurrentUser')
     {
         if ((!YII_ENV_DEV) && ($boxID !== 'FromCurrentUser')) {
             throw new HttpException(200, 'Forbidden.', 200);
@@ -63,19 +63,7 @@ class V3BoxController extends ActiveControllerExtended
             $box = V3Box::findOne(['id' => $boxID]);
         }
 
-        /** @var V3MoneyEvent[] $moneyEvents */
-        $moneyEvents = V3MoneyEvent::find()
-            ->where(['box_fk' => $box->id])
-            ->andWhere(['state' => V3MoneyEvent::state['pay']])
-            ->all();
-
-        $balance = 0;
-
-        foreach ($moneyEvents as $moneyEvent) {
-            $balance += +$moneyEvent->summ;
-        }
-
-        return $balance;
+        return $box;
     }
 
 }
