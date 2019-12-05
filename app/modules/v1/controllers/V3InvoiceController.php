@@ -21,6 +21,13 @@ class V3InvoiceController extends ActiveControllerExtended
 
     const actionGetPrepForClient = 'GET /v1/v3-invoice/get-prep-for-client';
 
+    /**
+     * Вернуть счета на подготовке (для клиента кассы)
+     * @param string $clientID
+     * @return array|\yii\db\ActiveRecord[]
+     * @throws HttpException
+     * @throws \Throwable
+     */
     public function actionGetPrepForClient($clientID = 'CurrentUser')
     {
         if ((!YII_ENV_DEV) && ($clientID !== 'CurrentUser')) {
@@ -32,8 +39,10 @@ class V3InvoiceController extends ActiveControllerExtended
         }
 
         $invoices = V3Invoice::find()
-            ->where(['user_fk' => $clientID])
-            ->andWhere(['flag_del' => 0])
+            ->select(['v3_invoice.*', '(SELECT SUM(v3_money_event.summ) FROM v3_money_event WHERE v3_money_event.invoice_fk = v3_invoice.id AND v3_money_event.state != \'del\') AS sum_pay'])
+            ->having('sum_pay IS NULL')
+            ->andHaving(['user_fk' => $clientID])
+            ->andHaving(['!=', 'flag_del', 1])
             ->all();
 
         return $invoices;
@@ -41,6 +50,13 @@ class V3InvoiceController extends ActiveControllerExtended
 
     const actionCreateByClient = 'POST /v1/v3-invoice/create-by-client';
 
+    /**
+     * Создать счет (для клиента кассы)
+     * @param $form
+     * @return array
+     * @throws HttpException
+     * @throws \Throwable
+     */
     public function actionCreateByClient($form)
     {
         $clientID = Yii::$app->getUser()->getIdentity()->getId();
@@ -71,6 +87,11 @@ class V3InvoiceController extends ActiveControllerExtended
 
     const actionDeleteByClient = 'POST /v1/v3-invoice/delete-by-client';
 
+    /**
+     * Удалить счет (для клиента кассы)
+     * @param $id
+     * @throws HttpException
+     */
     public function actionDeleteByClient($id)
     {
         self::deleteInvoice($id);
@@ -105,7 +126,8 @@ class V3InvoiceController extends ActiveControllerExtended
     const actionGetPrepForAdmin = 'GET /v1/v3-invoice/get-prep-for-admin';
 
     /**
-     * @return mixed
+     * Вернуть счета на подготовке (для администратора)
+     * @return array
      */
     public function actionGetPrepForAdmin()
     {
@@ -144,6 +166,10 @@ class V3InvoiceController extends ActiveControllerExtended
 
     const actionGetPartPayForAdmin = 'GET /v1/v3-invoice/get-part-pay-for-admin';
 
+    /**
+     * Вернуть частично опл. счета (для администратора)
+     * @return array|\yii\db\ActiveRecord[]
+     */
     public function actionGetPartPayForAdmin()
     {
         $invoices = V3Invoice::find()
@@ -155,5 +181,71 @@ class V3InvoiceController extends ActiveControllerExtended
         return $invoices;
     }
 
+    const actionGetPartPayForClient = 'GET /v1/v3-invoice/get-part-pay-for-client';
 
+    /**
+     * Вернуть частично опл. счета (для клиента кассы)
+     * @param $clientID
+     * @return array|\yii\db\ActiveRecord[]
+     * @throws HttpException
+     * @throws \Throwable
+     */
+    public function actionGetPartPayForClient($clientID = 'CurrentUser')
+    {
+        if ((!YII_ENV_DEV) && ($clientID !== 'CurrentUser')) {
+            throw new HttpException(200, 'Forbidden.', 200);
+        }
+
+        if ($clientID === 'CurrentUser') {
+            $clientID = Yii::$app->getUser()->getIdentity()->getId();
+        }
+
+        $invoices = V3Invoice::find()
+            ->select(['v3_invoice.*', '(SELECT SUM(v3_money_event.summ) FROM v3_money_event WHERE v3_money_event.invoice_fk = v3_invoice.id AND v3_money_event.state != \'del\') AS sum_pay'])
+            ->having('sum_pay IS NOT NULL')
+            ->andHaving('-sum_pay < summ')
+            ->andHaving(['user_fk' => $clientID])
+            ->all();
+
+        return $invoices;
+    }
+
+    const actionGetFullPayForClient = 'GET /v1/v3-invoice/get-full-pay-for-client';
+
+    /**
+     * Вернуть частично опл. счета (для клиента кассы)
+     * @param $date
+     * @param string $clientID
+     * @return array|\yii\db\ActiveRecord[]
+     * @throws HttpException
+     * @throws \Throwable
+     */
+    public function actionGetFullPayForClient($date, $clientID = 'CurrentUser')
+    {
+        $dateStart = date('Y-m-1 00:00:00', strtotime($date));
+        $dateEnd = date('Y-m-t 23:59:59', strtotime($date));
+
+        if ((!YII_ENV_DEV) && ($clientID !== 'CurrentUser')) {
+            throw new HttpException(200, 'Forbidden.', 200);
+        }
+
+        if ($clientID === 'CurrentUser') {
+            $clientID = Yii::$app->getUser()->getIdentity()->getId();
+        }
+
+        $invoices = V3Invoice::find()
+            ->select([
+                'v3_invoice.*',
+                '(SELECT SUM(v3_money_event.summ) FROM v3_money_event WHERE v3_money_event.invoice_fk = v3_invoice.id AND v3_money_event.state = \'pay\') AS sum_pay',
+                '(SELECT MAX(v3_money_event.ts_pay) FROM v3_money_event WHERE v3_money_event.invoice_fk = v3_invoice.id AND v3_money_event.state = \'pay\') AS ts_pay'
+            ])
+            ->having('sum_pay IS NOT NULL')
+            ->andHaving('-sum_pay = summ')
+            ->andHaving(['user_fk' => $clientID])
+            ->andHaving(['>=', 'ts_pay', $dateStart])
+            ->andHaving(['<=', 'ts_pay', $dateEnd])
+            ->all();
+
+        return $invoices;
+    }
 }

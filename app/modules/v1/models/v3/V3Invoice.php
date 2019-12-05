@@ -14,6 +14,7 @@ use app\gii\GiiV3Invoice;
 class V3Invoice extends GiiV3Invoice
 {
     public $sum_pay;
+    public $ts_pay;
 
     public $countEvent;
 
@@ -23,7 +24,8 @@ class V3Invoice extends GiiV3Invoice
             'userFk',
             'typeFk',
             'countEvent',
-            'sum_pay'
+            'sum_pay',
+            'ts_pay'
         ]);
     }
 }

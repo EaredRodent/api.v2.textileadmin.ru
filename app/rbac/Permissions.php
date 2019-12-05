@@ -487,6 +487,9 @@ class Permissions
             V3InvoiceTypeController::actionGetAll,
             V3InvoiceController::actionCreateByClient,
             V3InvoiceController::actionDeleteByClient,
+            V3MoneyEventController::actionGetPrepForClient,
+            V3InvoiceController::actionGetPartPayForClient,
+            V3InvoiceController::actionGetFullPayForClient,
         ],
 
         self::taskV3RegPays => [
@@ -500,6 +503,7 @@ class Permissions
             V3InvoiceController::actionDeleteByAdmin,
             V3MoneyEventController::actionSetDel,
             V3MoneyEventController::actionGetIncomingForAdmin,
+            V3MoneyEventController::actionTransfer,
         ],
 
         self::taskV3Box => [
@@ -508,6 +512,7 @@ class Permissions
             V3MoneyEventController::actionGetPrepForCashier,
             V3MoneyEventController::actionSetPay,
             V3MoneyEventController::actionGetPayForCashier,
+            V3MoneyEventController::actionGetIncomingForCashier,
 
         ],
 
@@ -515,7 +520,6 @@ class Permissions
             self::pageV3Preferences,
             V3InvoiceTypeController::actionGetAll,
             V3BoxController::actionGetForAdmin,
-            V3InvoiceTypeController::actionCreateEdit,
             V3InvoiceTypeController::actionCreateEdit,
             AnxUserController::actionGetUsersFromV3,
             V3BoxController::actionCreateEdit,
