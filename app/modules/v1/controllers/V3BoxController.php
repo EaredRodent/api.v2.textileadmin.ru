@@ -21,6 +21,10 @@ class V3BoxController extends ActiveControllerExtended
 
     const actionGetForAdmin = 'GET /v1/v3-box/get-for-admin';
 
+    /**
+     * Вернуть все кассы (для администратора)
+     * @return array|\yii\db\ActiveRecord[]
+     */
     public function actionGetForAdmin()
     {
         return V3Box::find()->all();
@@ -28,6 +32,12 @@ class V3BoxController extends ActiveControllerExtended
 
     const actionCreateEdit = 'POST /v1/v3-box/create-edit';
 
+    /**
+     * Создать или редактировать кассу (для администратора)
+     * @param $form
+     * @return array
+     * @throws HttpException
+     */
     public function actionCreateEdit($form)
     {
         $form = json_decode($form, true);
@@ -42,11 +52,30 @@ class V3BoxController extends ActiveControllerExtended
         $box->load($form, '');
         $box->save();
 
+        if(!isset($form['id'])) {
+            $moneyEvent = new V3MoneyEvent();
+            $moneyEvent->box_fk = $box->id;
+            $moneyEvent->direct = V3MoneyEvent::direct['in'];
+            $moneyEvent->type = V3MoneyEvent::type['balance'];
+            $moneyEvent->summ = $form['start_sum'];
+            $moneyEvent->comment = 'Начальное сальдо.';
+            $moneyEvent->state = V3MoneyEvent::state['pay'];
+            $moneyEvent->ts_pay = date('Y-m-d H:i:s');
+            $moneyEvent->save();
+        }
+
         return ['_result_' => 'success'];
     }
 
     const actionGetForCashier = 'GET /v1/v3-box/get-for-cashier';
 
+    /**
+     * Вернуть информацию по кассе (для кассира)
+     * @param string $boxID
+     * @return V3Box|null
+     * @throws HttpException
+     * @throws \Throwable
+     */
     public function actionGetForCashier($boxID = 'FromCurrentUser')
     {
         if ((!YII_ENV_DEV) && ($boxID !== 'FromCurrentUser')) {

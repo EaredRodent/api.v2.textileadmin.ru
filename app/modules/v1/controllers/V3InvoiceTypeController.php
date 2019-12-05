@@ -20,6 +20,10 @@ class V3InvoiceTypeController extends ActiveControllerExtended
 
     const actionGetAll = 'GET /v1/v3-invoice-type/get-all';
 
+    /**
+     * Вернуть типы счета (для администратора, для клиента кассы)
+     * @return array|\yii\db\ActiveRecord[]
+     */
     public function actionGetAll()
     {
         $invoiceTypes = V3InvoiceType::find()->all();
@@ -29,6 +33,12 @@ class V3InvoiceTypeController extends ActiveControllerExtended
 
     const actionCreateEdit = 'POST /v1/v3-invoice-type/create-edit';
 
+    /**
+     * Создать или редактировать тип счета (для администратора)
+     * @param $form
+     * @return array
+     * @throws HttpException
+     */
     public function actionCreateEdit($form)
     {
         $form = json_decode($form, true);
