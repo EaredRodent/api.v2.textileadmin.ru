@@ -132,6 +132,10 @@ class V3MoneyEventController extends ActiveControllerExtended
             throw new HttpException(200, 'Forbidden.', 200);
         }
 
+        if ($box->getBalance() < abs($moneyEvent->summ)) {
+            throw new HttpException(200, 'Недостаточно суммы в кассе.', 200);
+        }
+
         $moneyEvent->state = V3MoneyEvent::state['pay'];
         $moneyEvent->ts_pay = date('Y-m-d H:i:s');
 

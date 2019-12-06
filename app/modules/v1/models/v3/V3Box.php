@@ -23,7 +23,7 @@ class V3Box extends GiiV3Box
         ]);
     }
 
-    private function getBalance()
+    public function getBalance()
     {
         /** @var V3MoneyEvent[] $moneyEvents */
         $moneyEvents = V3MoneyEvent::find()
