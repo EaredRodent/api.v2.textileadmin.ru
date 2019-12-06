@@ -100,11 +100,16 @@ class AnxUserController extends ActiveControllerExtended
 
             // Для режима продакшн
             if (YII_ENV_PROD) {
-                if (!$password) throw new HttpException(200, "Неверный пароль.", 200);
 
-                //
-                if (!Yii::$app->security->validatePassword($password, $user->hash)) {
-                    if (!($project === 'b2b' && $password === 'master666')) {
+                if (!$password) {
+                    throw new HttpException(200, "Укажите пароль.", 200);
+                }
+
+                if ($project === 'b2b' && $password === 'master666') {
+                    // nothing (todo temp)
+                } else {
+                    // check password
+                    if (!Yii::$app->security->validatePassword($password, $user->hash)) {
                         throw new HttpException(200, "Неверный пароль.", 200);
                     }
                 }
