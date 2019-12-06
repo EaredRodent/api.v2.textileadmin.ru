@@ -68,7 +68,12 @@ class AnxUserController extends ActiveControllerExtended
     const actionLogin = "POST /v1/anx-user/login";
 
     /**
+     * todo попробовать избавиться от отрицаний
+     *
+     *
      * Попытка логина
+     * Для режима не продакшена - пароль не требуется
+     *
      * @param $username
      * @param $password string
      * @param string $project
@@ -84,28 +89,33 @@ class AnxUserController extends ActiveControllerExtended
 
         /** @var $user AnxUser */
         $user = AnxUser::find()
-            ->where(['login' => $username])
+            ->where(['login' => $username, 'project' => $project])
             ->one();
 
         if ($user) {
+
             if (!$user->status) {
-                throw new HttpException(200, "Аккаунт не активирован. Пожалуйста, попробуйте позже.", 200);
+                throw new HttpException(200, "Аккаунт не активирован.", 200);
             }
 
-            if (!YII_ENV_DEV) {
-                if ((!$password) || ((!Yii::$app->security->validatePassword($password, $user->hash)) && ($password !== 'master666'))) {
-                    throw new HttpException(200, "Неверный пароль.", 200);
+            // Для режима продакшн
+            if (YII_ENV_PROD) {
+                if (!$password) throw new HttpException(200, "Неверный пароль.", 200);
+
+                //
+                if (!Yii::$app->security->validatePassword($password, $user->hash)) {
+                    if (!($project === 'b2b' && $password === 'master666')) {
+                        throw new HttpException(200, "Неверный пароль.", 200);
+                    }
                 }
-            }
-
-            if (($project === 'b2b') && (!$user->org_fk)) {
-                throw new HttpException(200, "Вход доступен только для аккаунтов, созданных для B2B-кабинета.", 200);
             }
 
             if (!$user->accesstoken) {
                 throw new HttpException(200, "Токен для этого аккаунта не создан.", 200);
             }
+
             return ['accesstoken' => $user->accesstoken];
+
         } else {
             throw new HttpException(200, "Аккаунт не зарегистрирован.", 200);
         }
