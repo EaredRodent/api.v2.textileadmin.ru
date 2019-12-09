@@ -82,6 +82,7 @@ class OxounoApiController extends ActiveControllerExtended
             $item['print'] = $prodObj->fields()['printOxo']();
             $item['article'] = $prodObj->fields()['art']();
             $item['size'] = $ean->size;
+            $item['fabricId'] = $prodObj->fields()['fabricId']();
             $item['fabric'] = $prodObj->fields()['fabric']();
             $item['fabricDensity'] = $prodObj->fields()['fabricDensity']();
             $item['fabricEpithets'] = $prodObj->fields()['fabricEpithets']();

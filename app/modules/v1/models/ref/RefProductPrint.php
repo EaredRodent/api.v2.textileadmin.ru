@@ -67,6 +67,9 @@ class RefProductPrint extends GiiRefProductPrint
             'flagStopProd' => function () { //
                 return $this->flag_stop_prod;
             },
+            'fabricId' => function () { //
+                return $this->blankFk->fabric_type_fk;
+            },
             'fabric' => function () { //
                 return $this->blankFk->fabricTypeFk->struct;
             },
