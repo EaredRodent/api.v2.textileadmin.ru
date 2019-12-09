@@ -79,6 +79,10 @@ class OxounoApiController extends ActiveControllerExtended
             $item['modelEpithets'] = $prodObj->fields()['modelEpithets']();
             $item['name'] = $prodObj->fields()['titleStr']();
             $item['color'] = $prodObj->fields()['colorOxo']();
+            $item['themeId'] = $prodObj->fields()['themeId']();
+            $item['themeStr'] = $prodObj->fields()['themeStr']();
+            $item['themeDescript'] = $prodObj->fields()['themeDescript']();
+
             $item['print'] = $prodObj->fields()['printOxo']();
             $item['article'] = $prodObj->fields()['art']();
             $item['size'] = $ean->size;

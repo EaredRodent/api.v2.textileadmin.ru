@@ -52,6 +52,15 @@ class RefProductPrint extends GiiRefProductPrint
             'colorOxo' => function () {
                 return $this->blankFk->themeFk->title_price;
             },
+            'themeId' => function () { //
+                return $this->blankFk->theme_fk;
+            },
+            'themeStr' => function () { //
+                return $this->blankFk->themeFk->title;
+            },
+            'themeDescript' => function () { //
+                return $this->blankFk->themeFk->descript;
+            },
             'printProd' => function () { //
                 return $this->printFk->title;
             },

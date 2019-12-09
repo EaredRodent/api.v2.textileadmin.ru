@@ -47,6 +47,16 @@ class RefArtBlank extends GiiRefArtBlank
             'colorOxo' => function () { //
                 return $this->themeFk->title_price;
             },
+            'themeId' => function () { //
+                return $this->theme_fk;
+            },
+            'themeStr' => function () { //
+                return $this->themeFk->title;
+            },
+            'themeDescript' => function () { //
+                return $this->themeFk->descript;
+            },
+
             'printProd' => function () { //
                 return 'Без принта';
             },
