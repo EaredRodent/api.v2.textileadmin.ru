@@ -57,7 +57,7 @@ class Permissions
     const roleV3Larisa = 'roleV3Larisa'; // Кассир рнд
     const roleV3Anna = 'roleV3Anna'; // Кассир тгн
     const roleV3Krivinosova = 'roleV3Krivinosova'; //
-    const roleV3Yura = 'roleV3Yura'; //
+    const roleV3Client = 'roleV3Client'; // Роль человека, который только выставляет счета
 
     const roles = [
         self::roleGuest => [
@@ -152,7 +152,7 @@ class Permissions
             self::taskV3Preferences,
             self::taskV3RegPays,
         ],
-        self::roleV3Yura => [
+        self::roleV3Client => [
             self::taskV3Invoices,
         ],
 
