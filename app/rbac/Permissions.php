@@ -131,7 +131,6 @@ class Permissions
         // v3
 
         self::roleV3Alena => [
-            self::taskV3Invoices,
             self::taskV3Box,
             self::taskV3RegPays,
             self::taskV3Preferences,
@@ -504,6 +503,7 @@ class Permissions
             V3MoneyEventController::actionSetDel,
             V3MoneyEventController::actionGetIncomingForAdmin,
             V3MoneyEventController::actionTransfer,
+            V3InvoiceController::actionCreateByClient,
         ],
 
         self::taskV3Box => [
@@ -513,6 +513,7 @@ class Permissions
             V3MoneyEventController::actionSetPay,
             V3MoneyEventController::actionGetPayForCashier,
             V3MoneyEventController::actionGetIncomingForCashier,
+            V3MoneyEventController::actionMoneyInCreate,
 
         ],
 

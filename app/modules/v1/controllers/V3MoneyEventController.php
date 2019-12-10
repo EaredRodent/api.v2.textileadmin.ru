@@ -150,6 +150,7 @@ class V3MoneyEventController extends ActiveControllerExtended
             $moneyEventIn->direct = V3MoneyEvent::direct['in'];
             $moneyEventIn->type = V3MoneyEvent::type['transfer'];
             $moneyEventIn->state = V3MoneyEvent::state['pay'];
+            $moneyEventIn->ts_pay = date('Y-m-d H:i:s');
 
             $moneyEventIn->save();
         }
@@ -272,7 +273,10 @@ class V3MoneyEventController extends ActiveControllerExtended
 
         $moneyEvent = new V3MoneyEvent();
 
-        $moneyEvent->load($form, '');
+        $moneyEvent->box_fk = $form['box_fk'];
+        $moneyEvent->trans_box_fk = $form['trans_box_fk'];
+        $moneyEvent->summ = $form['summ'];
+        $moneyEvent->comment = isset($form['comment']) ? $form['comment'] : '';
 
         $moneyEvent->summ = -$moneyEvent->summ;
 
@@ -311,5 +315,30 @@ class V3MoneyEventController extends ActiveControllerExtended
             ->andWhere(['state' => V3MoneyEvent::state['prep']])
             ->andWhere(['v3_invoice.user_fk' => $clientID])
             ->all();
+    }
+
+    const actionMoneyInCreate = 'POST /v1/v3-money-event/money-in-create';
+
+    public function actionMoneyInCreate($form)
+    {
+        $form = json_decode($form, true);
+
+        $cashierID = Yii::$app->getUser()->getIdentity()->getId();
+        $box = V3Box::findOne(['user_fk' => $cashierID]);
+
+        $moneyEvent = new V3MoneyEvent();
+
+        $moneyEvent->load($form, '');
+
+
+        $moneyEvent->box_fk = $box->id;
+        $moneyEvent->direct = V3MoneyEvent::direct['in'];
+        $moneyEvent->type = V3MoneyEvent::type['other'];
+        $moneyEvent->state = V3MoneyEvent::state['pay'];
+        $moneyEvent->ts_pay = date('Y-m-d H:i:s');
+
+        $moneyEvent->save();
+
+        return ['_result_' => 'success'];
     }
 }
