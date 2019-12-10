@@ -484,7 +484,7 @@ class Permissions
             self::pageV3Invoices,
             V3InvoiceController::actionGetPrepForClient,
             V3InvoiceTypeController::actionGetAll,
-            V3InvoiceController::actionCreateByClient,
+            V3InvoiceController::actionCreateEdit,
             V3InvoiceController::actionDeleteByClient,
             V3MoneyEventController::actionGetPrepForClient,
             V3InvoiceController::actionGetPartPayForClient,
@@ -503,7 +503,8 @@ class Permissions
             V3MoneyEventController::actionSetDel,
             V3MoneyEventController::actionGetIncomingForAdmin,
             V3MoneyEventController::actionTransfer,
-            V3InvoiceController::actionCreateByClient,
+            V3InvoiceController::actionCreateEdit,
+            V3InvoiceController::createEditAll,
         ],
 
         self::taskV3Box => [

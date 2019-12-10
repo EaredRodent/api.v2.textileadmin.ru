@@ -48,16 +48,18 @@ class V3InvoiceController extends ActiveControllerExtended
         return $invoices;
     }
 
-    const actionCreateByClient = 'POST /v1/v3-invoice/create-by-client';
+    const actionCreateEdit = 'POST /v1/v3-invoice/create-edit';
+    // Позволяет редактировать чужие счета
+    const createEditAll = 'createEditAll';
 
     /**
-     * Создать счет (для клиента кассы)
+     * Создать или редактировать счет
      * @param $form
      * @return array
      * @throws HttpException
      * @throws \Throwable
      */
-    public function actionCreateByClient($form)
+    public function actionCreateEdit($form)
     {
         $clientID = Yii::$app->getUser()->getIdentity()->getId();
 
@@ -68,8 +70,10 @@ class V3InvoiceController extends ActiveControllerExtended
         if (isset($form['id'])) {
             $invoice = V3Invoice::findOne(['id' => $form['id']]);
 
-            if ($invoice->user_fk !== $clientID) {
-                throw new HttpException(200, 'Forbidden.', 200);
+            if (!Yii::$app->getUser()->can('createEditAll')) {
+                if ($invoice->user_fk !== $clientID) {
+                    throw new HttpException(200, 'Forbidden.', 200);
+                }
             }
         } else {
             $invoice = new V3Invoice();
