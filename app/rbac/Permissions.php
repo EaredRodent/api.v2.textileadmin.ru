@@ -94,6 +94,7 @@ class Permissions
             self::taskSalesClientsAccess,
             SlsMessageStateController::getMessagesForOtherManagers,
             self::taskSalesStatisticsB2BAccess,
+            self::taskSalesReport,
         ],
         self::roleBuhMain => [
             self::taskRegPaysPageAccess,
@@ -171,6 +172,8 @@ class Permissions
     const pageReferenceB2B = 'pageReferenceB2B';
 
     const pageSalesClients = 'pageSalesClients';
+
+    const pageReportsSelling = 'pageReportsSelling';
 
     const pageSalesStatisticsB2B = 'pageSalesStatisticsB2B';
 
@@ -273,6 +276,11 @@ class Permissions
      * Экшены для изменений на странице sales/statistics-b2b
      */
     const taskSalesStatisticsB2BWrite = 'taskSalesStatisticsB2BWrite';
+
+    /**
+     * Доступ к странице отчета по продажам
+     */
+    const taskSalesReport = 'taskSalesReport';
 
     /**
      * V3
@@ -478,6 +486,13 @@ class Permissions
 
         self::taskSalesStatisticsB2BWrite => [
 
+        ],
+
+        self::taskSalesReport => [
+            self::pageReportsSelling,
+            SlsItemController::actionGetPayReport,
+            RefBlankGroupController::actionGetGroups,
+            RefBlankSexController::actionGetSexRecs,
         ],
 
         self::taskV3Invoices => [
