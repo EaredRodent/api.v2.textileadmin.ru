@@ -186,6 +186,8 @@ class Permissions
 
     const pageV3RegPays = 'pageV3RegPays';
 
+    const pageV3RegPaysExpenseReport = 'pageV3RegPaysExpenseReport';
+
     const pageV3Box = 'pageV3Box';
 
     const pageV3Preferences = 'pageV3Preferences';
@@ -513,6 +515,7 @@ class Permissions
 
         self::taskV3RegPays => [
             self::pageV3RegPays,
+            self::pageV3RegPaysExpenseReport,
             V3InvoiceController::actionGetPrepForAdmin,
             V3BoxController::actionGetForAdmin,
             V3MoneyEventController::actionCreateForPrepInvoice,
