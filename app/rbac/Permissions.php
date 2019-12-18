@@ -114,12 +114,14 @@ class Permissions
             self::taskSalesClientsAccess,
             SlsMessageController::actionSendFromManager,
             self::taskSalesStatisticsB2BAccess,
+            self::taskSalesReport,
         ],
         self::roleSallerMain => [
             self::taskSalesClientsAccess,
             self::taskSalesClientsWrite,
             SlsMessageStateController::getMessagesForOtherManagers,
             self::taskSalesStatisticsB2BAccess,
+            self::taskSalesReport,
         ],
         self::roleOxouno => [
             self::taskOxounoApi,
@@ -493,6 +495,9 @@ class Permissions
             SlsItemController::actionGetPayReport,
             RefBlankGroupController::actionGetGroups,
             RefBlankSexController::actionGetSexRecs,
+            RefFabricTypeController::actionGetFabricPriceTypes,
+            SlsClientController::actionGetForFilters,
+            RefBlankClassController::actionGetTags,
         ],
 
         self::taskV3Invoices => [

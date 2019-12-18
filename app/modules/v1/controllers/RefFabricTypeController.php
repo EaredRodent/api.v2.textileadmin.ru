@@ -55,4 +55,20 @@ class RefFabricTypeController extends ActiveControllerExtended
             ->groupBy('type_price')
             ->all();
     }
+
+
+    const actionGetFabricPriceTypes = 'GET /v1/ref-fabric-type/get-fabric-price-types';
+
+    /**
+     * Вернуть список для фильтра по ткани для отчета по продажам
+     * @return RefFabricType[]
+     */
+    public function actionGetFabricPriceTypes()
+    {
+        return RefFabricType::find()
+            ->select(['type_price'])
+            ->groupBy('type_price')
+            ->orderBy('type_price')
+            ->all();
+    }
 }

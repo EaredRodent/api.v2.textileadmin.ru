@@ -29,7 +29,7 @@ class PayReport
     public $totalCommon = 0;
 
     function __construct($dateStart, $dateEnd,
-                         $articles, $sex, $groups, $tags, $clients, $managers,
+                         $articles, $sex, $groups, $fabrics, $tags, $clients, $managers,
                          $axisX, $axisY, $resultType)
     {
         $havingSql = "HAVING ";
@@ -47,6 +47,27 @@ class PayReport
             foreach ($groups as $group) $arrGroup[] = "'{$group}'";
             $gropuStr = implode(', ', $arrGroup);
             $arrayHaving[] = "groupStr IN ({$gropuStr})";
+        }
+
+        if ($fabrics) {
+            $arrFabrics = [];
+            foreach ($fabrics as $fabric) $arrFabrics[] = "'{$fabric}'";
+            $fabricStr = implode(', ', $arrFabrics);
+            $arrayHaving[] = "fabricStr IN ({$fabricStr})";
+        }
+
+        if ($clients) {
+            $arrClients = [];
+            foreach ($clients as $client) $arrClients[] = "'{$client}'";
+            $clientsStr = implode(', ', $arrClients);
+            $arrayHaving[] = "clientName IN ({$clientsStr})";
+        }
+
+        if ($tags) {
+            $arrTags = [];
+            foreach ($tags as $tag) $arrTags[] = "'{$tag}'";
+            $tagsStr = implode(', ', $arrTags);
+            $arrayHaving[] = "tag IN ({$tagsStr})";
         }
 
         if (empty($arrayHaving)) {
@@ -72,6 +93,9 @@ class PayReport
             ref_blank_class.tag AS tag,
             ref_blank_group.title AS groupStr,
             CONCAT ('OXO-', LPAD(blank_fk, 4, '0'), IF(print_fk > 3, CONCAT('-', LPAD(print_fk, 3, '0')), '')) AS art,
+               
+            ref_fabric_type.type_price AS fabricStr,
+               
             blank_fk,
             print_fk,
         
@@ -109,6 +133,7 @@ class PayReport
             LEFT JOIN anx_user ON anx_user.id = sls_order.user_fk
             LEFT JOIN sls_client ON sls_client.id = sls_order.client_fk
             LEFT JOIN ref_art_blank ON ref_art_blank.id = sls_item.blank_fk
+            LEFT JOIN ref_fabric_type ON ref_fabric_type.id = ref_art_blank.fabric_type_fk
             LEFT JOIN ref_blank_model ON ref_blank_model.id = ref_art_blank.model_fk
             LEFT JOIN ref_blank_sex ON ref_blank_sex.id = ref_blank_model.sex_fk
             LEFT JOIN ref_blank_class ON ref_blank_class.id = ref_blank_model.class_fk

@@ -53,4 +53,19 @@ class RefBlankClassController extends ActiveControllerExtended
         return $resp;
     }
 
+    const actionGetTags = 'GET ' . '/v1/ref-blank-class/get-tags';
+
+    /**
+     * Вернуть список тэгов
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function actionGetTags()
+    {
+        return RefBlankClass::find()
+            ->select(['tag'])
+            ->orderBy('tag')
+            ->groupBy('tag')
+            ->all();
+    }
+
 }

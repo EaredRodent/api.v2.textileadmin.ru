@@ -243,6 +243,7 @@ class SlsItemController extends ActiveControllerExtended
      * @param array $articles
      * @param array $sex
      * @param array $groups
+     * @param array $fabrics
      * @param array $tags
      * @param array $clients
      * @param array $managers
@@ -257,6 +258,7 @@ class SlsItemController extends ActiveControllerExtended
         array $articles = [],
         array $sex = [],
         array $groups = [],
+        array $fabrics = [],
         array $tags = [],
         array $clients = [],
         array $managers = [],
@@ -279,6 +281,7 @@ class SlsItemController extends ActiveControllerExtended
             $articles,
             $sex,
             $groups,
+            $fabrics,
             $tags,
             $clients,
             $managers,
