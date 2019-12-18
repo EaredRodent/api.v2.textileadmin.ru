@@ -66,19 +66,31 @@ class V3MoneyEventController extends ActiveControllerExtended
 
     /**
      * Вернуть список платежей со статусом оплачен (для администратора)
+     * @param $start
+     * @param null $end
+     * @param null $type_fk
+     * @param null $box_fk
      * @return array|\yii\db\ActiveRecord[]
      */
-    public function actionGetPayForAdmin($date)
+    public function actionGetPayForAdmin(
+        $start,
+        $end = null,    // Если не задан, то равняется $start
+        $type_fk = null,
+        $box_fk = null)
     {
-        $dateStart = date('Y-m-1 00:00:00', strtotime($date));
-        $dateEnd = date('Y-m-t 23:59:59', strtotime($date));
+        $dateStart = date('Y-m-1 00:00:00', strtotime($start));
+        $dateEnd = date('Y-m-t 23:59:59', strtotime($end ? $end : $start));
 
         return V3MoneyEvent::find()
+            ->joinWith('invoiceFk')
             ->where(['direct' => V3MoneyEvent::direct['out']])
             ->andWhere(['type' => [V3MoneyEvent::type['invoice'], V3MoneyEvent::type['transfer']]])
             ->andWhere(['state' => V3MoneyEvent::state['pay']])
             ->andWhere(['>=', 'ts_pay', $dateStart])
             ->andWhere(['<=', 'ts_pay', $dateEnd])
+            ->andFilterWhere(['v3_invoice.type_fk' => $type_fk])
+            ->andFilterWhere(['box_fk' => $box_fk])
+            ->orderBy('ts_pay')
             ->all();
     }
 
@@ -267,6 +279,12 @@ class V3MoneyEventController extends ActiveControllerExtended
 
     const actionTransfer = 'POST /v1/v3-money-event/transfer';
 
+    /**
+     * Перевести в кассу
+     * @param $form
+     * @return array
+     * @throws HttpException
+     */
     public function actionTransfer($form)
     {
         $form = json_decode($form, true);
@@ -319,6 +337,13 @@ class V3MoneyEventController extends ActiveControllerExtended
 
     const actionMoneyInCreate = 'POST /v1/v3-money-event/money-in-create';
 
+    /**
+     * Создать внеторговый приход
+     * @param $form
+     * @return array
+     * @throws HttpException
+     * @throws \Throwable
+     */
     public function actionMoneyInCreate($form)
     {
         $form = json_decode($form, true);
