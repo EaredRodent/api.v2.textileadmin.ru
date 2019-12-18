@@ -21,6 +21,7 @@ use app\modules\v1\models\sls\SlsClient;
 use app\modules\v1\models\sls\SlsItem;
 use app\modules\v1\models\sls\SlsOrder;
 use app\modules\v1\models\sls\SlsOrg;
+use app\objects\PayReport;
 use Yii;
 use yii\web\HttpException;
 
@@ -229,5 +230,72 @@ class SlsItemController extends ActiveControllerExtended
         LogEvent::log(LogEvent::editOrder);
 
         return ['_result_' => 'success'];
+    }
+
+
+    const actionGetPayReport = 'GET /v1/sls-item/get-pay-report';
+
+    /**
+     * Вернуть отчет по продажам
+     * Типы осей
+     * @param string $dateStart
+     * @param string $dateEnd
+     * @param array $articles
+     * @param array $sex
+     * @param array $groups
+     * @param array $tags
+     * @param array $clients
+     * @param array $managers
+     * @param string $axisX [month|managerName|groupStr|tag|sexStr]
+     * @param string $axisY
+     * @param string $resultType [rowMoney|rowCount]
+     * @return array
+     */
+    public function actionGetPayReport(
+        $dateStart = 'firstDayOfYear',
+        $dateEnd = 'currentDay',
+        array $articles = [],
+        array $sex = [],
+        array $groups = [],
+        array $tags = [],
+        array $clients = [],
+        array $managers = [],
+        $axisX = 'month',
+        $axisY = 'managerName',
+        $resultType = 'rowMoney'
+    )
+    {
+
+        $dateStart = ($dateStart === 'firstDayOfYear' || $dateStart === '') ?
+            date('Y-01-01') : date('Y-m-d', strtotime($dateStart));
+
+        $dateEnd = ($dateEnd === 'currentDay' || $dateEnd === '') ?
+            date('Y-m-d') : date('Y-m-d', strtotime($dateEnd));
+
+
+        $report = new PayReport(
+            $dateStart,
+            $dateEnd,
+            $articles,
+            $sex,
+            $groups,
+            $tags,
+            $clients,
+            $managers,
+            $axisX,
+            $axisY,
+            $resultType
+        );
+
+        return [
+            'axisX' => $report->axisX,
+            'axisY' => $report->axisY,
+            'matrix' => $report->matrix2,
+            'totalX' => $report->totalX,
+            'totalY' => $report->totalY,
+            'totalCommon' => $report->totalCommon,
+        ];
+        //return ;
+
     }
 }

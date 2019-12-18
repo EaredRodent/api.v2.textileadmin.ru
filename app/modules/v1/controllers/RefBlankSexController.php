@@ -97,4 +97,15 @@ class RefBlankSexController extends ActiveControllerExtended
 
         return $sexObjects;
     }
+
+    const actionGetSexRecs = 'GET /v1/ref-blank-sex/get-sex-recs';
+
+    /**
+     * Вернуть список для фильтра по полу (v2)
+     * @return array
+     */
+    public function actionGetSexRecs() {
+        return RefBlankSex::find()->all();
+    }
+
 }
