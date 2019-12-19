@@ -12,6 +12,7 @@ namespace app\modules\v1\controllers;
 use app\models\AnxUser;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\log\LogEvent;
+use Yii;
 
 class LogEventController extends ActiveControllerExtended
 {
@@ -57,5 +58,21 @@ class LogEventController extends ActiveControllerExtended
         }
 
         return $events;
+    }
+
+    const actionLogBrowser = 'GET /v1/log-event/log-browser';
+
+    /**
+     * Логирует старый браузер (B2B)
+     */
+    function actionLogBrowser()
+    {
+        $logEvent = new LogEvent();
+        $logEvent->event = 'LogOutdatedBrowser';
+        $logEvent->params = json_encode([
+            'userIP' => Yii::$app->request->userIP,
+            'userAgent' => Yii::$app->request->userAgent
+        ], JSON_UNESCAPED_UNICODE);
+        $logEvent->save();
     }
 }

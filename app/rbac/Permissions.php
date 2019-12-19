@@ -66,6 +66,7 @@ class Permissions
             AnxUserController::actionGetUsers,
             AnxUserController::actionB2bRegister,
             AnxUserController::actionReloadAllContacts,
+            LogEventController::actionLogBrowser,
         ],
         self::roleMaster => [
             self::pageTestApi,
