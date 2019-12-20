@@ -67,12 +67,18 @@ class LogEventController extends ActiveControllerExtended
      */
     function actionLogBrowser()
     {
-        $logEvent = new LogEvent();
-        $logEvent->event = 'LogOutdatedBrowser';
-        $logEvent->params = json_encode([
+        $params = json_encode([
             'userIP' => Yii::$app->request->userIP,
             'userAgent' => Yii::$app->request->userAgent
         ], JSON_UNESCAPED_UNICODE);
-        $logEvent->save();
+
+        $logEvent = LogEvent::findOne(['event' => 'LogOutdatedBrowser', 'params' => $params]);
+
+        if(!$logEvent) {
+            $logEvent = new LogEvent();
+            $logEvent->event = 'LogOutdatedBrowser';
+            $logEvent->params = $params;
+            $logEvent->save();
+        }
     }
 }
