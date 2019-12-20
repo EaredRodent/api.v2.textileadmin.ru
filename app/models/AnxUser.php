@@ -25,7 +25,7 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
 
 
         // удаляем небезопасные поля
-        unset($fields['auth_key'], $fields['accesstoken'], $fields['hash']);
+        unset($fields['auth_key'], $fields['url_key'], $fields['accesstoken'], $fields['hash']);
 
         return $fields;
     }

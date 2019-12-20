@@ -291,4 +291,38 @@ class RefArtBlankController extends ActiveControllerExtended
 //                    $newPrintProdIDs = RefProductPrint::calcNewProdIDs(30);
 //            }
 //        }
+
+    const actionGetAllArticles = 'GET /v1/ref-art-blank/get-all-articles';
+
+    /**
+     * Вернуть список всех артикулов (и даже с принтом)
+     */
+    public function actionGetAllArticles()
+    {
+        $resp = [];
+        $prods = RefArtBlank::find()
+            ->select('id')
+            ->all();
+
+        $postProds = RefProductPrint::find()
+            ->select(['blank_fk', 'print_fk'])
+            ->all();
+
+        foreach ($prods as $prod) {
+            $resp[] = 'OXO-' . str_pad($prod->id, 4, '0', STR_PAD_LEFT);
+        }
+
+        foreach ($postProds as $postProd) {
+            $resp[] = 'OXO-' .
+                str_pad($postProd->blank_fk, 4, '0', STR_PAD_LEFT) . '-' .
+                str_pad($postProd->print_fk, 3, '0', STR_PAD_LEFT);
+        }
+
+        sort($resp, SORT_NATURAL);
+
+        return $resp;
+
+
+    }
+
 }

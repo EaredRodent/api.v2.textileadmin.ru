@@ -295,13 +295,14 @@ class AnxUserController extends ActiveControllerExtended
     const actionGetManagers = 'GET /v1/anx-user/get-managers';
 
     /**
-     * Получает список менеджеров
+     * Получить список менеджеров
      * @return array|\yii\db\ActiveRecord[]
      */
     function actionGetManagers()
     {
         return AnxUser::find()
             ->where(['role' => ['roleSaller', 'roleSallerMain']])
+            ->orderBy('name')
             ->all();
     }
 

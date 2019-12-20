@@ -70,6 +70,20 @@ class PayReport
             $arrayHaving[] = "tag IN ({$tagsStr})";
         }
 
+        if ($managers) {
+            $arrManagers = [];
+            foreach ($managers as $manager) $arrManagers[] = "'{$manager}'";
+            $managersStr = implode(', ', $arrManagers);
+            $arrayHaving[] = "managerName IN ({$managersStr})";
+        }
+
+        if ($articles) {
+            $arrArts = [];
+            foreach ($articles as $art) $arrArts[] = "'{$art}'";
+            $artsStr = implode(', ', $arrArts);
+            $arrayHaving[] = "art IN ({$artsStr})";
+        }
+
         if (empty($arrayHaving)) {
             $havingSql = '';
         } else {
