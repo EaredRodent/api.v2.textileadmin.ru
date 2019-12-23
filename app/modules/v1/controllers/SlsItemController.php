@@ -250,6 +250,7 @@ class SlsItemController extends ActiveControllerExtended
      * @param string $axisX [month|managerName|groupStr|tag|sexStr]
      * @param string $axisY
      * @param string $resultType [rowMoney|rowCount]
+     * @param string $sortType [abc|valDESC|valASC]
      * @return array
      */
     public function actionGetPayReport(
@@ -264,7 +265,8 @@ class SlsItemController extends ActiveControllerExtended
         array $managers = [],
         $axisX = 'month',
         $axisY = 'managerName',
-        $resultType = 'rowMoney'
+        $resultType = 'rowMoney',
+        $sortType = 'abc'
     )
     {
 
@@ -287,18 +289,21 @@ class SlsItemController extends ActiveControllerExtended
             $managers,
             $axisX,
             $axisY,
-            $resultType
+            $resultType,
+            $sortType
         );
 
         return [
             'axisX' => $report->axisX,
             'axisY' => $report->axisY,
-            'matrix' => $report->matrix2,
+            'matrix' => $report->matrixResult,
             'totalX' => $report->totalX,
             'totalY' => $report->totalY,
             'totalCommon' => $report->totalCommon,
+            'totalXAdd' => $report->totalXAdd,
+            'totalYAdd' => $report->totalYAdd,
+            'totalCommonAdd' => $report->totalCommonAdd,
         ];
-        //return ;
 
     }
 }

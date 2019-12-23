@@ -19,19 +19,31 @@ class PayReport
     public $queryResult;
 
     public $matrix = [];
-    public $matrix2 = [];
-
     public $axisX;
     public $axisY;
-
     public $totalX = [];
     public $totalY = [];
     public $totalCommon = 0;
 
+
+    // Дополнительное значение (к основному при необходимости - деньги или штуки)
+    public $matrixAdd = [];
+    public $totalXAdd = [];
+    public $totalYAdd = [];
+    public $totalCommonAdd = 0;
+
+
+    // Результирующая матрица значений
+    public $matrixResult = [];
+
+
     function __construct($dateStart, $dateEnd,
                          $articles, $sex, $groups, $fabrics, $tags, $clients, $managers,
-                         $axisX, $axisY, $resultType)
+                         $axisX, $axisY, $resultType, $sortType)
     {
+
+        // Формирование выборки по запросу
+
         $havingSql = "HAVING ";
         $arrayHaving = [];
 
@@ -162,14 +174,37 @@ class PayReport
         $recs = Yii::$app->db->createCommand($sql)->queryAll();
         $this->queryResult = $recs;
 
+        // Формирование вспомогательных переменных и отчета
         $this->axisX = $this->getUnicValues($axisX);
         $this->axisY = $this->getUnicValues($axisY);
 
         foreach ($this->axisX as $ax) {
             $this->totalX[$ax] = 0;
+            $this->totalXAdd[$ax] = 0;
         }
         foreach ($this->axisY as $ay) {
             $this->totalY[$ay] = 0;
+            $this->totalYAdd[$ay] = 0;
+        }
+
+
+        // Вместе с запросом может быть дополнительный параметр (+деньги или +штуки)
+        $addResultType = null;
+
+        // todo быдлокод
+        if ($resultType === 'rowMoney') {
+            $addResultType = 'rowCount';
+        }
+        if ($resultType === 'rowCount') {
+            $addResultType = 'rowMoney';
+        }
+        if ($resultType === 'rowMoneyAddCount') {
+            $resultType = 'rowMoney';
+            $addResultType = 'rowCount';
+        }
+        if ($resultType === 'rowCountAddMoney') {
+            $resultType = 'rowCount';
+            $addResultType = 'rowMoney';
         }
 
         foreach ($this->queryResult as $rec) {
@@ -185,17 +220,45 @@ class PayReport
             $this->totalX[$x] += $value;
             $this->totalY[$y] += $value;
             $this->totalCommon += $value;
+
+            // Вычисление доп. значения при необходимости
+            if ($addResultType) {
+                $valueAdd = $rec[$addResultType];
+                if (!isset($this->matrixAdd[$x][$y])) {
+                    $this->matrixAdd[$x][$y] = 0;
+                }
+                $this->matrixAdd[$x][$y] += $valueAdd;
+                $this->totalXAdd[$x] += $valueAdd;
+                $this->totalYAdd[$y] += $valueAdd;
+                $this->totalCommonAdd+= $valueAdd;
+            }
         }
 
         foreach ($this->axisX as $ax) {
             foreach ($this->axisY as $ay) {
                 $val = (isset($this->matrix[$ax][$ay])) ? $this->matrix[$ax][$ay] : 0;
-                $this->matrix2[] =[
+                $valAdd = (isset($this->matrixAdd[$ax][$ay])) ? $this->matrixAdd[$ax][$ay] : 0;
+                $this->matrixResult[] =[
                     'x' => $ax,
                     'y' => $ay,
                     'val' => $val,
+                    'valAdd' => $valAdd
                 ];
             }
+        }
+
+        // Сортировка по значению
+        if ($sortType === 'valASK' || $sortType === 'valDESC') {
+            $newArr = $this->totalX;
+            natsort($newArr);
+            if ($sortType === 'valDESC') {
+                $newArr = array_reverse($newArr);
+            }
+            $newXArr = [];
+            foreach ($newArr as $key => $val) {
+                $newXArr[] = $key;
+            }
+            $this->axisX = $newXArr;
         }
 
     }
