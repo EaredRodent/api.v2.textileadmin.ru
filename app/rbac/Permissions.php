@@ -505,6 +505,8 @@ class Permissions
             RefFabricTypeController::actionGetFabricPriceTypes,
             SlsClientController::actionGetForFilters,
             RefBlankClassController::actionGetTags,
+            AnxUserController::actionGetManagers,
+            RefArtBlankController::actionGetAllArticles,
         ],
 
         self::taskV3Invoices => [
