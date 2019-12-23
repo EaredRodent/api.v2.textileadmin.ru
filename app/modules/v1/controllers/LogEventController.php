@@ -75,4 +75,18 @@ class LogEventController extends ActiveControllerExtended
         ], JSON_UNESCAPED_UNICODE);
         $logEvent->save();
     }
+
+    const actionGetOutdatedBrowsers = 'GET /v1/log-event/get-outdated-browsers';
+
+    /**
+     * Возвращает события лога старых браузеров
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    function actionGetOutdatedBrowsers()
+    {
+        $events = LogEvent::find()
+            ->where(['event' => 'LogOutdatedBrowser'])
+            ->all();
+        return $events;
+    }
 }

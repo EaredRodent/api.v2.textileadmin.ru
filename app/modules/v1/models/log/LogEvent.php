@@ -35,7 +35,11 @@ class LogEvent extends GiiLogEvent
         return array_merge(parent::fields(), [
             'userFk',
             'eventStr' => function () {
-                return self::eventStr[$this->event];
+                if (isset(self::eventStr[$this->event])) {
+                    return self::eventStr[$this->event];
+                } else {
+                    return '';
+                }
             },
             'paramsStr' => function () {
                 if ($this->event === self::createOrder) {
