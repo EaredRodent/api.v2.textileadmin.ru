@@ -96,6 +96,7 @@ class Permissions
             SlsMessageStateController::getMessagesForOtherManagers,
             self::taskSalesStatisticsB2BAccess,
             self::taskSalesReport,
+            self::taskStorRests,
         ],
         self::roleBuhMain => [
             self::taskRegPaysPageAccess,
@@ -288,6 +289,11 @@ class Permissions
      * Доступ к странице отчета по продажам
      */
     const taskSalesReport = 'taskSalesReport';
+
+    /**
+     * Доступ к странице остатки на складе
+     */
+    const taskStorRests = 'taskStorRests';
 
     /**
      * V3
@@ -507,6 +513,13 @@ class Permissions
             RefBlankClassController::actionGetTags,
             AnxUserController::actionGetManagers,
             RefArtBlankController::actionGetAllArticles,
+        ],
+
+        self::taskStorRests => [
+            PrStorProdController::actionGetStorRests,
+
+            // Экшены для данных фильтров
+
         ],
 
         self::taskV3Invoices => [

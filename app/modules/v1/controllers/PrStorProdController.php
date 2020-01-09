@@ -262,5 +262,16 @@ class PrStorProdController extends ActiveControllerExtended
         return $resp;
     }
 
+    const actionGetStorRests = 'GET /v1/pr-stor-prod/get-stor-rests';
+
+    /**
+     * Вернуть остатки на складе по фильтрам
+     */
+    public function actionGetStorRests()
+    {
+
+
+    }
+
 
 }
