@@ -289,7 +289,7 @@ class PrStorProdController extends ActiveControllerExtended
         array $themeId = [],
         array $printId = [],
         array $packId = [],
-        $flagInPrice = false,
+        $flagInPrice = null,
         $assortType = null,
         $flagInProd = null
     )
