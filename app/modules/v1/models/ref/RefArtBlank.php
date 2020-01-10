@@ -188,10 +188,64 @@ class RefArtBlank extends GiiRefArtBlank
         return $this->id;
     }
 
-    public function hArt()
+    /**
+     * Без принта print_fk = 1
+     * @param int $printId
+     * @return string
+     */
+    public function hClientArt($printId = 1)
     {
-        return 'OXO-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
+        $printStr = ($printId > 1) ? '-' . str_pad($printId, 3, '0', STR_PAD_LEFT) : '';
+        return 'OXO-' . str_pad($this->id, 4, '0', STR_PAD_LEFT) . $printStr;
     }
+
+    /**
+     * Наименования для накладной
+     * @param $printFk RefProdPrint
+     * @param $packFk RefProdPack
+     * @return string
+     */
+    public function hTitleForDocs($printFk, $packFk)
+    {
+        $name = $this->modelFk->classFk->title_client;
+        $sex = mb_strtolower(mb_substr($this->modelFk->sexFk->title, 0, 3));
+
+        if ($this->modelFk->sexFk->code === "B") {
+            $sex = ' для мальчиков';
+            // @todo #костыль
+            if ($this->modelFk->classFk->title === 'Свитшот') {
+                $sex = ' детский';
+            }
+        }
+        if ($this->modelFk->sexFk->code === "G") {
+            $sex = ' для девочек';
+            // @todo #костыль
+            if ($this->modelFk->classFk->title === 'Свитшот') {
+                $sex = ' детский';
+            }
+        }
+
+        if ($this->modelFk->sexFk->code === "K") {
+            $sex = $this->modelFk->classFk->kids_unisex;
+        }
+        if ($this->modelFk->sexFk->code === "U") {
+            $sex = '';
+        }
+
+        $model = mb_strtoupper($this->modelFk->title);
+        $theme = $this->themeFk->title;
+        $art = $this->hClientArt($printFk->id);
+        //$sizePart = ($sizeStr !== null) ? " {$sizeStr}" : ' *';
+        $printPart = ($printFk->id > 1) ? "/{$printFk->title}" : '';
+        $packPart = ($packFk->id > 1) ? " {$packFk->title}" : '';
+
+        if ($this->modelFk->sexFk->code === "U") {
+            return "{$name} {$model} ({$theme}{$printPart}) Арт: {$art}{$packPart}";
+        } else {
+            return "{$name}:{$sex}. {$model} ({$theme}{$printPart}) Арт: {$art}{$packPart}";
+        }
+    }
+
 
     /**
      * Вернуть тип размера - взрослый или детский

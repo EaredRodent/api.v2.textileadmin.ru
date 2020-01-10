@@ -4,7 +4,9 @@ namespace app\gii;
 
 use app\modules\v1\classes\ActiveRecordExtended;
 use app\modules\v1\models\ref\RefArtBlank;
+use app\modules\v1\models\ref\RefProdPack;
 use app\modules\v1\models\ref\RefProdPrint;
+use app\modules\v1\models\sls\SlsOrder;
 use Yii;
 
 /**

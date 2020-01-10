@@ -266,11 +266,156 @@ class PrStorProdController extends ActiveControllerExtended
 
     /**
      * Вернуть остатки на складе по фильтрам
+     * @param array $groupId
+     * @param array $sexId
+     * @param array $classId
+     * @param array $prodId
+     * @param array $fabricId
+     * @param array $themeId
+     * @param array $printId
+     * @param array $packId
+     * @param null $flagInPrice
+     * @param array $asortType
+     * @param null $flagInProd
      */
-    public function actionGetStorRests()
+    public function actionGetStorRests(
+        array $groupId = [],
+        array $sexId = [],
+        array $classId = [],
+        array $prodId = [],
+        array $fabricId = [],
+        array $themeId = [],
+        array $printId = [],
+        array $packId = [],
+        $flagInPrice = null,
+        array $asortType = [],
+        $flagInProd = null
+    )
     {
 
+        $matrix = [];
 
+        $groups = [];
+        $totalCount = 0;
+        $totalMoney = 0;
+
+        /** @var $recs PrStorProd[] */
+        $recs = PrStorProd::find()
+            ->select(array_merge(['{{pr_stor_prod}}.*'], Sizes::selectSumAbs))
+
+            ->with('blankFk.modelFk.classFk.groupFk')
+            ->with('blankFk.modelFk.sexFk')
+            ->with('printFk')
+            ->with('packFk')
+            ->with('blankFk.fabricTypeFk')
+            ->with('blankFk.themeFk')
+            ->joinWith('blankFk.modelFk.classFk.groupFk')
+            ->joinWith('blankFk.fabricTypeFk')
+            ->joinWith('blankFk.themeFk')
+
+            ->having('totalSum > 0')
+            ->groupBy('blank_fk, print_fk, pack_fk')
+            ->orderBy(
+                'ref_blank_group.title, ref_blank_class.title, ref_blank_model.sex_fk, ' .
+                'ref_blank_model.title, ref_fabric_type.type, ref_blank_theme.title, blank_fk, print_fk, pack_fk'
+            )
+            ->all();
+
+
+        $prices = new Prices();
+
+        foreach ($recs as $rec) {
+            $groupName = $rec->blankFk->modelFk->classFk->groupFk->title;
+            $className = $rec->blankFk->modelFk->classFk->title;
+            $prodName = $rec->blankFk->hTitleForDocs($rec->printFk, $rec->packFk);
+
+            if ($rec->print_fk > 1) {
+                $assortType = 'period';
+            } else {
+                $assortType = $rec->blankFk->assortment;
+            }
+            $sizes = [];
+            foreach (Sizes::fields as $fSize) {
+                $sizes[$fSize] = $rec->$fSize;
+            }
+
+            $matrix[$groupName][$className][$prodName] = [
+                'pack' => $rec->packFk->title,
+                'flagInPrice' => $prices->getFlagInPrice($rec->blank_fk, $rec->print_fk),
+                'assortType' => $assortType,
+                'flagInProd' => (bool) !$rec->blankFk->flag_stop_prod,
+                'sizes' => $sizes,
+                'total' => (int) $rec->totalSum,
+            ];
+        }
+
+
+        foreach ($matrix as $groupName => $classArr) {
+
+            $classes = [];
+            $sizesGroup = [
+                'size_5xs' => 0,
+                'size_4xs' => 0,
+                'size_3xs' => 0,
+                'size_2xs' => 0,
+                'size_xs' => 0,
+                'size_s' => 0,
+                'size_m' => 0,
+                'size_l' => 0,
+                'size_xl' => 0,
+                'size_2xl' => 0,
+                'size_3xl' => 0,
+                'size_4xl' => 0,
+            ];
+            foreach ($classArr as $className => $prodArr) {
+
+                $prods = [];
+                $sizesClass = [
+                    'size_5xs' => 0,
+                    'size_4xs' => 0,
+                    'size_3xs' => 0,
+                    'size_2xs' => 0,
+                    'size_xs' => 0,
+                    'size_s' => 0,
+                    'size_m' => 0,
+                    'size_l' => 0,
+                    'size_xl' => 0,
+                    'size_2xl' => 0,
+                    'size_3xl' => 0,
+                    'size_4xl' => 0,
+                ];
+                foreach ($prodArr as $prodName => $prodData) {
+                    $prods[] = array_merge(['name' => $prodName], $prodData);
+                    foreach (Sizes::fields as $fSize) {
+                        $sizesClass[$fSize] += $prodData['sizes'][$fSize];
+                        $totalCount += $prodData['sizes'][$fSize];
+                    }
+                }
+
+                $classes[] = [
+                    'name' => $className,
+                    'sizes' => $sizesClass,
+                    'prods' => $prods,
+                ];
+
+                foreach (Sizes::fields as $fSize) {
+                    $sizesGroup[$fSize] += $sizesClass[$fSize];
+                }
+            }
+
+            $groups[] = [
+                'name' => $groupName,
+                'sizes' => $sizesGroup,
+                'classes' => $classes,
+            ];
+        }
+
+
+        return [
+            'groups' => $groups,
+            'totalCount' => $totalCount,
+            'totalMoney' => $totalMoney,
+        ];
     }
 
 

@@ -22,7 +22,7 @@ use Yii;
  * @property SlsPreorderItem[] $slsPreorderItems
  * @property SlsPreorderReserv[] $slsPreorderReservs
  */
-class GiiRefProdPack extends \yii\db\ActiveRecord
+class GiiRefProdPack extends \app\modules\v1\classes\ActiveRecordExtended
 {
     /**
      * {@inheritdoc}

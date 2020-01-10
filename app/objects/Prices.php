@@ -12,12 +12,16 @@ use app\modules\v1\models\ref\RefProductPrint;
 
 /**
  * Предоставить инфу по ценам
+ * И о том, включен ли в прайс или нет
  * Тестирование /v1/test/obj-prices
  */
 class Prices
 {
     // Матрица [артикул][принт][размер] = цена
     private $matrix;
+
+    // Матрица [артикул][принт] = flagInPrice
+    private $matrixInPrice;
 
     function __construct()
     {
@@ -30,6 +34,7 @@ class Prices
                     $this->matrix[$rec->id][1][$fSize] = $rec->$fPrice;
                 }
             }
+            $this->matrixInPrice[$rec->id][1] = (bool) $rec->flag_price;
         }
 
         // С принтом
@@ -41,6 +46,7 @@ class Prices
                     $this->matrix[$recPrint->blank_fk][$recPrint->print_fk][$fSize] = $recPrint->$fPrice;
                 }
             }
+            $this->matrixInPrice[$recPrint->blank_fk][$recPrint->print_fk] = (bool) $recPrint->flag_price;
         }
     }
 
@@ -57,6 +63,19 @@ class Prices
         $fSize = Sizes::getFieldSize($size);
         return (isset($this->matrix[$prodId][$printId][$fSize])) ?
             $this->matrix[$prodId][$printId][$fSize] : 0;
+    }
+
+    /**
+     * Вернуть flagInPrice
+     * @param $prodId
+     * @param $printId
+     * @return bool
+     * @throws \Exception
+     */
+    public function getFlagInPrice($prodId, $printId)
+    {
+        return (isset($this->matrixInPrice[$prodId][$printId])) ?
+            $this->matrixInPrice[$prodId][$printId] : false;
     }
 
 }
