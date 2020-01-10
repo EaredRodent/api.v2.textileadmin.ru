@@ -54,4 +54,14 @@ class RefBlankThemeController extends ActiveControllerExtended
             ->groupBy('title_price')
             ->all();
     }
+
+    const actionGetAll = 'GET /v1/ref-blank-theme/get-all';
+
+    /**
+     * Вернуть список цветов v2
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function actionGetAll() {
+        return RefBlankTheme::find()->orderBy('title')->all();
+    }
 }

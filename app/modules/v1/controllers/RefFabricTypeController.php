@@ -71,4 +71,14 @@ class RefFabricTypeController extends ActiveControllerExtended
             ->orderBy('type_price')
             ->all();
     }
+
+    const actionGetAll = 'GET /v1/ref-fabric-type/get-all';
+
+    /**
+     * Вернуть список цветов v2
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function actionGetAll() {
+        return RefFabricType::find()->orderBy('type')->all();
+    }
 }

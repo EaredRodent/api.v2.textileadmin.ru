@@ -17,6 +17,8 @@ use app\modules\v1\controllers\RefBlankModelController;
 use app\modules\v1\controllers\RefBlankSexController;
 use app\modules\v1\controllers\RefBlankThemeController;
 use app\modules\v1\controllers\RefFabricTypeController;
+use app\modules\v1\controllers\RefProdPackController;
+use app\modules\v1\controllers\RefProdPrintController;
 use app\modules\v1\controllers\RefProductPrintController;
 use app\modules\v1\controllers\SlsClientController;
 use app\modules\v1\controllers\SlsCurrencyController;
@@ -196,6 +198,8 @@ class Permissions
 
     const pageV3Preferences = 'pageV3Preferences';
 
+    const pageReportsProdRest = 'pageReportsProdRest';
+
     const pages = [
         self::pageRegPays => 'Реестры платежей',
         self::pageTestApi => 'Тестирование API проекта',
@@ -207,6 +211,7 @@ class Permissions
         self::pageV3RegPays => 'Реестр платежей',
         self::pageV3Box => 'Касса',
         self::pageV3Preferences => 'Настройки',
+        self::pageReportsProdRest => 'Склад готовой продукции'
     ];
 
 
@@ -520,6 +525,18 @@ class Permissions
 
             // Экшены для данных фильтров
 
+            RefBlankGroupController::actionGetGroups,
+            RefBlankSexController::actionGetSexRecs,
+            RefBlankClassController::actionGetAll,
+            RefArtBlankController::actionGetAll,
+            RefBlankThemeController::actionGetAll,
+            RefFabricTypeController::actionGetAll,
+            RefProdPrintController::actionGetAll,
+            RefProdPackController::actionGetAll,
+
+            // Доступ к странице
+
+            self::pageReportsProdRest,
         ],
 
         self::taskV3Invoices => [

@@ -68,4 +68,13 @@ class RefBlankClassController extends ActiveControllerExtended
             ->all();
     }
 
+    const actionGetAll = 'GET /v1/ref-blank-class/get-all';
+
+    /**
+     * Вернуть список наименований v2
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function actionGetAll() {
+        return RefBlankClass::find()->orderBy('title')->all();
+    }
 }

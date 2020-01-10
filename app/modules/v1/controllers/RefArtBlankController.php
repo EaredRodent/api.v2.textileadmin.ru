@@ -325,4 +325,14 @@ class RefArtBlankController extends ActiveControllerExtended
 
     }
 
+    const actionGetAll = 'GET /v1/ref-art-blank/get-all';
+
+    /**
+     * Вернуть список артикулов v2
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function actionGetAll() {
+        return RefArtBlank::find()->all();
+    }
+
 }
