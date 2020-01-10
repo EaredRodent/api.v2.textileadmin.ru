@@ -395,6 +395,7 @@ class PrStorProdController extends ActiveControllerExtended
                 $classes[] = [
                     'name' => $className,
                     'sizes' => $sizesClass,
+                    'total' => array_sum($sizesClass),
                     'prods' => $prods,
                 ];
 
@@ -406,6 +407,7 @@ class PrStorProdController extends ActiveControllerExtended
             $groups[] = [
                 'name' => $groupName,
                 'sizes' => $sizesGroup,
+                'total' => array_sum($sizesGroup),
                 'classes' => $classes,
             ];
         }
