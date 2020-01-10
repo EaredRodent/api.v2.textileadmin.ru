@@ -275,8 +275,10 @@ class PrStorProdController extends ActiveControllerExtended
      * @param array $printId
      * @param array $packId
      * @param null $flagInPrice
-     * @param array $asortType
+     * @param array $assortType
      * @param null $flagInProd
+     * @return array
+     * @throws \Exception
      */
     public function actionGetStorRests(
         array $groupId = [],
@@ -287,17 +289,24 @@ class PrStorProdController extends ActiveControllerExtended
         array $themeId = [],
         array $printId = [],
         array $packId = [],
-        $flagInPrice = null,
-        array $asortType = [],
+        $flagInPrice = false,
+        $assortType = null,
         $flagInProd = null
     )
     {
+
+        //$sexId = [2];
+        //$classId = [1];
+        //$prodId = [69, 70, 71, 72];
 
         $matrix = [];
 
         $groups = [];
         $totalCount = 0;
         $totalMoney = 0;
+
+
+        $flagStopProd = ($flagInProd == null) ? null : (int) !$flagInProd;
 
         /** @var $recs PrStorProd[] */
         $recs = PrStorProd::find()
@@ -313,6 +322,17 @@ class PrStorProdController extends ActiveControllerExtended
             ->joinWith('blankFk.fabricTypeFk')
             ->joinWith('blankFk.themeFk')
 
+            ->filterWhere(['ref_blank_class.group_fk' => $groupId])
+            ->andFilterWhere(['ref_blank_model.sex_fk' => $sexId])
+            ->andFilterWhere(['ref_blank_model.class_fk' => $classId])
+            ->andFilterWhere(['blank_fk' => $prodId])
+            ->andFilterWhere(['print_fk' => $printId])
+            ->andFilterWhere(['pack_fk' => $packId])
+            ->andFilterWhere(['ref_art_blank.fabric_type_fk' => $fabricId])
+            ->andFilterWhere(['ref_art_blank.theme_fk' => $themeId])
+            ->andFilterWhere(['ref_art_blank.assortment' => $assortType])
+            ->andFilterWhere(['ref_art_blank.flag_stop_prod' => $flagStopProd])
+
             ->having('totalSum > 0')
             ->groupBy('blank_fk, print_fk, pack_fk')
             ->orderBy(
@@ -325,14 +345,23 @@ class PrStorProdController extends ActiveControllerExtended
         $prices = new Prices();
 
         foreach ($recs as $rec) {
+
+
+            $flagInPriceVal = $prices->getFlagInPrice($rec->blank_fk, $rec->print_fk);
+
+            // Фильтрация по flagInPrice
+            if ($flagInPrice !== null) {
+                if ((bool)$flagInPriceVal !== $flagInPrice) continue;
+            }
+
             $groupName = $rec->blankFk->modelFk->classFk->groupFk->title;
             $className = $rec->blankFk->modelFk->classFk->title;
             $prodName = $rec->blankFk->hTitleForDocs($rec->printFk, $rec->packFk);
 
             if ($rec->print_fk > 1) {
-                $assortType = 'period';
+                $assortTypeVal = 'period';
             } else {
-                $assortType = $rec->blankFk->assortment;
+                $assortTypeVal = $rec->blankFk->assortment;
             }
             $sizes = [];
             foreach (Sizes::fields as $fSize) {
@@ -341,8 +370,8 @@ class PrStorProdController extends ActiveControllerExtended
 
             $matrix[$groupName][$className][$prodName] = [
                 'pack' => $rec->packFk->title,
-                'flagInPrice' => $prices->getFlagInPrice($rec->blank_fk, $rec->print_fk),
-                'assortType' => $assortType,
+                'flagInPrice' => $flagInPriceVal,
+                'assortType' => $assortTypeVal,
                 'flagInProd' => (bool) !$rec->blankFk->flag_stop_prod,
                 'sizes' => $sizes,
                 'total' => (int) $rec->totalSum,
