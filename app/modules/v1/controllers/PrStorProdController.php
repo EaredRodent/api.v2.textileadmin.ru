@@ -345,8 +345,6 @@ class PrStorProdController extends ActiveControllerExtended
         $prices = new Prices();
 
         foreach ($recs as $rec) {
-
-
             $flagInPriceVal = $prices->getFlagInPrice($rec->blank_fk, $rec->print_fk);
 
             // Фильтрация по flagInPrice
@@ -366,6 +364,8 @@ class PrStorProdController extends ActiveControllerExtended
             $sizes = [];
             foreach (Sizes::fields as $fSize) {
                 $sizes[$fSize] = $rec->$fSize;
+                $price = round($prices->getPrice($rec->blank_fk, $rec->print_fk, $fSize) * 0.71);
+                $totalMoney += $rec->$fSize * $price;
             }
 
             $matrix[$groupName][$className][$prodName] = [
