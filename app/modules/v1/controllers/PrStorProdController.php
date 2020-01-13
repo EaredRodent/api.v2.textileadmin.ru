@@ -306,7 +306,16 @@ class PrStorProdController extends ActiveControllerExtended
         $totalMoney = 0;
 
 
-        $flagStopProd = ($flagInProd == null) ? null : (int) !$flagInProd;
+        // todo говнокод
+        if ($flagInProd !== null) {
+            $flagInProd = ($flagInProd === 'true') ? true : false;
+        }
+        $flagStopProd = ($flagInProd === null) ? null : (int) !$flagInProd;
+
+        if ($flagInPrice !== null) {
+            $flagInPrice = ($flagInPrice === 'true') ? true : false;
+        }
+
 
         /** @var $recs PrStorProd[] */
         $recs = PrStorProd::find()
