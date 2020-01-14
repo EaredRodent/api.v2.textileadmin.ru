@@ -24,48 +24,57 @@ class PrStorProdController extends ActiveControllerExtended
 
     /**
      * Вернуть отчет по приходу на склад продукции из производства с разбивкой по месяцам
-     * @param int $year - год по умолчанию 2019
      * @return array|\yii\db\ActiveRecord[]
      */
-    public function actionGetReportStorIncomAll($year = 2019)
+    public function actionGetReportStorIncomAll()
     {
-        if (!$year) $year = 2019;
 
         $resp = [];
 
-        $months = [
-            '01' => 'Янв',
-            '02' => 'Фев',
-            '03' => 'Мар',
-            '04' => 'Апр',
-            '05' => 'Май',
-            '06' => 'Июн',
-            '07' => 'Июл',
-            '08' => 'Авг',
-            '09' => 'Сен',
-            '10' => 'Окт',
-            '11' => 'Ноя',
-            '12' => 'Дек',
+        $monthInfo = [
+            ['num' => '01', 'str' => 'Янв'],
+            ['num' => '02', 'str' => 'Фев'],
+            ['num' => '03', 'str' => 'Мар'],
+            ['num' => '04', 'str' => 'Апр'],
+            ['num' => '05', 'str' => 'Май'],
+            ['num' => '06', 'str' => 'Июн'],
+            ['num' => '07', 'str' => 'Июл'],
+            ['num' => '08', 'str' => 'Авг'],
+            ['num' => '09', 'str' => 'Сен'],
+            ['num' => '10', 'str' => 'Окт'],
+            ['num' => '11', 'str' => 'Ноя'],
+            ['num' => '12', 'str' => 'Дек'],
         ];
 
-        foreach ($months as $mNum => $mStr) {
+        $year = 2018;
+        $month = 4;
 
+        while (1) {
             $moveReport = new ProdMoveReport();
 
-            $startSql = "{$year}-{$mNum}-01 00:00:00";
+            $startSql = "{$year}-{$monthInfo[$month - 1]['num']}-01 00:00:00";
             $endSql = date("Y-m-t 23:59:59", strtotime($startSql));
 
             $items = $moveReport->getIncomProdCostCount($startSql, $endSql);
             $itemsOut = $moveReport->getOutProdCostCount($startSql, $endSql);
 
             $resp[] = [
-                'monthNum' => $mNum,
-                'monthStr' => $mStr,
+                'year' => $year,
+                'monthNum' => $monthInfo[$month - 1]['num'],
+                'monthStr' => $monthInfo[$month - 1]['str'] . '-' . ($year - 2000),
                 'data' => $items,
                 'itemsOut' => $itemsOut,
             ];
 
+            if ($year === (int)date('Y') && $month === (int)date('m')) {
+                break;
+            }
 
+            $month++;
+            if ($month === 13) {
+                $month = 1;
+                $year++;
+            }
         }
 
         return $resp;
@@ -77,15 +86,14 @@ class PrStorProdController extends ActiveControllerExtended
     /**
      * todo дублировние кода
      * Вернуть отчет по приходу на склад за конкретный месяц
+     * @param $year - год
      * @param $month - номер месяца
      * @return array|\yii\db\ActiveRecord[]
+     * @throws \Exception
      */
-    public function actionGetReportStorIncomMonth($month)
+    public function actionGetReportStorIncomMonth($year, $month)
     {
-
         $prices = new Prices();
-
-        $year = 2019;
 
         $data = [];
 
@@ -132,15 +140,15 @@ class PrStorProdController extends ActiveControllerExtended
     /**
      * todo дублировние кода
      * Вернуть отчет по возврату со склада за конкретный месяц
+     * @param $year - год
      * @param $month - номер месяца
      * @return array|\yii\db\ActiveRecord[]
+     * @throws \Exception
      */
-    public function actionGetReportStorOutMonth($month)
+    public function actionGetReportStorOutMonth($year, $month)
     {
 
         $prices = new Prices();
-
-        $year = 2019;
 
         $data = [];
 
@@ -226,7 +234,7 @@ class PrStorProdController extends ActiveControllerExtended
             $orders = PrStorProd::find()
                 ->select('order_fk')
                 ->where(['direct' => 'out'])
-                ->andWhere('order_fk > 0' )
+                ->andWhere('order_fk > 0')
                 ->andWhere('dt_move >= :dateStart', [':dateStart' => $startSql])
                 ->andWhere('dt_move <= :dateEnd', [':dateEnd' => $endSql])
                 ->orderBy('dt_move')
@@ -247,7 +255,6 @@ class PrStorProdController extends ActiveControllerExtended
             foreach ($orderRecs as $orderRec) {
                 $summ += $orderRec->summ_order;
             }
-
 
 
             $resp[] = [
@@ -310,7 +317,7 @@ class PrStorProdController extends ActiveControllerExtended
         if ($flagInProd !== null) {
             $flagInProd = ($flagInProd === 'true') ? true : false;
         }
-        $flagStopProd = ($flagInProd === null) ? null : (int) !$flagInProd;
+        $flagStopProd = ($flagInProd === null) ? null : (int)!$flagInProd;
 
         if ($flagInPrice !== null) {
             $flagInPrice = ($flagInPrice === 'true') ? true : false;
@@ -320,7 +327,6 @@ class PrStorProdController extends ActiveControllerExtended
         /** @var $recs PrStorProd[] */
         $recs = PrStorProd::find()
             ->select(array_merge(['{{pr_stor_prod}}.*'], Sizes::selectSumAbs))
-
             ->with('blankFk.modelFk.classFk.groupFk')
             ->with('blankFk.modelFk.sexFk')
             ->with('printFk')
@@ -330,7 +336,6 @@ class PrStorProdController extends ActiveControllerExtended
             ->joinWith('blankFk.modelFk.classFk.groupFk')
             ->joinWith('blankFk.fabricTypeFk')
             ->joinWith('blankFk.themeFk')
-
             ->filterWhere(['ref_blank_class.group_fk' => $groupId])
             ->andFilterWhere(['ref_blank_model.sex_fk' => $sexId])
             ->andFilterWhere(['ref_blank_model.class_fk' => $classId])
@@ -341,7 +346,6 @@ class PrStorProdController extends ActiveControllerExtended
             ->andFilterWhere(['ref_art_blank.theme_fk' => $themeId])
             ->andFilterWhere(['ref_art_blank.assortment' => $assortType])
             ->andFilterWhere(['ref_art_blank.flag_stop_prod' => $flagStopProd])
-
             ->having('totalSum > 0')
             ->groupBy('blank_fk, print_fk, pack_fk')
             ->orderBy(
@@ -381,9 +385,9 @@ class PrStorProdController extends ActiveControllerExtended
                 'pack' => $rec->packFk->title,
                 'flagInPrice' => $flagInPriceVal,
                 'assortType' => $assortTypeVal,
-                'flagInProd' => (bool) !$rec->blankFk->flag_stop_prod,
+                'flagInProd' => (bool)!$rec->blankFk->flag_stop_prod,
                 'sizes' => $sizes,
-                'total' => (int) $rec->totalSum,
+                'total' => (int)$rec->totalSum,
             ];
         }
 
