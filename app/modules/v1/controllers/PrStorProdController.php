@@ -46,8 +46,8 @@ class PrStorProdController extends ActiveControllerExtended
             ['num' => '12', 'str' => 'Дек'],
         ];
 
-        $year = 2018;
-        $month = 4;
+        $year = 2019;
+        $month = 1;
 
         while (1) {
             $moveReport = new ProdMoveReport();
