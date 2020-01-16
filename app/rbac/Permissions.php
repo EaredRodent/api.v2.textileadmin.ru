@@ -522,6 +522,8 @@ class Permissions
 
         self::taskStorRests => [
             PrStorProdController::actionGetStorRests,
+            PrStorProdController::actionGetRestTree,
+
 
             // Экшены для данных фильтров
 

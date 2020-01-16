@@ -66,6 +66,25 @@ class Prices
     }
 
     /**
+     * Вернуть минимальную базовую цену для продукт/принт
+     * Есть максимальная для больших размеров
+     * @param $prodId
+     * @param $printId
+     * @param $size
+     * @return int
+     * @throws \Exception
+     */
+    public function getMinPrice($prodId, $printId)
+    {
+        foreach (Sizes::fields as $fSize) {
+            if (isset($this->matrix[$prodId][$printId][$fSize])) {
+                return $this->matrix[$prodId][$printId][$fSize];
+            }
+        }
+        return null;
+    }
+
+    /**
      * Вернуть flagInPrice
      * @param $prodId
      * @param $printId

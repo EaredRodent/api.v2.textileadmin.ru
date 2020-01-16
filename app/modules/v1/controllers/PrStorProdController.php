@@ -463,4 +463,178 @@ class PrStorProdController extends ActiveControllerExtended
     }
 
 
+    const actionGetRestTree = 'GET /v1/pr-stor-prod/get-rest-tree';
+
+    /**
+     * Вернуть остатки на складе в виде дерева
+     * @throws \Exception
+     */
+    public function actionGetRestTree()
+    {
+
+        /** @var $recs PrStorProd[] */
+        $recs = PrStorProd::find()
+            ->select(array_merge(['{{pr_stor_prod}}.*'], Sizes::selectSumAbs))
+            ->with([
+                'blankFk.modelFk.classFk.groupFk', 'blankFk.modelFk.sexFk', 'printFk', 'packFk',
+                'blankFk.fabricTypeFk', 'blankFk.themeFk'
+            ])
+            ->joinWith(['blankFk.modelFk.classFk.groupFk', 'blankFk.fabricTypeFk', 'blankFk.themeFk'])
+            ->having('totalSum > 0')
+            ->groupBy('blank_fk, print_fk, pack_fk')
+            ->orderBy(
+                'ref_art_blank.assortment, ref_blank_group.title, ref_blank_class.title, ' .
+                'ref_blank_model.title, ref_fabric_type.type, ref_blank_theme.title, blank_fk, print_fk, pack_fk'
+            )
+            ->all();
+
+        $prices = new Prices();
+
+        // Матрица пол/ассорт/группа/наименование/[продукты со свойствами]
+        $matrix = [];
+
+        $sexData = [
+            1 => 'Мужчинам',
+            2 => 'Женщинам',
+            3 => 'Детям',
+            4 => 'Детям',
+            5 => 'Женщинам',
+            6 => 'Детям',
+        ];
+
+        $assortData = [
+            'base' => 'Базовый',
+            'period' => 'Периодический',
+            '' => 'Не определен',
+        ];
+
+        foreach ($recs as $rec) {
+            // Пол
+            $sexVal = $rec->blankFk->modelFk->sex_fk;
+            $sexKey = $sexData[$sexVal];
+
+            // Ассортимент
+            $assortVal = ($rec->blankFk->assortment > 1) ? 'period' : (string)$rec->blankFk->assortment;
+            $assortKey = $assortData[$assortVal];
+
+            // Группы
+            $groupKey = $rec->blankFk->modelFk->classFk->groupFk->title;
+
+            // Наименование
+            $nameKey = $rec->blankFk->modelFk->classFk->title;
+
+            //Товары
+            $sizesFields = ($sexKey == 'Детям') ? Sizes::fieldsRangeKids : Sizes::fieldsRangeAdult;
+            $sizesVal = [];
+            $totalMoney = 0;
+            foreach ($sizesFields as $fSize => $strSize) {
+                $sizesVal[] = ['name' => $strSize, 'count' => $rec->$fSize];
+                $price29 = round($prices->getPrice($rec->blank_fk, $rec->print_fk, $fSize) * 0.71);
+                $totalMoney += $rec->$fSize * $price29;
+            }
+
+            $prod = [
+                'prodId' => $rec->blank_fk,
+                'printId' => $rec->print_fk,
+                'packId' => $rec->pack_fk,
+                'art' => $rec->blankFk->hClientArt($rec->print_fk),
+                'model' => $rec->blankFk->modelFk->title,
+                'fabric' => $rec->blankFk->fabricTypeFk->type,
+                'color' => $rec->blankFk->themeFk->title,
+                'print' => $rec->printFk->title,
+                'basePrice' => $prices->getMinPrice($rec->blank_fk, $rec->print_fk),
+                'flagInPrice' => $prices->getFlagInPrice($rec->blank_fk, $rec->print_fk),
+                'flagInProd' => !(bool)$rec->blankFk->flag_stop_prod,
+                'sizes' => $sizesVal,
+                'count' => (int)$rec->totalSum,
+                'price' => $totalMoney,
+            ];
+
+            $matrix[$sexKey][$assortKey][$groupKey][$nameKey][] = $prod;
+        }
+
+
+
+        $totalCount = 0;
+        $totalPrice = 0;
+
+        $tree = [];
+        $countSex = 0;
+        $priceSex = 0;
+        foreach ($matrix as $sexKey => $sexData) {
+
+            $assortArr = [];
+            $countAssort = 0;
+            $priceAssort = 0;
+            foreach ($sexData as $assortKey => $assortData) {
+
+                $groupArr = [];
+                $countGroup = 0;
+                $priceGroup = 0;
+                foreach ($assortData as $groupKey => $groupData) {
+
+                    $classArr = [];
+                    $countClass = 0;
+                    $priceClass = 0;
+                    foreach ($groupData as $classKey => $classData) {
+
+                        foreach ($classData as $prodRec) {
+                            $countClass += $prodRec['count'];
+                            $totalCount += $prodRec['count'];
+
+                            $priceClass += $prodRec['price'];
+                            $totalPrice += $prodRec['price'];
+                        }
+
+                        $classArr[] = [
+                            'name' => $classKey,
+                            'count' => $countClass,
+                            'price' => $priceClass,
+                            'prodArr' => $classData,
+                        ];
+                    }
+
+                    $countGroup += $countClass;
+                    $priceGroup += $priceClass;
+                    $groupArr[] = [
+                        'name' => $groupKey,
+                        'count' => $countGroup,
+                        'price' => $priceGroup,
+                        'classArr' => $classArr,
+                    ];
+                }
+
+                $countAssort += $countGroup;
+                $priceAssort += $priceGroup;
+                $assortArr[] = [
+                    'name' => $assortKey,
+                    'count' => $countAssort,
+                    'price' => $priceAssort,
+                    'groupArr' => $groupArr,
+                ];
+            }
+
+            $countSex += $countAssort;
+            $priceSex += $priceAssort;
+            $tree[] = [
+                'name' => $sexKey,
+                'count' => $countSex,
+                'price' => $priceSex,
+                'assortArr' => $assortArr,
+            ];
+        }
+
+
+
+        $resp = [
+            'sexArr' => $tree,
+            'count' => $totalCount,
+            'price' => $totalPrice,
+        ];
+
+
+        return $resp;
+    }
+
+
 }

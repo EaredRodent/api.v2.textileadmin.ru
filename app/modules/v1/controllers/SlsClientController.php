@@ -96,6 +96,20 @@ class SlsClientController extends ActiveControllerExtended
     {
         $form = json_decode($form, true);
 
+        // Проверка, чтобы не указали 2 раза один и тот де ИНН (Дрибан - Лариса поменяла ИНН)
+        $id = (isset($form["id"])) ? $form["id"] : null;
+        $inn = (isset($form["inn"])) ? $form["inn"] : '';
+        if ($inn) {
+            $existInn = SlsClient::find()
+                ->where(['inn' => $inn])
+                ->andFilterWhere(['!=', 'id', $id])
+                ->count();
+            if ($existInn > 0) {
+                throw new HttpException(200,
+                    'Такой ИНН уже существует. Если ИНН отсутствует - оставляйте пустую строку', 200);
+            }
+        }
+
         if (isset($form['id'])) {
             $slsClient = SlsClient::get($form['id']);
             $slsClient->attributes = $form;

@@ -32,6 +32,28 @@ class Sizes
 		'size_4xl',
 	];
 
+	const fieldsRangeAdult = [
+        'size_xs'  => 'XS',
+        'size_s'   => 'S',
+        'size_m'   => 'M',
+        'size_l'   => 'L',
+        'size_xl'  => 'XL',
+        'size_2xl' => 'XXL',
+        'size_3xl' => '3XL',
+	];
+
+	const fieldsRangeKids = [
+        'size_2xs' => '116',
+        'size_xs'  => '122',
+        'size_s'   => '128',
+        'size_m'   => '134',
+        'size_l'   => '140',
+        'size_xl'  => '146',
+        'size_2xl' => '152',
+        'size_3xl' => '158',
+        'size_4xl' => '164',
+	];
+
 
 	const prices = [
 		'size_5xs' => 'price_5xs',
