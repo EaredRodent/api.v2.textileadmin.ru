@@ -31,6 +31,9 @@ class CardProd2
     public $sizes;
 
     public $fabricTypeFk;
+    /**
+     * @var \app\modules\v1\models\ref\RefBlankModel
+     */
     public $modelFk;
     public $themeFk;
     public $printFk;

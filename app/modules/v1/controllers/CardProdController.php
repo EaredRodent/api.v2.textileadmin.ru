@@ -267,6 +267,7 @@ class CardProdController extends ActiveControllerExtended
         return [
             'class' => $card->class,
             'art' => $card->art,
+            'model' => $card->modelFk->title,
             'photos' => $card->photos,
         ];
 
