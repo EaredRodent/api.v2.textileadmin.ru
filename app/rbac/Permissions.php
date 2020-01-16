@@ -199,6 +199,7 @@ class Permissions
     const pageV3Preferences = 'pageV3Preferences';
 
     const pageReportsProdRest = 'pageReportsProdRest';
+    const pageReportsProdRest2 = 'pageReportsProdRest2';
 
     const pages = [
         self::pageRegPays => 'Реестры платежей',
@@ -211,7 +212,8 @@ class Permissions
         self::pageV3RegPays => 'Реестр платежей',
         self::pageV3Box => 'Касса',
         self::pageV3Preferences => 'Настройки',
-        self::pageReportsProdRest => 'Склад готовой продукции'
+        self::pageReportsProdRest => 'Склад готовой продукции',
+        self::pageReportsProdRest2 => 'Склад готовой продукции 2',
     ];
 
 
@@ -539,6 +541,7 @@ class Permissions
             // Доступ к странице
 
             self::pageReportsProdRest,
+            self::pageReportsProdRest2,
         ],
 
         self::taskV3Invoices => [
