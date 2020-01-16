@@ -523,6 +523,7 @@ class Permissions
         self::taskStorRests => [
             PrStorProdController::actionGetStorRests,
             PrStorProdController::actionGetRestTree,
+            CardProdController::actionGetCard,
 
 
             // Экшены для данных фильтров

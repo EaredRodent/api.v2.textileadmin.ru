@@ -239,4 +239,13 @@ class RefProductPrint extends GiiRefProductPrint
             ->andWhere(['ref_product_print.flag_price' => 1])
             ->all();
     }
+
+    /**
+     * @param $id
+     * @return RefProductPrint|null
+     */
+    public static function readProd($prodId, $printId)
+    {
+        return self::findOne(['blank_fk' => $prodId, 'print_fk' => $printId]);
+    }
 }

@@ -559,9 +559,10 @@ class PrStorProdController extends ActiveControllerExtended
         $totalPrice = 0;
 
         $tree = [];
-        $countSex = 0;
-        $priceSex = 0;
         foreach ($matrix as $sexKey => $sexData) {
+            $countSex = 0;
+            $priceSex = 0;
+
 
             $assortArr = [];
             $countAssort = 0;

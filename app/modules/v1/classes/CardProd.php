@@ -62,7 +62,7 @@ class CardProd
 
         $this->printFk = isset($objProd->print_fk) ? $objProd->printFk : RefProdPrint::findOne(['id' => 1]);
 
-        // Всегда полиэтилен
+        // Всегда полиэтилен todo !!!
         $this->packFk = RefProdPack::findOne(1);
 
         // Установка flagRest (если есть хоть что-то -- то true)

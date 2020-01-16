@@ -13,6 +13,7 @@ use app\extension\Sizes;
 use app\models\AnxUser;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\classes\CardProd;
+use app\modules\v1\classes\CardProd2;
 use app\modules\v1\models\log\LogEvent;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefBlankSex;
@@ -238,5 +239,36 @@ class CardProdController extends ActiveControllerExtended
         }
 
         return $resp;
+    }
+
+    const actionGetCard = 'GET /v1/card-prod/get-card';
+
+    /**
+     * Вернуть карточку товара (ta-v2)
+     * @param $prodId
+     * @param $printId
+     * @param $packId
+     * @throws \Exception
+     */
+    public function actionGetCard(int $prodId, int $printId, int $packId)
+    {
+        if ($printId === 1) {
+            $prod = RefArtBlank::readProd($prodId);
+        } else {
+            $prod = RefProductPrint::readProd($prodId, $printId);
+        }
+
+        if ($prod === null) {
+            throw new HttpException(200, "Такого товара не существует {$prodId}-$printId", 200);
+        }
+
+        $card = new CardProd2($prod, $packId);
+
+        return [
+            'class' => $card->class,
+            'art' => $card->art,
+            'photos' => $card->photos,
+        ];
+
     }
 }

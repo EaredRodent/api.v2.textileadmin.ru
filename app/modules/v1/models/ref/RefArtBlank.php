@@ -307,4 +307,13 @@ class RefArtBlank extends GiiRefArtBlank
             ->all();
     }
 
+    /**
+     * @param $id
+     * @return RefArtBlank|null
+     */
+    public static function readProd($id)
+    {
+        return self::findOne($id);
+    }
+
 }
