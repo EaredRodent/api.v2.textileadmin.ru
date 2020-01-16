@@ -23,6 +23,7 @@ use app\modules\v1\models\ref\RefProductPrint;
 use app\modules\v1\models\ref\RefWeight;
 use app\modules\v1\models\sls\SlsClient;
 use app\modules\v1\models\sls\SlsOrg;
+use app\objects\ProdWeight;
 use Yii;
 use yii\web\HttpException;
 
@@ -254,8 +255,10 @@ class CardProdController extends ActiveControllerExtended
     {
         if ($printId === 1) {
             $prod = RefArtBlank::readProd($prodId);
+            $blank = $prod;
         } else {
             $prod = RefProductPrint::readProd($prodId, $printId);
+            $blank = $prod->blankFk;
         }
 
         if ($prod === null) {
@@ -263,11 +266,38 @@ class CardProdController extends ActiveControllerExtended
         }
 
         $card = new CardProd2($prod, $packId);
+        $rests = new ProdRest();
+        $weights = new ProdWeight();
+
+        $tableSizes = [];
+        foreach (Sizes::prices as $fSize => $fPrice) {
+            if ($prod->$fPrice > 0) {
+
+                $tableSizes[] = [
+                    'size' => $blank->calcSizeStr($fSize),
+                    'weight' => $weights->getWeight($blank->model_fk, $blank->fabric_type_fk, $fSize),
+                    'basePrice' => $prod->$fPrice,
+                    'rest' => $rests->getRest($prodId, $printId, $packId, $fSize),
+
+                ];
+            }
+        }
+
 
         return [
             'class' => $card->class,
             'art' => $card->art,
             'model' => $card->modelFk->title,
+            'modelDescript' => $card->modelFk->descript,
+            'color' => $card->themeFk->title,
+            'print' => $card->printFk->title,
+
+            'fabricType' => $card->fabricTypeFk->type,
+            'fabricStruct' => $card->fabricTypeFk->struct,
+            'fabricDensity' => $card->fabricTypeFk->desity . ' г/м2',
+            'pack' => $card->packFk->title,
+            'tableSizes' => $tableSizes,
+
             'photos' => $card->photos,
         ];
 

@@ -258,6 +258,23 @@ class RefArtBlank extends GiiRefArtBlank
     }
 
     /**
+     * Вернуть строковое обозначение размера
+     * @param $fSize
+     * @return
+     */
+    public function calcSizeStr($fSize)
+    {
+        $sexId = $this->modelFk->sex_fk;
+        $type = (in_array($sexId, [1, 2, 5])) ? 'adults' : 'kids';
+
+        if ($type === 'adults') {
+            return Sizes::adults[$fSize];
+        } else {
+            return Sizes::kids[$fSize];
+        }
+    }
+
+    /**
      * Получает массив с id новинок изделий
      * @param int $count
      * @return array

@@ -562,31 +562,26 @@ class PrStorProdController extends ActiveControllerExtended
         foreach ($matrix as $sexKey => $sexData) {
             $countSex = 0;
             $priceSex = 0;
-
-
             $assortArr = [];
-            $countAssort = 0;
-            $priceAssort = 0;
             foreach ($sexData as $assortKey => $assortData) {
-
                 $groupArr = [];
-                $countGroup = 0;
-                $priceGroup = 0;
+                $countAssort = 0;
+                $priceAssort = 0;
                 foreach ($assortData as $groupKey => $groupData) {
-
                     $classArr = [];
-                    $countClass = 0;
-                    $priceClass = 0;
+                    $countGroup = 0;
+                    $priceGroup = 0;
                     foreach ($groupData as $classKey => $classData) {
-
+                        $countClass = 0;
+                        $priceClass = 0;
                         foreach ($classData as $prodRec) {
                             $countClass += $prodRec['count'];
-                            $totalCount += $prodRec['count'];
-
                             $priceClass += $prodRec['price'];
+                            $totalCount += $prodRec['count'];
                             $totalPrice += $prodRec['price'];
                         }
-
+                        $countGroup += $countClass;
+                        $priceGroup += $priceClass;
                         $classArr[] = [
                             'name' => $classKey,
                             'count' => $countClass,
@@ -594,9 +589,8 @@ class PrStorProdController extends ActiveControllerExtended
                             'prodArr' => $classData,
                         ];
                     }
-
-                    $countGroup += $countClass;
-                    $priceGroup += $priceClass;
+                    $countAssort += $countGroup;
+                    $priceAssort += $priceGroup;
                     $groupArr[] = [
                         'name' => $groupKey,
                         'count' => $countGroup,
@@ -604,9 +598,8 @@ class PrStorProdController extends ActiveControllerExtended
                         'classArr' => $classArr,
                     ];
                 }
-
-                $countAssort += $countGroup;
-                $priceAssort += $priceGroup;
+                $countSex += $countAssort;
+                $priceSex += $priceAssort;
                 $assortArr[] = [
                     'name' => $assortKey,
                     'count' => $countAssort,
@@ -614,9 +607,6 @@ class PrStorProdController extends ActiveControllerExtended
                     'groupArr' => $groupArr,
                 ];
             }
-
-            $countSex += $countAssort;
-            $priceSex += $priceAssort;
             $tree[] = [
                 'name' => $sexKey,
                 'count' => $countSex,
@@ -624,7 +614,6 @@ class PrStorProdController extends ActiveControllerExtended
                 'assortArr' => $assortArr,
             ];
         }
-
 
 
         $resp = [
