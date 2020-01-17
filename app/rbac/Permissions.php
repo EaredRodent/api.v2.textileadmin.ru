@@ -126,6 +126,7 @@ class Permissions
             SlsMessageStateController::getMessagesForOtherManagers,
             self::taskSalesStatisticsB2BAccess,
             self::taskSalesReport,
+            self::taskStorRests,
         ],
         self::roleOxouno => [
             self::taskOxounoApi,
