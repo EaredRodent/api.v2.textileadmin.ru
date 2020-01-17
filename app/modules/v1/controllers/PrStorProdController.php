@@ -503,8 +503,8 @@ class PrStorProdController extends ActiveControllerExtended
         ];
 
         $assortData = [
-            'base' => 'Базовый',
-            'period' => 'Периодический',
+            'base' => 'Базовый ассортимент',
+            'period' => 'Периодический ассортимент',
             '' => 'Не определен',
         ];
 

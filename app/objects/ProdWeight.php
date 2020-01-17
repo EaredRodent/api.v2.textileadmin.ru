@@ -42,7 +42,7 @@ class ProdWeight
     {
         $fSize = Sizes::getFieldSize($size);
         return (isset($this->matrix[$modelId][$fabricId][$fSize])) ?
-            $this->matrix[$modelId][$fabricId][$fSize] : 0;
+            $this->matrix[$modelId][$fabricId][$fSize] : null;
     }
 
 }
