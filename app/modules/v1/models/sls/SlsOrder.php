@@ -149,4 +149,56 @@ class SlsOrder extends GiiSlsOrder
         return $summ;
     }
 
+    /**
+     * Для ОСВ (об сальд вед)
+     * @param $dateStart
+     * @param $dateEnd
+     * @return array|self[]
+     */
+    public static function readOrdersBankDiapason($dateStart, $dateEnd = null)
+    {
+        if (!$dateEnd) {
+            return self::find()
+                ->where(['pay_type' => SlsOrder::payBank])
+                ->andWhere(['!=', 'status', self::s0_del])
+                ->andWhere(['<=', 'ts_doc', $dateStart])
+                ->andWhere(['!=', 'flag_pre', 1])
+                ->all();
+        } else {
+            return self::find()
+                ->where(['pay_type' => SlsOrder::payBank])
+                ->andWhere(['!=', 'status', self::s0_del])
+                ->andWhere(['>=', 'ts_doc', $dateStart])
+                ->andWhere(['<=', 'ts_doc', $dateEnd])
+                ->andWhere(['!=', 'flag_pre', 1])
+                ->all();
+        }
+    }
+
+    /**
+     * Для ОСВ (об сальд вед)
+     * @param $dateStart
+     * @param $dateEnd
+     * @return array|self[]
+     */
+    public static function readOrdersCashDiapason($dateStart, $dateEnd = null)
+    {
+        if (!$dateEnd) {
+            return self::find()
+                ->where(['pay_type' => SlsOrder::payCash])
+                ->andWhere(['!=', 'status', self::s0_del])
+                ->andWhere(['<=', 'ts_assembl', $dateStart])
+                ->andWhere(['!=', 'flag_pre', 1])
+                ->all();
+        } else {
+            return self::find()
+                ->where(['pay_type' => SlsOrder::payCash])
+                ->andWhere(['!=', 'status', self::s0_del])
+                ->andWhere(['>=', 'ts_assembl', $dateStart])
+                ->andWhere(['<=', 'ts_assembl', $dateEnd])
+                ->andWhere(['!=', 'flag_pre', 1])
+                ->all();
+        }
+    }
+
 }
