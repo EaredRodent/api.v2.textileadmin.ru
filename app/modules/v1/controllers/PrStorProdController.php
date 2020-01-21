@@ -11,6 +11,7 @@ namespace app\modules\v1\controllers;
 use app\extension\Sizes;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\pr\PrStorProd;
+use app\modules\v1\models\ref\RefBlankSex;
 use app\modules\v1\models\sls\SlsOrder;
 use app\objects\Prices;
 use app\objects\ProdMoveReport;
@@ -523,6 +524,14 @@ class PrStorProdController extends ActiveControllerExtended
             // Наименование
             $nameKey = $rec->blankFk->modelFk->classFk->title;
 
+            // Модель
+
+            $model = $rec->blankFk->modelFk->title;
+
+            if (in_array($rec->blankFk->modelFk->sex_fk, [3, 4, 6])) {
+                $model .= ' (' . $rec->blankFk->modelFk->sexFk->code_ru . ')';
+            }
+
             //Товары
             $sizesFields = ($sexKey == 'Детям') ? Sizes::fieldsRangeKids : Sizes::fieldsRangeAdult;
             $sizesVal = [];
@@ -538,8 +547,7 @@ class PrStorProdController extends ActiveControllerExtended
                 'printId' => $rec->print_fk,
                 'packId' => $rec->pack_fk,
                 'art' => $rec->blankFk->hClientArt($rec->print_fk),
-                'model' => $rec->blankFk->modelFk->title,
-                'sex' => $rec->blankFk->modelFk->sexFk->code_ru,
+                'model' => $model,
                 'fabric' => $rec->blankFk->fabricTypeFk->type,
                 'color' => $rec->blankFk->themeFk->title,
                 'print' => $rec->printFk->title,
@@ -553,7 +561,6 @@ class PrStorProdController extends ActiveControllerExtended
 
             $matrix[$sexKey][$assortKey][$groupKey][$nameKey][] = $prod;
         }
-
 
 
         $totalCount = 0;

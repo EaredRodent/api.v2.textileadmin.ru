@@ -81,7 +81,10 @@ class SlsInvoiceController extends ActiveControllerExtended
             // Юра
             12 => 'Калашников',
             // Алена
-            8 => 'Молодцова',
+            //8 => 'Молодцова',
+            // Тюрнева
+            85 => 'Тюрнева',
+
         ];
         foreach ($usersList as $key => $name) {
 
