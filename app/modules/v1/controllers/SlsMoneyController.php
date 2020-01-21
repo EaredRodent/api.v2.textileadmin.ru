@@ -8,8 +8,12 @@
 
 namespace app\modules\v1\controllers;
 
+use app\extension\Sizes;
 use app\models\AnxUser;
 use app\modules\v1\classes\ActiveControllerExtended;
+use app\modules\v1\models\pr\PrStorProd;
+use app\modules\v1\models\ref\RefArtBlank;
+use app\modules\v1\models\ref\RefProductPrint;
 use app\modules\v1\models\sls\SlsClient;
 use app\modules\v1\models\sls\SlsInvoice;
 use app\modules\v1\models\sls\SlsMoney;
@@ -254,5 +258,54 @@ class SlsMoneyController extends ActiveControllerExtended
             ->one();
 
         return ['balance' => $rec->summ];
+    }
+
+    const actionEnterpriseBalance = 'GET /v1/sls-money/enterprise-balance';
+
+    /**
+     * Вернуть баланс предприятия
+     */
+    public function actionEnterpriseBalance()
+    {
+
+        $response = [];
+
+        // Считать основные средства
+
+        $sum = 0;
+
+        /** @var PrStorProd[] $storProd */
+        $storProd = PrStorProd::readRest(null);
+
+        foreach ($storProd as $prod) {
+            // Брать цены из RefArtBlank если print_fk === 1, иначе из RefProductPrint
+
+            $prodPrices = $prod->print_fk === 1 ?
+                $prod->blankFk :
+                RefProductPrint::find()
+                    ->where(['blank_fk' => $prod->blank_fk])
+                    ->andWhere(['print_fk' => $prod->print_fk])
+                    ->one();
+
+            // Расчет стоимости остатков $prod для всех размеров
+            if($prodPrices) {
+                foreach (Sizes::prices as $size => $price) {
+                    if ($prod->$size) {
+                        $sum += $prod->$size * round($prodPrices->$price * 0.71);
+                    }
+                }
+            }
+        }
+
+        $response['active'][] = [
+            'name' => 'Основные средства',
+            'value' => $sum
+        ];
+
+        // Считать склад ткани
+
+        $sum = 0;
+
+        return $response;
     }
 }

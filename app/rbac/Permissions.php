@@ -99,6 +99,7 @@ class Permissions
             self::taskSalesStatisticsB2BAccess,
             self::taskSalesReport,
             self::taskStorRests,
+            self::taskEnterpriseBalance,
         ],
         self::roleBuhMain => [
             self::taskRegPaysPageAccess,
@@ -202,6 +203,8 @@ class Permissions
     const pageReportsProdRest = 'pageReportsProdRest';
     const pageReportsProdRest2 = 'pageReportsProdRest2';
 
+    const pageReportsEnterpriseBalance = 'pageReportsEnterpriseBalance';
+
     const pages = [
         self::pageRegPays => 'Реестры платежей',
         self::pageTestApi => 'Тестирование API проекта',
@@ -215,6 +218,7 @@ class Permissions
         self::pageV3Preferences => 'Настройки',
         self::pageReportsProdRest => 'Склад готовой продукции',
         self::pageReportsProdRest2 => 'Склад готовой продукции 2',
+        self::pageReportsEnterpriseBalance => 'Баланс предприятия',
     ];
 
 
@@ -326,6 +330,11 @@ class Permissions
      * Экшены для страницы /box
      */
     const taskV3Box = 'taskV3Box';
+
+    /**
+     * Экшены для страницы /reports/enterprise-balance
+     */
+    const taskEnterpriseBalance = 'taskEnterpriseBalance';
 
     const tasks = [
 
@@ -592,7 +601,12 @@ class Permissions
             V3InvoiceTypeController::actionCreateEdit,
             AnxUserController::actionGetUsersFromV3,
             V3BoxController::actionCreateEdit,
-        ]
+        ],
+
+        self::taskEnterpriseBalance => [
+            self::pageReportsEnterpriseBalance,
+            SlsMoneyController::actionEnterpriseBalance,
+        ],
     ];
 
 
