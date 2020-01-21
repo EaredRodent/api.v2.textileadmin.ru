@@ -19,4 +19,15 @@ class SlsClient extends GiiSlsClient
             'managerFk'
         ]);
     }
+
+    /**
+     * @return array|self[]
+     */
+    public static function readAllSort()
+    {
+        return self::find()
+            ->with('slsOrders')
+            ->orderBy('short_name')
+            ->all();
+    }
 }

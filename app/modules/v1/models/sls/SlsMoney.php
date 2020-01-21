@@ -72,4 +72,80 @@ class SlsMoney extends GiiSlsMoney
             ->joinWith('orderFk')
             ->all();
     }
+
+    /**
+     * Остатки на счетах
+     * @return string
+     */
+    public static function calcBalance()
+    {
+        /** @var $rec self */
+        $rec = self::find()
+            ->select('sum(summ) AS summ')
+            ->where(['type' => SlsMoney::typeBank])
+            ->groupBy('type')
+            ->one();
+
+        return $rec->summ;
+    }
+
+    /**
+     * Оплата заказов
+     * @param $dateStart
+     * @param null $dateEnd
+     * @param null $payType
+     * @return array|self[]
+     */
+    public static function readForReport($dateStart, $dateEnd = null, $payType = null)
+    {
+        if (!$dateEnd) {
+            return self::find()
+                ->with('orderFk')
+                ->joinWith('orderFk')
+                ->where('order_fk > 0')
+                ->andWhere(['!=', 'sls_order.flag_pre', 1])
+                ->andWhere('ts_incom <= :dateStart', [':dateStart' => $dateStart])
+                ->andWhere(['direct' => SlsMoney::directIn])
+                ->andFilterWhere(['sls_order.pay_type' => $payType])
+                ->all();
+        } else {
+            return self::find()
+                ->with('orderFk')
+                ->joinWith('orderFk')
+                ->where('order_fk > 0')
+                ->andWhere(['!=', 'sls_order.flag_pre', 1])
+                ->andWhere('ts_incom >= :dateStart', [':dateStart' => $dateStart])
+                ->andWhere(['direct' => SlsMoney::directIn])
+                ->andWhere('ts_incom <= :dateEnd', [':dateEnd' => $dateEnd])
+                ->andFilterWhere(['sls_order.pay_type' => $payType])
+                ->all();
+        }
+    }
+
+    /**
+     * Возврат оплаты по заказам
+     * @param $dateStart
+     * @param null $dateEnd
+     * @param null $payType
+     * @return array|self[]
+     */
+    public static function readForReportReturns($dateStart, $dateEnd = null, $payType = null)
+    {
+        if (!$dateEnd) {
+            return self::find()
+                ->where('client_fk > 0')
+                ->andWhere('ts_incom <= :dateStart', [':dateStart' => $dateStart])
+                ->andFilterWhere(['type' => $payType])
+                ->all();
+        } else {
+            return self::find()
+                ->where('client_fk > 0')
+                ->andWhere('ts_incom >= :dateStart', [':dateStart' => $dateStart])
+                ->andWhere('ts_incom <= :dateEnd', [':dateEnd' => $dateEnd])
+                ->andFilterWhere(['type' => $payType])
+                ->all();
+        }
+    }
+
+
 }

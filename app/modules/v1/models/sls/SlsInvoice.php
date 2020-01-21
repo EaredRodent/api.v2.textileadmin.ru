@@ -105,4 +105,46 @@ class SlsInvoice extends GiiSlsInvoice
             ->andFilterWhere(['user_fk' => $userId])
             ->count();
     }
+
+    /**
+     * @return float
+     */
+    public static function calcSummWait()
+    {
+        /** @var $rec self */
+        $rec = SlsInvoice::find()
+            ->select(['SUM(summ) as summ'])
+            ->where(['state' => SlsInvoice::stateWait])
+            ->groupBy('state')
+            ->one();
+        return ($rec) ? $rec->summ : 0;
+    }
+
+    /**
+     * @return float
+     */
+    public static function calcSummPartPay()
+    {
+        /** @var $rec self */
+        $rec = SlsInvoice::find()
+            ->select(['(SUM(summ) - SUM(summ_pay)) as summ'])
+            ->where(['state' => SlsInvoice::statePartPay])
+            ->groupBy('state')
+            ->one();
+        return ($rec) ? $rec->summ : 0;
+    }
+
+    /**
+     * @return float
+     */
+    public static function calcSummAccept()
+    {
+        /** @var $rec self */
+        $rec = SlsInvoice::find()
+            ->select(['(SUM(summ) - SUM(summ_pay)) as summ'])
+            ->where(['state' => SlsInvoice::stateAccept])
+            ->groupBy('state')
+            ->one();
+        return ($rec) ? $rec->summ : 0;
+    }
 }
