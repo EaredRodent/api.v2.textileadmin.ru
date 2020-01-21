@@ -21,6 +21,7 @@ use app\modules\v1\controllers\RefProdPackController;
 use app\modules\v1\controllers\RefProdPrintController;
 use app\modules\v1\controllers\RefProductPrintController;
 use app\modules\v1\controllers\ReportsController;
+use app\modules\v1\controllers\SlsBalanceParamController;
 use app\modules\v1\controllers\SlsClientController;
 use app\modules\v1\controllers\SlsCurrencyController;
 use app\modules\v1\controllers\SlsInvoiceController;
@@ -107,6 +108,8 @@ class Permissions
             self::taskRegPaysInvoiceManage,
             self::taskBuh,
             self::taskReferenceAccess,
+            self::taskEnterpriseBalance,
+            self::taskEnterpriseBalanceEdit,
         ],
         self::roleBuh => [
             self::taskRegPaysPageAccess,
@@ -205,6 +208,7 @@ class Permissions
     const pageReportsProdRest2 = 'pageReportsProdRest2';
 
     const pageReportsEnterpriseBalance = 'pageReportsEnterpriseBalance';
+    const pageReportsEnterpriseBalanceEdit = 'pageReportsEnterpriseBalanceEdit';
 
     const pages = [
         self::pageRegPays => 'Реестры платежей',
@@ -220,6 +224,7 @@ class Permissions
         self::pageReportsProdRest => 'Склад готовой продукции',
         self::pageReportsProdRest2 => 'Склад готовой продукции 2',
         self::pageReportsEnterpriseBalance => 'Баланс предприятия',
+        self::pageReportsEnterpriseBalanceEdit => 'Баланс предприятия (редактирование)'
     ];
 
 
@@ -336,6 +341,11 @@ class Permissions
      * Экшены для страницы /reports/enterprise-balance
      */
     const taskEnterpriseBalance = 'taskEnterpriseBalance';
+
+    /**
+     * Экшены для страницы /reports/enterprise-balance/edit
+     */
+    const taskEnterpriseBalanceEdit = 'taskEnterpriseBalanceEdit';
 
     const tasks = [
 
@@ -608,6 +618,13 @@ class Permissions
             self::pageReportsEnterpriseBalance,
             ReportsController::actionEnterpriseBalance,
         ],
+
+        self::taskEnterpriseBalanceEdit => [
+            self::pageReportsEnterpriseBalanceEdit,
+            SlsBalanceParamController::actionGetAll,
+            SlsBalanceParamController::actionCreateEdit,
+            SlsBalanceParamController::actionDeleteById,
+        ]
     ];
 
 
