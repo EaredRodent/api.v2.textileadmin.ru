@@ -539,6 +539,7 @@ class PrStorProdController extends ActiveControllerExtended
                 'packId' => $rec->pack_fk,
                 'art' => $rec->blankFk->hClientArt($rec->print_fk),
                 'model' => $rec->blankFk->modelFk->title,
+                'sex' => $rec->blankFk->modelFk->sexFk->code_ru,
                 'fabric' => $rec->blankFk->fabricTypeFk->type,
                 'color' => $rec->blankFk->themeFk->title,
                 'print' => $rec->printFk->title,
