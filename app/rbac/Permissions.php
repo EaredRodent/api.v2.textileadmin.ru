@@ -20,6 +20,7 @@ use app\modules\v1\controllers\RefFabricTypeController;
 use app\modules\v1\controllers\RefProdPackController;
 use app\modules\v1\controllers\RefProdPrintController;
 use app\modules\v1\controllers\RefProductPrintController;
+use app\modules\v1\controllers\ReportsController;
 use app\modules\v1\controllers\SlsClientController;
 use app\modules\v1\controllers\SlsCurrencyController;
 use app\modules\v1\controllers\SlsInvoiceController;
@@ -605,7 +606,7 @@ class Permissions
 
         self::taskEnterpriseBalance => [
             self::pageReportsEnterpriseBalance,
-            SlsMoneyController::actionEnterpriseBalance,
+            ReportsController::actionEnterpriseBalance,
         ],
     ];
 
