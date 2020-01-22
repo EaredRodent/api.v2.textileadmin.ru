@@ -17,10 +17,13 @@ use app\modules\v1\models\comp\CompStor;
 use app\modules\v1\models\pr\PrStorFabric;
 use app\modules\v1\models\pr\PrStorProd;
 use app\modules\v1\models\ref\RefProductPrint;
+use app\modules\v1\models\sls\SlsBalanceParam;
 use app\modules\v1\models\sls\SlsClient;
 use app\modules\v1\models\sls\SlsInvoice;
 use app\modules\v1\models\sls\SlsMoney;
 use app\modules\v1\models\sls\SlsPreorder;
+use app\modules\v1\models\v3\V3Box;
+use app\modules\v1\models\v3\V3Invoice;
 use app\objects\MoneyReport;
 use app\objects\Prices;
 use ReflectionClass;
@@ -43,13 +46,22 @@ class ReportsController extends ActiveControllerExtended
     {
 
         // Актив
-
         $active = [];
-        
+
         // Основные средства
+        $osArr = SlsBalanceParam::find()
+            ->where(['type' => 'os'])
+            ->all();
+
+        $osSum = 0;
+
+        foreach ($osArr as $os) {
+            $osSum += $os->value;
+        }
+
         $active[] = [
             'name' => 'Основные средства',
-            'value' => 'хз'
+            'value' => $osSum
         ];
 
         // Склад готовой продукции
@@ -96,6 +108,22 @@ class ReportsController extends ActiveControllerExtended
             'value' => (float)$sumRestBankMoney,
         ];
 
+        // Остатки на счете (нал)
+
+        $sumRestCash = 0;
+        /** @var V3Box[] $v3BoxArr */
+        $v3BoxArr = V3Box::find()->all();
+
+        foreach ($v3BoxArr as $v3Box) {
+            $fff = $v3Box->getBalance();
+            $sumRestCash += $fff;
+        }
+
+        $active[] = [
+            'name' => 'Остатки на счете (нал)',
+            'value' => $sumRestCash,
+        ];
+
         // Дебиторская задолженность
         $osv = new MoneyReport(
             date('Y-m-d', strtotime('first day of this month')),
@@ -103,9 +131,12 @@ class ReportsController extends ActiveControllerExtended
             null //SlsMoney::typeBank
         );
         $active[] = [
-            'name' => 'Остатки на счете (безнал)',
+            'name' => 'Дебиторская задолженность',
             'value' => (float)$osv->itogo['endDebet'],
         ];
+
+        $activeSum = $osSum + $sumStor + $sumFabric +
+            (float)$sumComp + (float)$sumRestBankMoney + $sumRestCash + (float)$osv->itogo['endDebet'];
 
 
         // Пассив
@@ -113,9 +144,19 @@ class ReportsController extends ActiveControllerExtended
         $passive = [];
 
         // Займы
+        $loansArr = SlsBalanceParam::find()
+            ->where(['type' => 'loans'])
+            ->all();
+
+        $loansSum = 0;
+
+        foreach ($loansArr as $loans) {
+            $loansSum += $loans->value;
+        }
+
         $passive[] = [
             'name' => 'Займы',
-            'value' => 'хз',
+            'value' => $loansSum,
         ];
 
         // Предоплаты
@@ -129,20 +170,51 @@ class ReportsController extends ActiveControllerExtended
             'value' => $summPrepay,
         ];
 
-        // Кредиторская задолженность
+        // Кредиторская задолженность (безнал)
         $kredLoad = SlsInvoice::calcSummWait() + SlsInvoice::calcSummPartPay() + SlsInvoice::calcSummAccept();
         $passive[] = [
-            'name' => 'Кредиторская задолженность',
+            'name' => 'Кредиторская задолженность (безнал)',
             'value' => $kredLoad,
+        ];
+
+        // Кредиторская задолженность (нал)
+
+        $kredLoadCash = 0;
+        $users = V3Invoice::getPrepForAdmin();
+
+        foreach ($users as $user) {
+            foreach ($user as $prepInvoice) {
+                $kredLoadCash += $prepInvoice->summ;
+            }
+        }
+
+        $partPays = V3Invoice::getPartPayForAdmin();
+
+        foreach ($partPays as $partPay) {
+            $kredLoadCash += $partPay->summ + $partPay->sum_pay;
+        }
+
+        $passive[] = [
+            'name' => 'Кредиторская задолженность (нал)',
+            'value' => $kredLoadCash,
+        ];
+
+        $passiveSum = $loansSum + $summPrepay + $kredLoad + $kredLoadCash;
+
+        // Нераспределенная прибыль
+        $passive[] = [
+            'name' => 'Нераспределенная прибыль',
+            'value' => $activeSum - $passiveSum,
         ];
 
 
         return [
             'active' => $active,
             'passive' => $passive,
+            'activeTotalMoney' => $activeSum,
+            'passiveTotalMoney' => $activeSum
         ];
     }
-
 
 
 }
