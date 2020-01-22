@@ -31,6 +31,17 @@ class SlsBalanceParamController extends ActiveControllerExtended
             ->where(['type' => 'loans'])
             ->all();
 
+        $result['osTotalSum'] = 0;
+
+        foreach ($result['os'] as $os) {
+            $result['osTotalSum'] += $os->value;
+        }
+
+        $result['loansTotalSum'] = 0;
+
+        foreach ($result['loans'] as $loans) {
+            $result['loansTotalSum'] += $loans->value;
+        }
         return $result;
     }
 
@@ -59,7 +70,7 @@ class SlsBalanceParamController extends ActiveControllerExtended
     public function actionDeleteById($id)
     {
         $param = SlsBalanceParam::findOne(['id' => $id]);
-        if(!$param) {
+        if (!$param) {
             throw new HttpException(200, 'Запись уже удалена.', 200);
         }
         $param->delete();
