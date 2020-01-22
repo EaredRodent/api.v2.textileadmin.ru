@@ -110,6 +110,8 @@ class Permissions
             self::taskBuh,
             self::taskReferenceAccess,
             self::taskEnterpriseBalance,
+            self::taskSalesReport,
+            self::taskStorRests,
             self::taskEnterpriseBalanceEdit,
         ],
         self::roleBuhMain => [
