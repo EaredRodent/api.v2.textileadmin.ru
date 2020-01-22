@@ -49,6 +49,7 @@ class Permissions
     const roleMaster = 'roleMaster';
     const roleEdush = 'roleEdush';
     const roleBuhMain = 'roleBuhMain';
+    const roleFinDir = 'roleFinDir'; // Кривоносова (перстала быть главбухом)
     const roleBuh = 'roleBuh';
     const roleB2bClient = 'roleB2bClient';
     const roleSaller = 'roleSaller'; // Менеджер отдела продаж
@@ -103,13 +104,19 @@ class Permissions
             self::taskStorRests,
             self::taskEnterpriseBalance,
         ],
-        self::roleBuhMain => [
+        self::roleFinDir => [
             self::taskRegPaysPageAccess,
             self::taskRegPaysInvoiceManage,
             self::taskBuh,
             self::taskReferenceAccess,
             self::taskEnterpriseBalance,
             self::taskEnterpriseBalanceEdit,
+        ],
+        self::roleBuhMain => [
+            self::taskRegPaysPageAccess,
+            self::taskRegPaysInvoiceManage,
+            self::taskBuh,
+            self::taskReferenceAccess,
         ],
         self::roleBuh => [
             self::taskRegPaysPageAccess,
