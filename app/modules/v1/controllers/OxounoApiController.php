@@ -70,6 +70,15 @@ class OxounoApiController extends ActiveControllerExtended
                 continue;
             }
 
+            // Фильтр (не выгружать "не в продаже, снято")
+            $flagInPrice = (int)$prodObj->fields()['flagInPrice']();
+            $flagStopProd = (int)$prodObj->fields()['flagStopProd']();
+
+            if ($flagInPrice === 0 && $flagStopProd === 1) {
+                continue;
+            }
+
+
             $item['group'] = $prodObj->fields()['group']();
             $item['class'] = $prodObj->fields()['classOxo']();
             $item['sex'] = $prodObj->fields()['sex']();
@@ -91,9 +100,9 @@ class OxounoApiController extends ActiveControllerExtended
             $item['fabricDensity'] = $prodObj->fields()['fabricDensity']();
             $item['fabricEpithets'] = $prodObj->fields()['fabricEpithets']();
             $item['fabricCare'] = $prodObj->fields()['fabricCare']();
-            $item['flagInPrice'] = $prodObj->fields()['flagInPrice']();
+            $item['flagInPrice'] = $flagInPrice;
             $item['assortment'] = $prodObj->fields()['assortment']();
-            $item['flagStopProd'] = $prodObj->fields()['flagStopProd']();
+            $item['flagStopProd'] = $flagStopProd;
             $item['price'] = $prices->getPrice($ean->blank_fk, $ean->print_fk, $ean->size);
             $item['weight'] = $weight->getWeight(
                 $ean->blankFk->model_fk, $ean->blankFk->fabric_type_fk, $ean->size
