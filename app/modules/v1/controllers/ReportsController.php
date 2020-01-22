@@ -173,7 +173,7 @@ class ReportsController extends ActiveControllerExtended
         // Кредиторская задолженность (безнал)
         $kredLoad = SlsInvoice::calcSummWait() + SlsInvoice::calcSummPartPay() + SlsInvoice::calcSummAccept();
         $passive[] = [
-            'name' => 'Кредиторская задолженность',
+            'name' => 'Кредиторская задолженность (безнал)',
             'value' => $kredLoad,
         ];
 
