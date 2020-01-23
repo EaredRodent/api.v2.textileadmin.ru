@@ -102,16 +102,16 @@ class Permissions
             self::taskSalesStatisticsB2BAccess,
             self::taskSalesReport,
             self::taskStorRests,
-            self::taskEnterpriseBalance,
+            self::taskEnterpriseBalance
         ],
         self::roleFinDir => [
             self::taskRegPaysPageAccess,
             self::taskRegPaysInvoiceManage,
             self::taskBuh,
             self::taskReferenceAccess,
-            self::taskEnterpriseBalance,
             self::taskSalesReport,
             self::taskStorRests,
+            self::taskEnterpriseBalance,
             self::taskEnterpriseBalanceEdit,
         ],
         self::roleBuhMain => [
@@ -625,12 +625,12 @@ class Permissions
 
         self::taskEnterpriseBalance => [
             self::pageReportsEnterpriseBalance,
+            self::pageReportsEnterpriseBalanceEdit,
             ReportsController::actionEnterpriseBalance,
+            SlsBalanceParamController::actionGetAll,
         ],
 
         self::taskEnterpriseBalanceEdit => [
-            self::pageReportsEnterpriseBalanceEdit,
-            SlsBalanceParamController::actionGetAll,
             SlsBalanceParamController::actionCreateEdit,
             SlsBalanceParamController::actionDeleteById,
         ]

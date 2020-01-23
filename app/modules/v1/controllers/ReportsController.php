@@ -61,7 +61,8 @@ class ReportsController extends ActiveControllerExtended
 
         $active[] = [
             'name' => 'Основные средства',
-            'value' => $osSum
+            'value' => $osSum,
+            'url' => '//v2.textileadmin.ru/reports/enterprise-balance/edit'
         ];
 
         // Склад готовой продукции
@@ -78,6 +79,7 @@ class ReportsController extends ActiveControllerExtended
         $active[] = [
             'name' => 'Склад готовой продукции (29%)',
             'value' => $sumStor,
+            'url' => '//v2.textileadmin.ru/reports/prod-rest2'
         ];
 
         // Склад ткани
@@ -85,6 +87,7 @@ class ReportsController extends ActiveControllerExtended
         $active[] = [
             'name' => 'Склад ткани',
             'value' => $sumFabric,
+            'url' => '//textileadmin.ru/production/stor-fabric/rests'
         ];
 
         // Склад комплектующих
@@ -99,6 +102,7 @@ class ReportsController extends ActiveControllerExtended
         $active[] = [
             'name' => 'Склад комплектующих',
             'value' => (float)$sumComp,
+            'url' => '//textileadmin.ru/prod-components/stor'
         ];
 
         // Остатки на счете (безнал)
@@ -106,6 +110,7 @@ class ReportsController extends ActiveControllerExtended
         $active[] = [
             'name' => 'Остатки на счете (безнал)',
             'value' => (float)$sumRestBankMoney,
+            'url' => '//v2.textileadmin.ru/management/reg-pays'
         ];
 
         // Остатки на счете (нал)
@@ -122,6 +127,7 @@ class ReportsController extends ActiveControllerExtended
         $active[] = [
             'name' => 'Остатки на счете (нал)',
             'value' => $sumRestCash,
+            'url' => '//v3.textileadmin.ru/reg-pays'
         ];
 
         // Дебиторская задолженность
@@ -133,6 +139,7 @@ class ReportsController extends ActiveControllerExtended
         $active[] = [
             'name' => 'Дебиторская задолженность',
             'value' => (float)$osv->itogo['endDebet'],
+            'url' => '//textileadmin.ru/sales/money/report'
         ];
 
         $activeSum = $osSum + $sumStor + $sumFabric +
@@ -157,6 +164,7 @@ class ReportsController extends ActiveControllerExtended
         $passive[] = [
             'name' => 'Займы',
             'value' => $loansSum,
+            'url' => '//v2.textileadmin.ru/reports/enterprise-balance/edit'
         ];
 
         // Предоплаты
@@ -168,6 +176,7 @@ class ReportsController extends ActiveControllerExtended
         $passive[] = [
             'name' => 'Предоплаты',
             'value' => $summPrepay,
+            'url' => '//textileadmin.ru/sales/orders/preorders3'
         ];
 
         // Кредиторская задолженность (безнал)
@@ -175,6 +184,7 @@ class ReportsController extends ActiveControllerExtended
         $passive[] = [
             'name' => 'Кредиторская задолженность (безнал)',
             'value' => $kredLoad,
+            'url' => '//v2.textileadmin.ru/management/reg-pays'
         ];
 
         // Кредиторская задолженность (нал)
@@ -197,6 +207,7 @@ class ReportsController extends ActiveControllerExtended
         $passive[] = [
             'name' => 'Кредиторская задолженность (нал)',
             'value' => $kredLoadCash,
+            'url' => '//v3.textileadmin.ru/reg-pays'
         ];
 
         $passiveSum = $loansSum + $summPrepay + $kredLoad + $kredLoadCash;
