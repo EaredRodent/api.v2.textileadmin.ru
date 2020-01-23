@@ -40,6 +40,7 @@ class ReportsController extends ActiveControllerExtended
 
     /**
      * Вернуть баланс предприятия
+     * todo говнокод со ссылками
      * @return array
      */
     public function actionEnterpriseBalance()
