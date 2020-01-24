@@ -437,25 +437,6 @@ class AnxUserController extends ActiveControllerExtended
         return $contacts;
     }
 
-    const actionReloadAllContacts = 'POST /v1/anx-user/reload-all-contacts';
-
-    /**
-     * Рассылает сигнал о перезагрузке страницы всем контактным лицам
-     * @param $secret_key
-     */
-    function actionReloadAllContacts($secret_key)
-    {
-        $wsc = new Client(AppMod::wssUrl);
-        try {
-            $wsc->send(json_encode([
-                'secret_key' => $secret_key,
-                'message' => ['ALL_CONTACTS_RELOAD_PAGE']
-            ]));
-        } catch (\Exception $ee) {
-
-        }
-    }
-
     const actionGetUsersFromV3 = 'GET /v1/anx-user/get-users-from-v3';
 
     /**

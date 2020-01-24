@@ -1,0 +1,99 @@
+<?php
+/**
+ *  * Created by PhpStorm.
+ * User: x3RABBITx3
+ * Date: 1/24/2020
+ * Time: 10:45 AM
+ */
+
+namespace app\modules\v1\controllers;
+
+
+use app\modules\AppMod;
+use app\modules\v1\classes\ActiveControllerExtended;
+use yii\httpclient\Client;
+use yii\web\ForbiddenHttpException;
+use yii\web\HttpException;
+
+class ServiceController extends ActiveControllerExtended
+{
+    public $modelClass = '';
+
+    const actionReloadAllContacts = 'POST /v1/service/reload-all-contacts';
+
+    /**
+     * Рассылает сигнал о перезагрузке страницы всем контактным лицам
+     * @param $secret_key
+     */
+    function actionReloadAllContacts($secret_key)
+    {
+        $wsc = new \WebSocket\Client(AppMod::wssUrl);
+        try {
+            $wsc->send(json_encode([
+                'secret_key' => $secret_key,
+                'message' => ['ALL_CONTACTS_RELOAD_PAGE']
+            ]));
+        } catch (\Exception $ee) {
+
+        }
+    }
+
+    const actionGenerateMetaFile = 'POST /v1/service/generate-meta-file';
+
+    /**
+     * Генерирует мета-файл с информацией о всех проектах
+     * @param $secret_key
+     * @return void
+     * @throws ForbiddenHttpException
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\httpclient\Exception
+     */
+    function actionGenerateMetaFile($secret_key)
+    {
+        if ($secret_key !== AppMod::metaGenerateSecretKey) {
+            throw new ForbiddenHttpException();
+        }
+
+        $client = new Client();
+
+        $metaFile = [
+            'textile-spa' => [],
+            'textile-v3' => [],
+            'b2b-oxouno' => [],
+            'textile-api' => [],
+            'date' => ''
+        ];
+
+        // Заполнение информации о проектах
+
+        foreach ($metaFile as $projectName => &$projectInfo) {
+            $response = $client->createRequest()
+                ->setMethod('GET')
+                ->setUrl('https://api.github.com/repos/ralex123/' . $projectName . '/branches/master')
+                ->setHeaders([
+                    'User-Agent' => 'x3RABBITx3',
+                    'Authorization' => AppMod::gitHubAuthorizationHeader
+                ])
+                ->send();
+
+            if ($response->isOk) {
+                $resp = $response->getData();
+
+                $projectInfo['hash'] = $resp['commit']['sha'];
+                $projectInfo['date'] = date('d.m.Y H:i:s', strtotime($resp['commit']['commit']['committer']['date']));
+                $projectInfo['message'] = $resp['commit']['commit']['message'];
+
+            } else {
+                $projectInfo = [];
+            }
+        }
+
+        // TS создания файла
+
+        $metaFile['date'] = date('d.m.Y H:i:s');
+
+        $metaFile = json_encode($metaFile, JSON_UNESCAPED_UNICODE);
+
+        file_put_contents(\Yii::getAlias('@app/web/meta-info.json'), $metaFile);
+    }
+}

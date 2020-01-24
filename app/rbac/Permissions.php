@@ -21,6 +21,7 @@ use app\modules\v1\controllers\RefProdPackController;
 use app\modules\v1\controllers\RefProdPrintController;
 use app\modules\v1\controllers\RefProductPrintController;
 use app\modules\v1\controllers\ReportsController;
+use app\modules\v1\controllers\ServiceController;
 use app\modules\v1\controllers\SlsBalanceParamController;
 use app\modules\v1\controllers\SlsClientController;
 use app\modules\v1\controllers\SlsCurrencyController;
@@ -70,7 +71,8 @@ class Permissions
             AnxUserController::actionBootstrap,
             AnxUserController::actionGetUsers,
             AnxUserController::actionB2bRegister,
-            AnxUserController::actionReloadAllContacts,
+            ServiceController::actionReloadAllContacts,
+            ServiceController::actionGenerateMetaFile,
             LogEventController::actionLogBrowser,
         ],
         self::roleMaster => [
