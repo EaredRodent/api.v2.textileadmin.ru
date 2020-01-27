@@ -249,6 +249,7 @@ class CardProdController extends ActiveControllerExtended
      * @param $prodId
      * @param $printId
      * @param $packId
+     * @return array
      * @throws \Exception
      */
     public function actionGetCard(int $prodId, int $printId, int $packId)
@@ -296,6 +297,7 @@ class CardProdController extends ActiveControllerExtended
             'fabricStruct' => $card->fabricTypeFk->struct,
             'fabricDensity' => $card->fabricTypeFk->desity . ' г/м2',
             'pack' => $card->packFk->title,
+            'packId' => $card->packFk->id,
             'tableSizes' => $tableSizes,
 
             'photos' => $card->photos,

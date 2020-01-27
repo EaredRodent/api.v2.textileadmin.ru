@@ -73,6 +73,7 @@ class Permissions
             AnxUserController::actionB2bRegister,
             ServiceController::actionReloadAllContacts,
             ServiceController::actionGenerateMetaFile,
+            ServiceController::actionGetMetaFile,
             LogEventController::actionLogBrowser,
         ],
         self::roleMaster => [

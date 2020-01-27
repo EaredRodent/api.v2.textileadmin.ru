@@ -96,4 +96,16 @@ class ServiceController extends ActiveControllerExtended
 
         file_put_contents(\Yii::getAlias('@app/web/meta-info.json'), $metaFile);
     }
+
+    const actionGetMetaFile = 'GET /v1/service/get-meta-file';
+
+    /**
+     * Выдает сгенерированный мета-файл с хешами актуальных коммитов
+     * @return mixed
+     */
+    public function actionGetMetaFile()
+    {
+        $file = file_get_contents(\Yii::getAlias('@app/web/meta-info.json'));
+        return json_decode($file, true);
+    }
 }
