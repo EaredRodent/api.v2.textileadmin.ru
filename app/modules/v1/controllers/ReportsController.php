@@ -168,7 +168,7 @@ class ReportsController extends ActiveControllerExtended
             'url' => '//v2.textileadmin.ru/reports/enterprise-balance/edit'
         ];
 
-        // Предоплаты
+        // Предоплаты (временно убрать)
         $summPrepay = 0;
 //        $preOrders = SlsPreorder::readPreorders();
 //        foreach ($preOrders as $rec) {
