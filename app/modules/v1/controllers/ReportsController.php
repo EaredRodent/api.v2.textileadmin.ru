@@ -170,15 +170,15 @@ class ReportsController extends ActiveControllerExtended
 
         // Предоплаты
         $summPrepay = 0;
-        $preOrders = SlsPreorder::readPreorders();
-        foreach ($preOrders as $rec) {
-            $summPrepay += $rec->summ_free;
-        }
-        $passive[] = [
-            'name' => 'Предоплаты',
-            'value' => $summPrepay,
-            'url' => '//textileadmin.ru/sales/orders/preorders3'
-        ];
+//        $preOrders = SlsPreorder::readPreorders();
+//        foreach ($preOrders as $rec) {
+//            $summPrepay += $rec->summ_free;
+//        }
+//        $passive[] = [
+//            'name' => 'Предоплаты',
+//            'value' => $summPrepay,
+//            'url' => '//textileadmin.ru/sales/orders/preorders3'
+//        ];
 
         // Кредиторская задолженность (безнал)
         $kredLoad = SlsInvoice::calcSummWait() + SlsInvoice::calcSummPartPay() + SlsInvoice::calcSummAccept();
