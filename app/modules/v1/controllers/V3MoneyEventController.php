@@ -366,4 +366,22 @@ class V3MoneyEventController extends ActiveControllerExtended
 
         return ['_result_' => 'success'];
     }
+
+    const actionEditSum = 'POST /v1/v3-money-event/edit-sum';
+
+    /**
+     * Редактирует сумму расхода
+     * @param $id
+     * @param $summ
+     * @return array
+     * @throws HttpException
+     */
+    public function actionEditSum($id, $summ)
+    {
+        $moneyEvent = V3MoneyEvent::findOne(['id' => $id]);
+        $moneyEvent->summ = -$summ;
+        $moneyEvent->save();
+
+        return ['_result_' => 'success'];
+    }
 }

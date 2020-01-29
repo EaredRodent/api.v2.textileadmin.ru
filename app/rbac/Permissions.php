@@ -159,6 +159,7 @@ class Permissions
             self::taskV3Box,
             self::taskV3RegPays,
             self::taskV3Preferences,
+            V3MoneyEventController::actionEditSum,
         ],
         self::roleV3Edush => [
             self::taskV3Invoices,
