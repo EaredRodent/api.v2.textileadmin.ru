@@ -12,6 +12,8 @@ class AppMod
 
     const domain = YII_ENV_PROD ? 'https://api.b2b.oxouno.ru' : 'http://api.textileadmin.loc';
 
+    const fileToGitJson = '@app/../../textile/files/git-json/meta-info.json';
+
     // Прикрепленные файлы для счетов в реестре пладежей
     const filesInvoiceAttachement = 'filesInvoiceAttachement';
 

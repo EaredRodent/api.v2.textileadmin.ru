@@ -94,7 +94,7 @@ class ServiceController extends ActiveControllerExtended
 
         $metaFile = json_encode($metaFile, JSON_UNESCAPED_UNICODE);
 
-        file_put_contents(\Yii::getAlias('@app/web/meta-info.json'), $metaFile);
+        file_put_contents(\Yii::getAlias(AppMod::fileToGitJson), $metaFile);
     }
 
     const actionGetMetaFile = 'GET /v1/service/get-meta-file';
