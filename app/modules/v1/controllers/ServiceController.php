@@ -105,7 +105,7 @@ class ServiceController extends ActiveControllerExtended
      */
     public function actionGetMetaFile()
     {
-        $file = file_get_contents(\Yii::getAlias('@app/web/meta-info.json'));
+        $file = file_get_contents(\Yii::getAlias(AppMod::fileToGitJson));
         return json_decode($file, true);
     }
 }
