@@ -38,17 +38,17 @@ class ServiceController extends ActiveControllerExtended
         }
     }
 
-    const actionGenerateMetaFile = 'POST /v1/service/generate-meta-file';
+    const actionDeploy = 'POST /v1/service/deploy';
 
     /**
      * Генерирует мета-файл с информацией о всех проектах
-     * @param $secret_key
-     * @return void
+     * @param $secret_key [IuiKnzwda6xFtjeTd92K]
+     * @return array
      * @throws ForbiddenHttpException
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\httpclient\Exception
      */
-    function actionGenerateMetaFile($secret_key)
+    function actionDeploy($secret_key)
     {
         if ($secret_key !== AppMod::metaGenerateSecretKey) {
             throw new ForbiddenHttpException();
@@ -92,18 +92,20 @@ class ServiceController extends ActiveControllerExtended
 
         $metaFile['date'] = date('d.m.Y H:i:s');
 
-        $metaFile = json_encode($metaFile, JSON_UNESCAPED_UNICODE);
+        $metaFileStr = json_encode($metaFile, JSON_UNESCAPED_UNICODE+JSON_PRETTY_PRINT);
 
-        file_put_contents(\Yii::getAlias(AppMod::fileToGitJson), $metaFile);
+        file_put_contents(\Yii::getAlias(AppMod::fileToGitJson), $metaFileStr);
+
+        return $metaFile;
     }
 
-    const actionGetMetaFile = 'GET /v1/service/get-meta-file';
+    const actionGetDeployJson = 'GET /v1/service/get-deploy-json';
 
     /**
      * Выдает сгенерированный мета-файл с хешами актуальных коммитов
      * @return mixed
      */
-    public function actionGetMetaFile()
+    public function actionGetDeployJson()
     {
         $file = file_get_contents(\Yii::getAlias(AppMod::fileToGitJson));
         return json_decode($file, true);

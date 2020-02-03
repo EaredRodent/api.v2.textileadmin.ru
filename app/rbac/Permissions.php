@@ -72,8 +72,8 @@ class Permissions
             AnxUserController::actionGetUsers,
             AnxUserController::actionB2bRegister,
             ServiceController::actionReloadAllContacts,
-            ServiceController::actionGenerateMetaFile,
-            ServiceController::actionGetMetaFile,
+            ServiceController::actionDeploy,
+            ServiceController::actionGetDeployJson,
             LogEventController::actionLogBrowser,
         ],
         self::roleMaster => [

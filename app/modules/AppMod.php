@@ -12,7 +12,7 @@ class AppMod
 
     const domain = YII_ENV_PROD ? 'https://api.b2b.oxouno.ru' : 'http://api.textileadmin.loc';
 
-    const fileToGitJson = '@app/../../textile/files/git-json/meta-info.json';
+    const fileToGitJson = '@app/web/deploy/deploy.json';
 
     // Прикрепленные файлы для счетов в реестре пладежей
     const filesInvoiceAttachement = 'filesInvoiceAttachement';
@@ -94,6 +94,6 @@ class AppMod
     // Authorization header для авторизованных запросов к GitHub API от лица x3RABBITx3
     const gitHubAuthorizationHeader = 'Basic cmFiYml0Z2l0OTBAbWFpbC5ydTpmZDhqSWlmOGZpSWR6';
 
-    // Секретный ключ для генерации мета-файла
+    // Секретный ключ для генерации deploy.json
     const metaGenerateSecretKey = 'IuiKnzwda6xFtjeTd92K';
 }
