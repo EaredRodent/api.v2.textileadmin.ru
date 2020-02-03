@@ -30,8 +30,8 @@ class ServiceController extends ActiveControllerExtended
         $wsc = new \WebSocket\Client(AppMod::wssUrl);
         try {
             $wsc->send(json_encode([
-                'secret_key' => $secret_key,
-                'message' => ['ALL_CONTACTS_RELOAD_PAGE']
+                'type' => 'RELOAD',
+                'token' => $secret_key
             ]));
         } catch (\Exception $ee) {
 

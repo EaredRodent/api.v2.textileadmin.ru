@@ -121,8 +121,9 @@ class ActiveControllerExtended extends ActiveController
                 $wsc = new Client(AppMod::wssUrl);
                 try {
                     $wsc->send(json_encode([
-                        'secret_key' => AppMod::wsSenderSecretKey,
-                        'message' => $module->cmdTables
+                        'type' => 'TABLES_UPDATE',
+                        'data' => $module->cmdTables,
+                        'token' => AppMod::wsSenderSecretKey
                     ]));
                 } catch (Exception $ee) {
 

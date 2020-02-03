@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "esm": "^3.2.25",
     "ws": "^7.2.1"
   }
 }
