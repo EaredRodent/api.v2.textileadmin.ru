@@ -37,8 +37,27 @@ $config = [
                 $appTime = round($logger->elapsedTime, 3);
                 $appMemory = number_format(memory_get_peak_usage(), 0, '', ' ');
 
-                $headers = Yii::$app->response->headers;
+                $request = Yii::$app->request;
+                $getParams = $_GET;
+                $bodyParams = $request->bodyParams;
+                $fullParams = array_merge($getParams, $bodyParams);
+                $fullParamsStr = json_encode($fullParams,JSON_UNESCAPED_UNICODE);
+                $arr =[
+                    'ip' => $request->userIP,
+                    'project' => (Yii::$app->user->isGuest) ? '-' : Yii::$app->user->identity->getProject(),
+                    'user_id' => (Yii::$app->user->isGuest) ? 0 : Yii::$app->user->id,
+                    'login' => (Yii::$app->user->isGuest) ? 'GUEST' : Yii::$app->user->identity->getLogin(),
+                    'method' => $request->method,
+                    'url' => explode('?' , $request->url)[0],
+                    'params' => $fullParamsStr,
+                    'app_time' => $appTime,
+                    'app_db' => $dbCountQuery,
+                    'app_memory' => str_replace(' ', '', $appMemory),
 
+                ];
+                Yii::$app->db->createCommand()->insert('log_api', $arr)->execute();
+
+                $headers = Yii::$app->response->headers;
                 $headers->add('Log-Dbcount', $dbCountQuery);
                 $headers->add('Log-Dbtime', $dbTime);
                 $headers->add('Log-Apptime', $appTime);
