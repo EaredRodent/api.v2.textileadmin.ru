@@ -12713,14 +12713,37 @@
               <Y>2 px</Y>
             </CommentOffset>
           </Model>
+          <Model xsi:type="TableModel">
+            <CustomProperties>
+              <OID>748</OID>
+              <Parent>0</Parent>
+            </CustomProperties>
+            <Location>
+              <X>6710 px</X>
+              <Y>-330 px</Y>
+            </Location>
+            <Size>
+              <Width>220 px</Width>
+              <Height>242 px</Height>
+            </Size>
+            <DbOid>
+              <Path>textile.log_api</Path>
+              <TypeName>Table</TypeName>
+            </DbOid>
+            <Compartments>
+              <ConstraintsCollapsed>True</ConstraintsCollapsed>
+              <IndexesCollapsed>True</IndexesCollapsed>
+              <TriggersCollapsed>True</TriggersCollapsed>
+            </Compartments>
+          </Model>
         </Children>
         <GridSize>22 px</GridSize>
         <ViewPort>
           <ScaleMode>Free</ScaleMode>
-          <Scale>0.44</Scale>
+          <Scale>0.68</Scale>
           <Location>
-            <X>6115.90909487009 px</X>
-            <Y>1340.90908521118 px</Y>
+            <X>5924.99993767809 px</X>
+            <Y>-508.823523657132 px</Y>
           </Location>
         </ViewPort>
       </Model>

@@ -1,18 +1,41 @@
-const os = require('os')
+// node -r esm index
 
-///
+import WebSocket from 'ws'
+import fs from 'fs'
+import path from 'path'
+import { config, log, ClientList, WSMessage } from './classes'
 
-const prodHostName = 'fvds-2'
+// Чтение deploy.json
+const fPath = path.resolve(__dirname, '../web/deploy/deploy.json')
+config.deployJson = fs.readFileSync(fPath, 'utf8')
 
-///
+// Запуск сервера
+let server = new WebSocket.Server({ port: config.port })
+log(`Server is running on port ${config.port}`)
+let clientList = new ClientList()
 
-let hostName = os.hostname()
+// Подключить к серверу нового пользователя client
+server.on('connection', (client, req) => {
+  // Добавить client в список подключенных клиентов
+  clientList.add(client)
 
-const MOD_ENV = (hostName === prodHostName) ? 'prod' : 'dev'
-const MOD_PROD = (MOD_ENV === 'prod')
-const MOD_DEV = (MOD_ENV === 'dev')
+  // Обработать данные присланные client
+  client.on('message', function (data) {
+    let wsMessage = WSMessage.fromWSData(data)
 
+    if (wsMessage.type === 'PING') {
+      clientList.pong(client)
+      return
+    }
 
-console.log(MOD_DEV)
+    // Рассылать сообщения может только доверенный пользователь, пользователь должен прикрепить token к данным
+    if(wsMessage.testToken()) {
+      clientList.broadcast(wsMessage, client)
+    }
+  })
 
-
+  // Обработать отключение client от сервера
+  client.on('close', function () {
+    clientList.remove(client)
+  })
+})
