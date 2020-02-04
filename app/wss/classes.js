@@ -60,6 +60,11 @@ class ClientList {
     this.clients.forEach(client => {
       if ((client !== sender) && (client.readyState === 1)) {
         client.send(data)
+
+        // todo
+        if(wsMessage.type === 'RELOAD') {
+          client.send('[\'ALL_CONTACTS_RELOAD_PAGE\']')
+        }
       }
     })
     log(`Broadcast message: "${data}"`)
