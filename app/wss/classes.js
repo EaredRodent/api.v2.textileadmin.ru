@@ -87,7 +87,6 @@ class ClientList {
 
     client.pingTimeOut = setTimeout(() => {
       log('Client do not PING me :c')
-      client.send(JSON.stringify(['ALL_CONTACTS_RELOAD_PAGE']))
       client.terminate()  // Вызывает событие client.on('close'...
     }, 10000)
   }
