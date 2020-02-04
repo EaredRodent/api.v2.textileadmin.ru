@@ -63,7 +63,7 @@ class ClientList {
 
         // todo
         if(wsMessage.type === 'RELOAD') {
-          client.send('[\'ALL_CONTACTS_RELOAD_PAGE\']')
+          client.send(JSON.stringify(['ALL_CONTACTS_RELOAD_PAGE']))
         }
       }
     })
