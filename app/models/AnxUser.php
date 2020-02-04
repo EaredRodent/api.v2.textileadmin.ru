@@ -181,4 +181,14 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
 
         return $lastActivity;
     }
+
+    public function getLogin()
+    {
+        return $this->login;
+    }
+
+    public function getProject()
+    {
+        return $this->project;
+    }
 }
