@@ -23,6 +23,7 @@ use app\modules\v1\models\ref\RefProdPrint;
 use app\modules\v1\models\ref\RefProductPrint;
 use app\modules\v1\models\ref\RefWeight;
 use yii\db\ActiveQuery;
+use yii\web\HttpException;
 
 class RefArtBlankController extends ActiveControllerExtended
 {
@@ -331,7 +332,8 @@ class RefArtBlankController extends ActiveControllerExtended
      * Вернуть список артикулов v2
      * @return array|\yii\db\ActiveRecord[]
      */
-    public function actionGetAll() {
+    public function actionGetAll()
+    {
         return RefArtBlank::find()->all();
     }
 
@@ -347,6 +349,10 @@ class RefArtBlankController extends ActiveControllerExtended
      */
     public function actionSetDiscount($prodId, $printId, $discount)
     {
+        if ($discount < 0 || 100 < $discount) {
+            throw  new HttpException(200, 'Указанная скидка некорректна.', 200);
+        }
+
         /** @var RefArtBlank|RefProductPrint $prod */
         $prod = null;
 
