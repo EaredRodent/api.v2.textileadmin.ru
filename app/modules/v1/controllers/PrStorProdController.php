@@ -396,7 +396,7 @@ class PrStorProdController extends ActiveControllerExtended
                 'flagInProd' => (bool)!$rec->blankFk->flag_stop_prod,
                 'sizes' => $sizes,
                 'total' => (int)$rec->totalSum,
-                'minPrice' => round($prices->getMinPrice($rec->blank_fk, $rec->print_fk) * 0.71 * $discountMultiplier),
+                'minPrice' => round($prices->getMinPrice($rec->blank_fk, $rec->print_fk)),
                 'discount' => $discount,
                 'prodId' => $rec->blank_fk,
                 'printId' => $rec->print_fk,
