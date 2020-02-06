@@ -104,6 +104,7 @@ class OxounoApiController extends ActiveControllerExtended
             $item['assortment'] = $prodObj->fields()['assortment']();
             $item['flagStopProd'] = $flagStopProd;
             $item['price'] = $prices->getPrice($ean->blank_fk, $ean->print_fk, $ean->size);
+            $item['discount'] = $prices->getDiscount($ean->blank_fk, $ean->print_fk);
             $item['weight'] = $weight->getWeight(
                 $ean->blankFk->model_fk, $ean->blankFk->fabric_type_fk, $ean->size
             );

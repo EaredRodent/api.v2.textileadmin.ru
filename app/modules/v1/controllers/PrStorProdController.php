@@ -533,18 +533,19 @@ class PrStorProdController extends ActiveControllerExtended
                 $model .= ' (' . $rec->blankFk->modelFk->sexFk->code_ru . ')';
             }
 
+            // Скидка
+            $discount = $prices->getDiscount($rec->blank_fk, $rec->print_fk);
+
             //Товары
             $sizesFields = ($sexKey == 'Детям') ? Sizes::fieldsRangeKids : Sizes::fieldsRangeAdult;
             $sizesVal = [];
             $totalMoney = 0;
             foreach ($sizesFields as $fSize => $strSize) {
                 $sizesVal[] = ['name' => $strSize, 'count' => $rec->$fSize];
-                $price29 = round($prices->getPrice($rec->blank_fk, $rec->print_fk, $fSize) * 0.71);
+                $discountMultiplier = 1 - $discount / 100;
+                $price29 = round($prices->getPrice($rec->blank_fk, $rec->print_fk, $fSize) * 0.71 * $discountMultiplier);
                 $totalMoney += $rec->$fSize * $price29;
             }
-
-            // Скидка
-            $discount = $prices->getDiscount($rec->blank_fk, $rec->print_fk);
 
             $prod = [
                 'prodId' => $rec->blank_fk,
