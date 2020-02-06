@@ -573,6 +573,10 @@ class Permissions
             RefProdPrintController::actionGetAll,
             RefProdPackController::actionGetAll,
 
+            // Правка скидки
+
+            RefArtBlankController::actionSetDiscount,
+
             // Доступ к странице
 
             self::pageReportsProdRest,

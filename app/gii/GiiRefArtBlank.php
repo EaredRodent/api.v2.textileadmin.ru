@@ -3,12 +3,9 @@
 namespace app\gii;
 
 use app\modules\v1\classes\ActiveRecordExtended;
-use app\modules\v1\models\pr\PrStorProd;
 use app\modules\v1\models\ref\RefBlankModel;
 use app\modules\v1\models\ref\RefBlankTheme;
 use app\modules\v1\models\ref\RefFabricType;
-use app\modules\v1\models\ref\RefProductPrint;
-use app\modules\v1\models\sls\SlsItem;
 use Yii;
 
 /**
@@ -39,6 +36,7 @@ use Yii;
  * @property int $mid_rest
  * @property string $assortment
  * @property int $flag_stop_prod
+ * @property int $discount
  *
  * @property PrInventItem[] $prInventItems
  * @property PrLot[] $prLots
@@ -55,7 +53,7 @@ use Yii;
  * @property SlsPreorderItem[] $slsPreorderItems
  * @property SlsPreorderReserv[] $slsPreorderReservs
  */
-class GiiRefArtBlank extends \app\modules\v1\classes\ActiveRecordExtended
+class GiiRefArtBlank extends ActiveRecordExtended
 {
     /**
      * {@inheritdoc}
@@ -73,7 +71,7 @@ class GiiRefArtBlank extends \app\modules\v1\classes\ActiveRecordExtended
         return [
             [['dt_create'], 'safe'],
             [['model_fk', 'fabric_type_fk', 'theme_fk'], 'required'],
-            [['model_fk', 'fabric_type_fk', 'theme_fk', 'weight_fabric', 'flag_price', 'price_5xs', 'price_4xs', 'price_3xs', 'price_2xs', 'price_xs', 'price_s', 'price_m', 'price_l', 'price_xl', 'price_2xl', 'price_3xl', 'price_4xl', 'flag_best_photo', 'min_rest', 'mid_rest', 'flag_stop_prod'], 'integer'],
+            [['model_fk', 'fabric_type_fk', 'theme_fk', 'weight_fabric', 'flag_price', 'price_5xs', 'price_4xs', 'price_3xs', 'price_2xs', 'price_xs', 'price_s', 'price_m', 'price_l', 'price_xl', 'price_2xl', 'price_3xl', 'price_4xl', 'flag_best_photo', 'min_rest', 'mid_rest', 'flag_stop_prod', 'discount'], 'integer'],
             [['assortment'], 'string'],
             [['comment'], 'string', 'max' => 245],
             [['model_fk'], 'exist', 'skipOnError' => true, 'targetClass' => RefBlankModel::className(), 'targetAttribute' => ['model_fk' => 'id']],
@@ -113,6 +111,7 @@ class GiiRefArtBlank extends \app\modules\v1\classes\ActiveRecordExtended
             'mid_rest' => 'Mid Rest',
             'assortment' => 'Assortment',
             'flag_stop_prod' => 'Flag Stop Prod',
+            'discount' => 'Discount',
         ];
     }
 

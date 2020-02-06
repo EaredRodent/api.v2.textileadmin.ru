@@ -33,11 +33,12 @@ use Yii;
  * @property int $price_4xl
  * @property string $assortiment
  * @property int $flag_stop_prod
+ * @property int $discount
  *
  * @property RefArtBlank $blankFk
  * @property RefProdPrint $printFk
  */
-class GiiRefProductPrint extends \app\modules\v1\classes\ActiveRecordExtended
+class GiiRefProductPrint extends ActiveRecordExtended
 {
     /**
      * {@inheritdoc}
@@ -55,7 +56,7 @@ class GiiRefProductPrint extends \app\modules\v1\classes\ActiveRecordExtended
         return [
             [['ts_create', 'ts_update'], 'safe'],
             [['blank_fk', 'print_fk'], 'required'],
-            [['blank_fk', 'print_fk', 'flag_price', 'flag_price_on', 'flag_bazar', 'flag_bazar_on', 'price_5xs', 'price_4xs', 'price_3xs', 'price_2xs', 'price_xs', 'price_s', 'price_m', 'price_l', 'price_xl', 'price_2xl', 'price_3xl', 'price_4xl', 'flag_stop_prod'], 'integer'],
+            [['blank_fk', 'print_fk', 'flag_price', 'flag_price_on', 'flag_bazar', 'flag_bazar_on', 'price_5xs', 'price_4xs', 'price_3xs', 'price_2xs', 'price_xs', 'price_s', 'price_m', 'price_l', 'price_xl', 'price_2xl', 'price_3xl', 'price_4xl', 'flag_stop_prod', 'discount'], 'integer'],
             [['assortiment'], 'string'],
             [['blank_fk'], 'exist', 'skipOnError' => true, 'targetClass' => RefArtBlank::className(), 'targetAttribute' => ['blank_fk' => 'id']],
             [['print_fk'], 'exist', 'skipOnError' => true, 'targetClass' => RefProdPrint::className(), 'targetAttribute' => ['print_fk' => 'id']],
@@ -91,6 +92,7 @@ class GiiRefProductPrint extends \app\modules\v1\classes\ActiveRecordExtended
             'price_4xl' => 'Price 4xl',
             'assortiment' => 'Assortiment',
             'flag_stop_prod' => 'Flag Stop Prod',
+            'discount' => 'Discount',
         ];
     }
 

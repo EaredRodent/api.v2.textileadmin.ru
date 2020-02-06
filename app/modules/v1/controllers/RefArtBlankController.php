@@ -335,4 +335,33 @@ class RefArtBlankController extends ActiveControllerExtended
         return RefArtBlank::find()->all();
     }
 
+    const actionSetDiscount = 'POST /v1/ref-art-blank/set-discount';
+
+    /**
+     * Устанавливает скидку для изделия (v2)
+     * @param $prodId
+     * @param $printId
+     * @param $discount
+     * @return array
+     * @throws \yii\web\HttpException
+     */
+    public function actionSetDiscount($prodId, $printId, $discount)
+    {
+        /** @var RefArtBlank|RefProductPrint $prod */
+        $prod = null;
+
+        if ($printId === 1) {
+            $prod = RefArtBlank::findOne(['id' => $prodId]);
+        } else {
+            $prod = RefProductPrint::find()
+                ->where(['blank_fk' => $prodId])
+                ->andWhere(['print_fk' => $printId])
+                ->one();
+        }
+
+        $prod->discount = $discount;
+        $prod->save();
+
+        return ['_result_' => 'success', 'newProd'];
+    }
 }

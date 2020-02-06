@@ -12,6 +12,7 @@ use app\extension\Sizes;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\pr\PrStorProd;
 use app\modules\v1\models\ref\RefBlankSex;
+use app\modules\v1\models\ref\RefProductPrint;
 use app\modules\v1\models\sls\SlsOrder;
 use app\objects\Prices;
 use app\objects\ProdMoveReport;
@@ -542,6 +543,9 @@ class PrStorProdController extends ActiveControllerExtended
                 $totalMoney += $rec->$fSize * $price29;
             }
 
+            // Скидка
+            $discount = $prices->getDiscount($rec->blank_fk, $rec->print_fk);
+
             $prod = [
                 'prodId' => $rec->blank_fk,
                 'printId' => $rec->print_fk,
@@ -550,13 +554,14 @@ class PrStorProdController extends ActiveControllerExtended
                 'model' => $model,
                 'fabric' => $rec->blankFk->fabricTypeFk->type,
                 'color' => $rec->blankFk->themeFk->title,
-                'print' => $rec->printFk->title,
+                'print' => $rec->printFk->id === 1 ? "" : $rec->printFk->title,
                 'basePrice' => $prices->getMinPrice($rec->blank_fk, $rec->print_fk),
                 'flagInPrice' => $prices->getFlagInPrice($rec->blank_fk, $rec->print_fk),
                 'flagInProd' => !(bool)$rec->blankFk->flag_stop_prod,
                 'sizes' => $sizesVal,
                 'count' => (int)$rec->totalSum,
                 'price' => $totalMoney,
+                'discount' => $discount
             ];
 
             $matrix[$sexKey][$assortKey][$groupKey][$nameKey][] = $prod;

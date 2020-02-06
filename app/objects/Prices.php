@@ -23,6 +23,9 @@ class Prices
     // Матрица [артикул][принт] = flagInPrice
     private $matrixInPrice;
 
+    // Матрица [артикул][принт] = discount
+    private $matrixDiscount;
+
     function __construct()
     {
         // Без принта
@@ -35,6 +38,7 @@ class Prices
                 }
             }
             $this->matrixInPrice[$rec->id][1] = (bool) $rec->flag_price;
+            $this->matrixDiscount[$rec->id][1] = $rec->discount;
         }
 
         // С принтом
@@ -47,6 +51,7 @@ class Prices
                 }
             }
             $this->matrixInPrice[$recPrint->blank_fk][$recPrint->print_fk] = (bool) $recPrint->flag_price;
+            $this->matrixDiscount[$recPrint->blank_fk][$recPrint->print_fk] = $recPrint->discount;
         }
     }
 
@@ -95,6 +100,18 @@ class Prices
     {
         return (isset($this->matrixInPrice[$prodId][$printId])) ?
             $this->matrixInPrice[$prodId][$printId] : false;
+    }
+
+    /**
+     * Вернуть discount
+     * @param $prodId
+     * @param $printId
+     * @return int
+     */
+    public function getDiscount($prodId, $printId)
+    {
+        return (isset($this->matrixDiscount[$prodId][$printId])) ?
+            $this->matrixDiscount[$prodId][$printId] : 0;
     }
 
 }

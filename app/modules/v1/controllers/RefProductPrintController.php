@@ -38,6 +38,7 @@ class RefProductPrintController extends ActiveControllerExtended
      * @param $id
      * @param int $printId
      * @return array
+     * @throws \Exception
      */
     public function actionGetClientDetail($id, $printId = 1)
     {
@@ -79,8 +80,12 @@ class RefProductPrintController extends ActiveControllerExtended
 
     const actionGetWithoutOxouno = 'GET /v1/ref-product-print/get-without-oxouno';
 
-
-    public function actionGetWithoutOxouno() {
+    /**
+     * Тест изделий без поля oxouno
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function actionGetWithoutOxouno()
+    {
         return RefProductPrint::find()
             ->joinWith('printFk')
             ->where('flag_price = 1 AND (ref_prod_print.oxouno IS NULL OR ref_prod_print.oxouno = \'\')')
