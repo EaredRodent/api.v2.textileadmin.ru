@@ -371,15 +371,21 @@ class PrStorProdController extends ActiveControllerExtended
             $className = $rec->blankFk->modelFk->classFk->title;
             $prodName = $rec->blankFk->hTitleForDocs($rec->printFk, $rec->packFk);
 
+            // Ассортимент
             if ($rec->print_fk > 1) {
                 $assortTypeVal = 'period';
             } else {
                 $assortTypeVal = $rec->blankFk->assortment;
             }
+
+            // Скидка
+            $discount = $prices->getDiscount($rec->blank_fk, $rec->print_fk);
+            $discountMultiplier = 1 - $discount / 100;
+
             $sizes = [];
             foreach (Sizes::fields as $fSize) {
                 $sizes[$fSize] = $rec->$fSize;
-                $price = round($prices->getPrice($rec->blank_fk, $rec->print_fk, $fSize) * 0.71);
+                $price = round($prices->getPrice($rec->blank_fk, $rec->print_fk, $fSize) * 0.71 * $discountMultiplier);
                 $totalMoney += $rec->$fSize * $price;
             }
 
@@ -390,6 +396,11 @@ class PrStorProdController extends ActiveControllerExtended
                 'flagInProd' => (bool)!$rec->blankFk->flag_stop_prod,
                 'sizes' => $sizes,
                 'total' => (int)$rec->totalSum,
+                'minPrice' => round($prices->getMinPrice($rec->blank_fk, $rec->print_fk) * 0.71 * $discountMultiplier),
+                'discount' => $discount,
+                'prodId' => $rec->blank_fk,
+                'printId' => $rec->print_fk,
+                'packId' => $rec->pack_fk
             ];
         }
 

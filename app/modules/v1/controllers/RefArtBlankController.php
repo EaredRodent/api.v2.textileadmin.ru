@@ -347,7 +347,7 @@ class RefArtBlankController extends ActiveControllerExtended
      * @return array
      * @throws \yii\web\HttpException
      */
-    public function actionSetDiscount($prodId, $printId, $discount)
+    public function actionSetDiscount($prodId, $printId, $packId, $discount)
     {
         if ($discount < 0 || 100 < $discount) {
             throw  new HttpException(200, 'Указанная скидка некорректна.', 200);
@@ -362,6 +362,7 @@ class RefArtBlankController extends ActiveControllerExtended
             $prod = RefProductPrint::find()
                 ->where(['blank_fk' => $prodId])
                 ->andWhere(['print_fk' => $printId])
+                ->andWhere(['pack_fk' => $packId])
                 ->one();
         }
 
