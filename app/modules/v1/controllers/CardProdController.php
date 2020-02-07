@@ -23,6 +23,7 @@ use app\modules\v1\models\ref\RefProductPrint;
 use app\modules\v1\models\ref\RefWeight;
 use app\modules\v1\models\sls\SlsClient;
 use app\modules\v1\models\sls\SlsOrg;
+use app\objects\Prices;
 use app\objects\ProdWeight;
 use Yii;
 use yii\web\HttpException;
@@ -48,6 +49,7 @@ class CardProdController extends ActiveControllerExtended
 
         $search = isset($form['search']) ? $form['search'] : '';
         $newOnly = isset($form['newOnly']) ? $form['newOnly'] : false;
+        $discountOnly = isset($form['discountOnly']) ? $form['discountOnly'] : false;
         $groupIDs = isset($form['groupIDs']) ? $form['groupIDs'] : [];
         $classTags = isset($form['classTags']) ? $form['classTags'] : [];
         $themeTags = isset($form['themeTags']) ? $form['themeTags'] : [];
@@ -76,14 +78,14 @@ class CardProdController extends ActiveControllerExtended
         $filteredProdsPrint = [];
 
         if ($print === 'all') {
-            $filteredProds = RefArtBlank::readFilterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
-            $filteredProdsPrint = RefProductPrint::readFilterProds($newPrintProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
+            $filteredProds = RefArtBlank::readFilterProds($newProdIDs, $discountOnly, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
+            $filteredProdsPrint = RefProductPrint::readFilterProds($newPrintProdIDs, $discountOnly, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
         }
         if ($print === 'yes') {
-            $filteredProdsPrint = RefProductPrint::readFilterProds($newPrintProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
+            $filteredProdsPrint = RefProductPrint::readFilterProds($newPrintProdIDs, $discountOnly, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
         }
         if ($print === 'no') {
-            $filteredProds = RefArtBlank::readFilterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
+            $filteredProds = RefArtBlank::readFilterProds($newProdIDs, $discountOnly, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
         }
 
         $prodRests = new ProdRest();
@@ -105,14 +107,14 @@ class CardProdController extends ActiveControllerExtended
         $filteredProdsPrint2 = [];
 
         if ($print === 'all') {
-            $filteredProds2 = RefArtBlank::readFilterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, [], []);
-            $filteredProdsPrint2 = RefProductPrint::readFilterProds($newPrintProdIDs, $sexTitles, $groupIDs, $classTags, [], []);
+            $filteredProds2 = RefArtBlank::readFilterProds($newProdIDs, $discountOnly, $sexTitles, $groupIDs, $classTags, [], []);
+            $filteredProdsPrint2 = RefProductPrint::readFilterProds($newPrintProdIDs, $discountOnly, $sexTitles, $groupIDs, $classTags, [], []);
         }
         if ($print === 'yes') {
-            $filteredProdsPrint2 = RefProductPrint::readFilterProds($newPrintProdIDs, $sexTitles, $groupIDs, $classTags, [], []);
+            $filteredProdsPrint2 = RefProductPrint::readFilterProds($newPrintProdIDs, $discountOnly, $sexTitles, $groupIDs, $classTags, [], []);
         }
         if ($print === 'no') {
-            $filteredProds2 = RefArtBlank::readFilterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, [], []);
+            $filteredProds2 = RefArtBlank::readFilterProds($newProdIDs, $discountOnly, $sexTitles, $groupIDs, $classTags, [], []);
         }
 
         /** @var CardProd[] $arrCards2 */
@@ -169,22 +171,23 @@ class CardProdController extends ActiveControllerExtended
         $prodId = (int)$prodId;
         $printId = (int)$printId;
 
-        // Скидка
+        // Скидка клиента
 
-        $discount = 0;
         /** @var AnxUser $contact */
         $contact = Yii::$app->getUser()->getIdentity();
         $legalEntity = SlsClient::findOne(['id' => $legalEntityID]);
+
+        $clientDiscount = 0;
 
         if ($legalEntity && $legalEntity->discount) {
             if ($contact->org_fk !== $legalEntity->org_fk) {
                 throw new HttpException(200, "Юр. лицо с этим ID не состоит в вашей организации.", 200);
             }
 
-            $discount = $legalEntity->discount;
+            $clientDiscount = $legalEntity->discount;
         } else {
             $org = SlsOrg::findOne(['id' => $contact->org_fk]);
-            $discount = $org->discount;
+            $clientDiscount = $org->discount;
         }
 
         // Получение информации
@@ -207,12 +210,30 @@ class CardProdController extends ActiveControllerExtended
         $prodRest = new ProdRest([$prodId]);
         $weight = RefWeight::readRec($prod->model_fk, $prod->fabric_type_fk);
 
-        $resp = [];
+        $resp = [
+            "infoArr" => [],
+            "discountBiggerThan29Flag" => false
+        ];
 
-        $priceModel = $printId === 1 ? $prod : $postProd;
+        $prices = new Prices();
+
+        // Скидка товара
+
+        $prodDiscount = $prices->getDiscount($prodId, $printId);
+
+        // Полная скидка
+
+        $totalDiscount = (1 - $clientDiscount / 100) * (1 - $prodDiscount / 100);
+
+        if($totalDiscount < 0.71) {
+            $resp['discountBiggerThan29Flag'] = true;
+            $totalDiscount = 0.71;
+        }
 
         foreach (Sizes::prices as $fSize => $fPrice) {
-            if ($priceModel->$fPrice > 0) {
+            $price = $prices->getPrice($prodId, $printId, $fSize);
+
+            if ($price) {
 
                 $rest = $prodRest->getAvailForOrder($prodId, $printId, 1, $fSize);
                 if ($rest <= 0) {
@@ -226,12 +247,12 @@ class CardProdController extends ActiveControllerExtended
                     $restStr = '> 10';
                 }
 
-                $resp[] = [
+                $resp['infoArr'][] = [
                     // 'fSize' => $fSize,
                     'sizeStr' => Sizes::typeCompare[$sexType][$fSize],
                     'size' => $fSize,
-                    'price' => $priceModel->$fPrice,
-                    'priceDiscount' => round($priceModel->$fPrice * (1 - $discount / 100)),
+                    'price' => $price,
+                    'priceDiscount' => round($price * $totalDiscount),
                     'restStr' => $restStr,
                     'restColor' => $restColor,
                     'weight' => $weight->$fSize,

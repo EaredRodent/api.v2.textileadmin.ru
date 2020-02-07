@@ -166,7 +166,10 @@ class RefProductPrint extends GiiRefProductPrint
                 return $resp;
             },
             'blankFk',
-            'printFk'
+            'printFk',
+            'discount' => function () {
+                return $this->discount;
+            }
         ]);
     }
 
@@ -221,23 +224,27 @@ class RefProductPrint extends GiiRefProductPrint
      * @param $fabTypeTags
      * @return array|self[]
      */
-    public static function readFilterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags)
+    public static function readFilterProds($newProdIDs, $discountOnly, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags)
     {
-        return self::find()
+        $activeQuery = self::find()
             ->joinWith('blankFk.modelFk.sexFk')
             ->joinWith('blankFk.modelFk.classFk')
             ->joinWith('blankFk.modelFk.classFk.groupFk')
             ->joinWith('blankFk.fabricTypeFk')
             ->joinWith('blankFk.themeFk')
-
             ->filterWhere(['ref_product_print.id' => $newProdIDs])
             ->andfilterWhere(['in', 'ref_blank_sex.title', $sexTitles])
             ->andfilterWhere(['in', 'ref_blank_group.id', $groupIDs])
             ->andFilterWhere(['in', 'ref_blank_class.oxouno', $classTags])
             ->andFilterWhere(['in', 'ref_blank_theme.title_price', $themeTags])
             ->andFilterWhere(['in', 'ref_fabric_type.type_price', $fabTypeTags])
-            ->andWhere(['ref_product_print.flag_price' => 1])
-            ->all();
+            ->andWhere(['ref_product_print.flag_price' => 1]);
+
+        if($discountOnly) {
+            $activeQuery->andWhere(['>', 'ref_product_print.discount', 0]);
+        }
+
+        return $activeQuery->all();
     }
 
     /**

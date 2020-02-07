@@ -36,6 +36,8 @@ class CardProd
     public $printFk;
     public $packFk;
     public $flagRest; // 1 - если есть остатки на складе по этому изделию
+    public $discount;
+    public $discountPrice;
 
     /**
      * CardProd constructor.
@@ -76,6 +78,9 @@ class CardProd
                 }
             }
         }
+
+        $this->discount = $objProd->fields()['discount']();
+        $this->discountPrice = $this->minPrice * (1 - $this->discount / 100);
     }
 
 
