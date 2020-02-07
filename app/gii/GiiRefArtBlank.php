@@ -3,9 +3,12 @@
 namespace app\gii;
 
 use app\modules\v1\classes\ActiveRecordExtended;
+use app\modules\v1\models\pr\PrStorProd;
 use app\modules\v1\models\ref\RefBlankModel;
 use app\modules\v1\models\ref\RefBlankTheme;
 use app\modules\v1\models\ref\RefFabricType;
+use app\modules\v1\models\ref\RefProductPrint;
+use app\modules\v1\models\sls\SlsItem;
 use Yii;
 
 /**
