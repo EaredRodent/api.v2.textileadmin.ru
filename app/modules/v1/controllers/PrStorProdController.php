@@ -380,14 +380,15 @@ class PrStorProdController extends ActiveControllerExtended
 
             // Скидка
             $discount = $prices->getDiscount($rec->blank_fk, $rec->print_fk);
-            $discountMultiplier = 1 - $discount / 100;
 
             $sizes = [];
+            $totalMoneyProd = 0;
             foreach (Sizes::fields as $fSize) {
                 $sizes[$fSize] = $rec->$fSize;
-                $price = round($prices->getPrice($rec->blank_fk, $rec->print_fk, $fSize) * 0.71 * $discountMultiplier);
-                $totalMoney += $rec->$fSize * $price;
+                $price = round($prices->getPrice($rec->blank_fk, $rec->print_fk, $fSize) * 0.71);
+                $totalMoneyProd += $rec->$fSize * $price;
             }
+            $totalMoney += $totalMoneyProd;
 
             $matrix[$groupName][$className][$prodName] = [
                 'pack' => $rec->packFk->title,
@@ -396,6 +397,7 @@ class PrStorProdController extends ActiveControllerExtended
                 'flagInProd' => (bool)!$rec->blankFk->flag_stop_prod,
                 'sizes' => $sizes,
                 'total' => (int)$rec->totalSum,
+                'totalMoney' => $totalMoneyProd,
                 'minPrice' => round($prices->getMinPrice($rec->blank_fk, $rec->print_fk)),
                 'discount' => $discount,
                 'prodId' => $rec->blank_fk,
@@ -422,6 +424,8 @@ class PrStorProdController extends ActiveControllerExtended
                 'size_3xl' => 0,
                 'size_4xl' => 0,
             ];
+            $totalMoneyGroup = 0;
+
             foreach ($classArr as $className => $prodArr) {
 
                 $prods = [];
@@ -439,30 +443,36 @@ class PrStorProdController extends ActiveControllerExtended
                     'size_3xl' => 0,
                     'size_4xl' => 0,
                 ];
+                $totalMoneyClass = 0;
+
                 foreach ($prodArr as $prodName => $prodData) {
                     $prods[] = array_merge(['name' => $prodName], $prodData);
                     foreach (Sizes::fields as $fSize) {
                         $sizesClass[$fSize] += $prodData['sizes'][$fSize];
                         $totalCount += $prodData['sizes'][$fSize];
                     }
+                    $totalMoneyClass += $prodData['totalMoney'];
                 }
 
                 $classes[] = [
                     'name' => $className,
                     'sizes' => $sizesClass,
                     'total' => array_sum($sizesClass),
+                    'totalMoney' => $totalMoneyClass,
                     'prods' => $prods,
                 ];
 
                 foreach (Sizes::fields as $fSize) {
                     $sizesGroup[$fSize] += $sizesClass[$fSize];
                 }
+                $totalMoneyGroup += $totalMoneyClass;
             }
 
             $groups[] = [
                 'name' => $groupName,
                 'sizes' => $sizesGroup,
                 'total' => array_sum($sizesGroup),
+                'totalMoney' => $totalMoneyGroup,
                 'classes' => $classes,
             ];
         }
