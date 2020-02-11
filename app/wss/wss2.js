@@ -17,20 +17,28 @@ let clientList = new ClientList()
 // Подключить к серверу нового пользователя client
 server.on('connection', (client, req) => {
   // Добавить client в список подключенных клиентов
-  clientList.add(client)
+  clientList.add(client,req.headers['x-forwarded-for'] || req.connection.remoteAddress)
 
   // Обработать данные присланные client
   client.on('message', function (data) {
     let wsMessage = WSMessage.fromWSData(data)
-
     if (wsMessage.type === 'PING') {
       clientList.pong(client)
+      Object.assign(client.projectInfo, wsMessage.data || {})
       return
     }
 
-    // Рассылать сообщения может только доверенный пользователь, пользователь должен прикрепить token к данным
-    if(wsMessage.testToken()) {
-      clientList.broadcast(wsMessage, client)
+    // Запросы для API, пользователь должен прикрепить token к данным
+    if (wsMessage.testToken()) {
+      // Мониторинг пользователей
+      if (wsMessage.type === 'MONITORING') {
+        clientList.returnUserList(client)
+      }
+
+      // Рассылка сообщения
+      if (wsMessage.type === 'TABLES_UPDATE') {
+        clientList.broadcast(wsMessage, client)
+      }
     }
   })
 

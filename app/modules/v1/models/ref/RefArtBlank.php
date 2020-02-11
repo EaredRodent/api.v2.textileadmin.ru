@@ -165,6 +165,9 @@ class RefArtBlank extends GiiRefArtBlank
             'fabricTypeFk',
             'themeFk',
             'modelFk',
+            'discount' => function () {
+                return $this->discount;
+            }
         ]);
     }
 
@@ -299,6 +302,7 @@ class RefArtBlank extends GiiRefArtBlank
     /**
      * Вернуть продукты по фильтрам
      * @param $newProdIDs
+     * @param $discountOnly
      * @param $sexTitles
      * @param $groupIDs
      * @param $classTags
@@ -306,9 +310,9 @@ class RefArtBlank extends GiiRefArtBlank
      * @param $fabTypeTags
      * @return array|self[]
      */
-    public static function readFilterProds($newProdIDs, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags)
+    public static function readFilterProds($newProdIDs, $discountOnly, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags)
     {
-        return self::find()
+        $activeQuery = self::find()
             ->joinWith('modelFk.sexFk')
             ->joinWith('modelFk.classFk')
             ->joinWith('modelFk.classFk.groupFk')
@@ -320,8 +324,12 @@ class RefArtBlank extends GiiRefArtBlank
             ->andFilterWhere(['in', 'ref_blank_class.oxouno', $classTags])
             ->andFilterWhere(['in', 'ref_blank_theme.title_price', $themeTags])
             ->andFilterWhere(['in', 'ref_fabric_type.type_price', $fabTypeTags])
-            ->andWhere(['flag_price' => 1])
-            ->all();
+            ->andWhere(['flag_price' => 1]);
+
+        if($discountOnly) {
+            $activeQuery->andWhere(['>','discount', 0]);
+        }
+        return $activeQuery->all();
     }
 
     /**
