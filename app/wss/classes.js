@@ -112,11 +112,55 @@ class ClientList {
    * @param client
    */
   returnUserList (client) {
-    let userList = this.clients
+    // Преобразовать массив клиентов в массив проектной информации о клиентах
+    let userList = this.clients.map(client => client.projectInfo)
 
-    userList = userList.map(client => client.projectInfo)
+    // Клонировать массив информации
+    userList = JSON.parse(JSON.stringify(userList))
+
+    // Добавить к информации свойство tsOnline (онлайн пользователя)
     userList.forEach(projectInfo => projectInfo.tsOnline = Date.now() - projectInfo.tsConnected)
+
+    // Оставить в массиве лишь информацию, содержащую login (отсеить служебного пользователя "API")
     userList = userList.filter(projectInfo => projectInfo.login)
+
+    // Группировать информацию с одинаковым проектом и логином пользователя
+
+    userList = userList.reduce((newArray, projectInfo) => {
+      let existingProjectInfo = newArray.find((projectInfoTest) =>
+        projectInfo.project === projectInfoTest.project &&
+        projectInfo.login === projectInfoTest.login)
+
+      if (existingProjectInfo) {
+        // Прибавить 1 вкладку
+        existingProjectInfo.tabs++
+
+        // Выбрать больший онлайн
+        if (existingProjectInfo.tsOnline < projectInfo.tsOnline) {
+          existingProjectInfo.tsOnline = projectInfo.tsOnline
+        }
+
+        // Объединить страницы
+        existingProjectInfo.urls = existingProjectInfo.urls.concat(projectInfo.urls)
+      } else {
+        projectInfo.tabs = 1
+        newArray.push(projectInfo)
+      }
+
+      return newArray
+    }, [])
+
+
+    // Отсортировать информацию в массиве по проекту и имени пользователя
+    userList = userList.sort((a, b) => {
+      if (a.project + a.name < b.project + b.name) {
+        return -1
+      }
+      if (a.project + a.name > b.project + b.name) {
+        return 1
+      }
+      return 0
+    })
 
     let message = new WSMessage('USER_LIST', userList)
 
