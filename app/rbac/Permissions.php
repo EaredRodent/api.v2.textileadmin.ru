@@ -105,7 +105,8 @@ class Permissions
             self::taskSalesStatisticsB2BAccess,
             self::taskSalesReport,
             self::taskStorRests,
-            self::taskEnterpriseBalance
+            self::taskEnterpriseBalance,
+            self::taskUsersOnline,
         ],
         self::roleFinDir => [
             self::taskRegPaysPageAccess,
@@ -223,6 +224,8 @@ class Permissions
     const pageReportsEnterpriseBalance = 'pageReportsEnterpriseBalance';
     const pageReportsEnterpriseBalanceEdit = 'pageReportsEnterpriseBalanceEdit';
 
+    const pageUsersOnline = 'pageUsersOnline';
+
     const pages = [
         self::pageRegPays => 'Реестры платежей',
         self::pageTestApi => 'Тестирование API проекта',
@@ -237,7 +240,8 @@ class Permissions
         self::pageReportsProdRest => 'Склад готовой продукции',
         self::pageReportsProdRest2 => 'Склад готовой продукции 2',
         self::pageReportsEnterpriseBalance => 'Баланс предприятия',
-        self::pageReportsEnterpriseBalanceEdit => 'Баланс предприятия (редактирование)'
+        self::pageReportsEnterpriseBalanceEdit => 'Баланс предприятия (редактирование)',
+        self::pageUsersOnline => 'Пользователи онлайн'
     ];
 
 
@@ -359,6 +363,11 @@ class Permissions
      * Экшены для страницы /reports/enterprise-balance/edit
      */
     const taskEnterpriseBalanceEdit = 'taskEnterpriseBalanceEdit';
+
+    /**
+     * Экшены для страницы /users/online
+     */
+    const taskUsersOnline = 'taskUsersOnline';
 
     const tasks = [
 
@@ -641,6 +650,11 @@ class Permissions
         self::taskEnterpriseBalanceEdit => [
             SlsBalanceParamController::actionCreateEdit,
             SlsBalanceParamController::actionDeleteById,
+        ],
+
+        self::taskUsersOnline => [
+            self::pageUsersOnline,
+            ServiceController::actionGetWssMonitoringInfo,
         ]
     ];
 

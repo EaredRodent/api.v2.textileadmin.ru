@@ -92,7 +92,7 @@ class ServiceController extends ActiveControllerExtended
 
         $metaFile['date'] = date('d.m.Y H:i:s');
 
-        $metaFileStr = json_encode($metaFile, JSON_UNESCAPED_UNICODE+JSON_PRETTY_PRINT);
+        $metaFileStr = json_encode($metaFile, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT);
 
         file_put_contents(\Yii::getAlias(AppMod::fileToGitJson), $metaFileStr);
 
@@ -109,5 +109,32 @@ class ServiceController extends ActiveControllerExtended
     {
         $file = file_get_contents(\Yii::getAlias(AppMod::fileToGitJson));
         return json_decode($file, true);
+    }
+
+    /**
+     * Токен, который используется клиентом для мониторинга WSS (TA)
+     */
+    const actionGetWssMonitoringInfo = 'GET /v1/service/get-wss-monitoring-info';
+
+    public function actionGetWssMonitoringInfo()
+    {
+        $userList = [];
+
+        $wsc = new \WebSocket\Client(AppMod::wssUrl);
+        try {
+            $wsc->send(json_encode([
+                'type' => 'MONITORING',
+                'token' => AppMod::wsSenderSecretKey
+            ]));
+
+            $message = $wsc->receive();
+            $message = json_decode($message, true);
+            if (isset($message['data'])) {
+                $userList = $message['data'];
+            }
+        } catch (Exception $ee) {
+        }
+
+        return $userList;
     }
 }

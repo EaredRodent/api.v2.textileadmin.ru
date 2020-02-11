@@ -4,7 +4,8 @@
  */
 const config = {
   port: 6001,
-  token: '149509e79053e4e2af391c01ab56fb6d646f6b434b1a3350532c4065061e3748',
+  broadcastingToken: '149509e79053e4e2af391c01ab56fb6d646f6b434b1a3350532c4065061e3748',  // Для массовой рассылки с API
+  monitoringToken: '0bdbc7d7fb6a47c5d6199046f40ed226b75e087dc18b7ba8928361afb677e974', // Для мониторинга пользователей
   deployJson: ''
 }
 
@@ -28,10 +29,15 @@ class ClientList {
   /**
    * Добавить клиента в список
    * @param client
+   * @param ip
    */
-  add (client) {
+  add (client, ip) {
     this.clients.push(client)
     this.resetPingTimeOut(client)
+    client.projectInfo = {
+      tsConnected: Date.now(),
+      ip
+    }
     log(`New client connection! Clients: ${this.clients.length}`)
   }
 
@@ -69,7 +75,7 @@ class ClientList {
    * Ответить PONG сообщением клиенту
    * @param client
    */
-  pong(client) {
+  pong (client) {
     if (client.readyState === 1) {
       this.resetPingTimeOut(client)
 
@@ -98,6 +104,24 @@ class ClientList {
   clearPingTimeOut (client) {
     if (client.pingTimeOut) {
       clearTimeout(client.pingTimeOut)
+    }
+  }
+
+  /**
+   * Возвращает информацию о пользователях WS
+   * @param client
+   */
+  returnUserList (client) {
+    let userList = this.clients
+
+    userList = userList.map(client => client.projectInfo)
+    userList.forEach(projectInfo => projectInfo.tsOnline = Date.now() - projectInfo.tsConnected)
+    userList = userList.filter(projectInfo => projectInfo.login)
+
+    let message = new WSMessage('USER_LIST', userList)
+
+    if (client.readyState === 1) {
+      client.send(message.toString())
     }
   }
 }
@@ -131,11 +155,11 @@ class WSMessage {
     return JSON.stringify(this)
   }
 
-  // Сверяет секретный ключ с секретным ключем в config
-  testToken() {
+  // Сверяет секретный ключ API с секретным ключем в config
+  testToken () {
     let token = this.token
     delete this.token
-    return token === config.token
+    return token === config.broadcastingToken
   }
 }
 
