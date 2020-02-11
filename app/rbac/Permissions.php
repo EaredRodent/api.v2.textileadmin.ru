@@ -203,7 +203,7 @@ class Permissions
 
     const pageSalesStatisticsB2B = 'pageSalesStatisticsB2B';
 
-    const pageSalesStatisticsB2BOutdatedBrowsersLog = 'pageSalesStatisticsB2BOutdatedBrowsersLog';
+    const pageUsersOutdatedBrowsersLog = 'pageUsersOutdatedBrowsersLog';
 
     // Отчеты (дашборды) по производству
     const pageReportsProduction = 'pageReportsProduction';
@@ -543,7 +543,7 @@ class Permissions
 
         self::taskSalesStatisticsB2BAccess => [
             self::pageSalesStatisticsB2B,
-            self::pageSalesStatisticsB2BOutdatedBrowsersLog,
+            self::pageUsersOutdatedBrowsersLog,
             AnxUserController::actionGetAllContacts,
             LogEventController::actionGetEvents,
             LogEventController::actionGetOutdatedBrowsers,

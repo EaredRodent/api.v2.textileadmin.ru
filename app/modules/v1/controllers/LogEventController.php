@@ -68,7 +68,7 @@ class LogEventController extends ActiveControllerExtended
     function actionLogBrowser()
     {
         $params = json_encode([
-            'userIP' => Yii::$app->request->userIP,
+            'userIP' => Yii::$app->request->headers->get('x-forwarded-for'),
             'userAgent' => Yii::$app->request->userAgent
         ], JSON_UNESCAPED_UNICODE);
 
