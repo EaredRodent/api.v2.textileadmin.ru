@@ -194,17 +194,16 @@ class RefProductPrint extends GiiRefProductPrint
 
     /**
      * Получает массив с id новинок изделий с принтом
-     * @param int $count
      * @return array
      */
-    public static function calcNewProdIDs($count)
+    public static function calcNewProdIDs()
     {
         $newIDs = [];
+        $dateStart = date('Y-m-d H:i:s', strtotime('-30 day'));
 
         $newProds = self::find()
             ->where(['flag_price' => 1])
-            ->orderBy('ts_create DESC')
-            ->limit($count)
+            ->andWhere(['>=', 'ts_create', $dateStart])
             ->all();
 
         foreach ($newProds as $newProd) {

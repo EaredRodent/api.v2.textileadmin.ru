@@ -227,7 +227,7 @@ class RefArtBlankController extends ActiveControllerExtended
         if ($newOnly) {
 //            switch ($form['print']) {
 //                case 'no':
-            $newProdIDs = RefArtBlank::calcNewProdIDs(30);
+            $newProdIDs = RefArtBlank::calcNewProdIDs();
 //                    break;
 //                case 'yes':
 //                    $newPrintProdIDs = $this->getNewPrintProdIDs(30);

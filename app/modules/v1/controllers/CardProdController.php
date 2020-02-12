@@ -39,6 +39,8 @@ class CardProdController extends ActiveControllerExtended
      * Вернуть все изделия соответствующие фильтрам
      * @param $form - {search: "", "sexTags":["Мужчинам"],"groupIDs":[],"classTags":["Футболка"],"themeTags":[],"fabTypeTags":[],"newOnly":false,"print":"all"}
      * @return array
+     * @throws HttpException
+     * @throws \Throwable
      */
     public function actionGetByFilters($form)
     {
@@ -64,14 +66,14 @@ class CardProdController extends ActiveControllerExtended
         $newPrintProdIDs = [];
 
         if ($newOnly && $print === 'all') {
-            $newProdIDs = RefArtBlank::calcNewProdIDs(30);
-            $newPrintProdIDs = RefProductPrint::calcNewProdIDs(30);
+            $newProdIDs = RefArtBlank::calcNewProdIDs();
+            $newPrintProdIDs = RefProductPrint::calcNewProdIDs();
         }
         if ($newOnly && $print === 'yes') {
-            $newPrintProdIDs = RefProductPrint::calcNewProdIDs(30);
+            $newPrintProdIDs = RefProductPrint::calcNewProdIDs();
         }
         if ($newOnly && $print === 'no') {
-            $newProdIDs = RefArtBlank::calcNewProdIDs(30);
+            $newProdIDs = RefArtBlank::calcNewProdIDs();
         }
 
         $filteredProds = [];

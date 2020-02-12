@@ -14,6 +14,7 @@ use app\gii\GiiRefArtBlank;
 use app\modules\AppMod;
 use app\modules\v1\classes\CardProd;
 use app\objects\ProdWeight;
+use yii\db\ActiveQuery;
 
 class RefArtBlank extends GiiRefArtBlank
 {
@@ -279,17 +280,16 @@ class RefArtBlank extends GiiRefArtBlank
 
     /**
      * Получает массив с id новинок изделий
-     * @param int $count
      * @return array
      */
-    public static function calcNewProdIDs($count)
+    public static function calcNewProdIDs()
     {
         $newIDs = [];
+        $dateStart = date('Y-m-d H:i:s', strtotime('-30 day'));
 
         $newProds = RefArtBlank::find()
             ->where(['flag_price' => 1])
-            ->orderBy('dt_create DESC')
-            ->limit($count)
+            ->andWhere(['>=', 'dt_create', $dateStart])
             ->all();
 
         foreach ($newProds as $newProd) {
@@ -326,8 +326,8 @@ class RefArtBlank extends GiiRefArtBlank
             ->andFilterWhere(['in', 'ref_fabric_type.type_price', $fabTypeTags])
             ->andWhere(['flag_price' => 1]);
 
-        if($discountOnly) {
-            $activeQuery->andWhere(['>','discount', 0]);
+        if ($discountOnly) {
+            $activeQuery->andWhere(['>', 'discount', 0]);
         }
         return $activeQuery->all();
     }
