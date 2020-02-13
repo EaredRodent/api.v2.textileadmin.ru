@@ -37,8 +37,8 @@ class RefBlankClassController extends ActiveControllerExtended
 
         $resp = [
             'Верх' => [],
-            'Костюм' => [],
             'Низ' => [],
+            'Костюм' => []
         ];
 
         foreach ($resp as $type => $arr) {
