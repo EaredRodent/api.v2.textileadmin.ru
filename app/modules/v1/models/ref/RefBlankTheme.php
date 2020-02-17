@@ -12,5 +12,8 @@ use app\gii\GiiRefBlankTheme;
 
 class RefBlankTheme extends GiiRefBlankTheme
 {
-
+    public function hArt()
+    {
+        return str_pad($this->id, 3, '0', STR_PAD_LEFT);
+    }
 }

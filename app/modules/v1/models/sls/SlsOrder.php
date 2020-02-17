@@ -93,6 +93,18 @@ class SlsOrder extends GiiSlsOrder
                 } else {
                     return '';
                 }
+            },
+            'export1c' => function () {
+                /** @var AnxUser $contact */
+                $contact = Yii::$app->getUser()->getIdentity();
+                $urlKey = $contact->url_key;
+                return AppMod::domain . "/v1/files/get-order-doc/{$urlKey}/export1c/{$this->id}";
+            },
+            'description' => function () {
+                /** @var AnxUser $contact */
+                $contact = Yii::$app->getUser()->getIdentity();
+                $urlKey = $contact->url_key;
+                return AppMod::domain . "/v1/files/get-order-doc/{$urlKey}/description/{$this->id}";
             }
         ]);
     }

@@ -32,4 +32,8 @@ class RefFabricType extends GiiRefFabricType
         return $resp;
     }
 
+    public function hArt()
+    {
+        return str_pad($this->id, 2, '0', STR_PAD_LEFT);
+    }
 }

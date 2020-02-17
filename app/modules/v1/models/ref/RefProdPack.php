@@ -13,5 +13,12 @@ use app\gii\GiiRefProdPack;
 
 class RefProdPack extends GiiRefProdPack
 {
-
+    public function hArt()
+    {
+        if ($this->id == 1) {
+            return '00';
+        } else {
+            return str_pad($this->id, 2, '0', STR_PAD_LEFT);
+        }
+    }
 }

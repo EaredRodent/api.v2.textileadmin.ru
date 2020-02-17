@@ -250,6 +250,67 @@ class RefArtBlank extends GiiRefArtBlank
         }
     }
 
+    /**
+     * @param $sizeUniversal null||string - принимает и размерыStr ('XL', 'XXL') или названия полей
+     * @param $printFk RefProdPrint
+     * @param $packFk RefProdPack
+     * @return string
+     */
+    public function hTitleForDocs2($sizeUniversal, $printFk, $packFk)
+    {
+
+        // Проверить поле передали или sizeStr. Если поле, то найти соотв. болванке sizeStr
+        if (in_array($sizeUniversal, Sizes::fields)) {
+
+            //if ($this->modelFk->classFk->groupFk->flag_child_size) {
+            if ($this->modelFk->isChildModel()) {
+                $sizeStr = Sizes::kids[$sizeUniversal];
+            } else {
+                $sizeStr = Sizes::adults[$sizeUniversal];
+            }
+        } else {
+            $sizeStr = $sizeUniversal;
+        }
+
+        $name = $this->modelFk->classFk->title_client;
+        $sex = mb_strtolower(mb_substr($this->modelFk->sexFk->title, 0, 3));
+
+        if ($this->modelFk->sexFk->code === "B") {
+            $sex = ' для мальчиков';
+            // @todo #костыль
+            if ($this->modelFk->classFk->title === 'Свитшот') {
+                $sex = ' детский';
+            }
+        }
+        if ($this->modelFk->sexFk->code === "G") {
+            $sex = ' для девочек';
+            // @todo #костыль
+            if ($this->modelFk->classFk->title === 'Свитшот') {
+                $sex = ' детский';
+            }
+        }
+
+        if ($this->modelFk->sexFk->code === "K") {
+            $sex = $this->modelFk->classFk->kids_unisex;
+        }
+        if ($this->modelFk->sexFk->code === "U") {
+            $sex = '';
+        }
+
+        $model = mb_strtoupper($this->modelFk->title);
+        $theme = $this->themeFk->title;
+        $art = $this->hClientArt($printFk->id);
+        $sizePart = ($sizeStr !== null) ? " {$sizeStr}" : ' *';
+        $printPart = ($printFk->id > 1) ? "/{$printFk->title}" : '';
+        $packPart = ($packFk->id > 1) ? " {$packFk->title}" : '';
+
+        if ($this->modelFk->sexFk->code === "U") {
+            return "{$name} {$model} ({$theme}{$printPart}{$sizePart}) Арт: {$art}{$packPart}";
+        } else {
+            return "{$name}:{$sex}. {$model} ({$theme}{$printPart}{$sizePart}) Арт: {$art}{$packPart}";
+        }
+    }
+
 
     /**
      * Вернуть тип размера - взрослый или детский
@@ -341,4 +402,16 @@ class RefArtBlank extends GiiRefArtBlank
         return self::findOne($id);
     }
 
+    public function hArt2()
+    {
+        $group = $this->modelFk->classFk->groupFk->code;
+        $class = $this->modelFk->classFk->code;
+        $sex = $this->modelFk->sexFk->code;
+        $model = $this->modelFk->hCode();
+
+        $fabric = $this->fabricTypeFk->hArt();
+
+        $theme = $this->themeFk->hArt();
+        return "{$group}.{$class}.{$sex}{$model}.{$fabric}.{$theme}";
+    }
 }

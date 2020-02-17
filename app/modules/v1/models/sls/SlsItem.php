@@ -49,4 +49,19 @@ class SlsItem extends GiiSlsItem
             ->groupBy('blank_fk, print_fk, pack_fk')
             ->all();
     }
+
+    public function hPrice3($size)
+    {
+        $part = explode('_', $size)[1];
+        $price = "price_{$part}";
+        if ($this->$price === null) {
+            return '';
+        }
+        $num = round($this->$price);
+        if ($num > 0) {
+            return "{$num}";
+        } else {
+            return 0;
+        }
+    }
 }

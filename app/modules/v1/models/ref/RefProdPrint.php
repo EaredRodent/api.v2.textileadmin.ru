@@ -19,5 +19,12 @@ use app\gii\GiiRefProductPrint;
  */
 class RefProdPrint extends GiiRefProdPrint
 {
-
+    public function hArt()
+    {
+        if ($this->id == 1) {
+            return '000';
+        } else {
+            return str_pad($this->id, 3, '0', STR_PAD_LEFT);
+        }
+    }
 }
