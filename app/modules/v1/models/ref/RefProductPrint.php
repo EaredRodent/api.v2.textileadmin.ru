@@ -14,6 +14,7 @@ use app\gii\GiiRefBlankClass;
 use app\gii\GiiRefProductPrint;
 use app\modules\AppMod;
 use app\modules\v1\classes\ActiveRecordExtended;
+use app\modules\v1\classes\CardProd;
 
 /**
  * Class RefBlankClass
@@ -239,7 +240,7 @@ class RefProductPrint extends GiiRefProductPrint
             ->andFilterWhere(['in', 'ref_fabric_type.type_price', $fabTypeTags])
             ->andWhere(['ref_product_print.flag_price' => 1]);
 
-        if($discountOnly) {
+        if ($discountOnly) {
             $activeQuery->andWhere(['>', 'ref_product_print.discount', 0]);
         }
 
@@ -253,5 +254,35 @@ class RefProductPrint extends GiiRefProductPrint
     public static function readProd($prodId, $printId)
     {
         return self::findOne(['blank_fk' => $prodId, 'print_fk' => $printId]);
+    }
+
+    /**
+     * @param $filterProds
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    static function readForPrice($filterProds)
+    {
+        $prods = self::find()
+            ->where(['flag_price' => 1])
+            ->orderBy('blank_fk DESC, print_fk DESC')
+            ->all();
+
+        $prods = array_filter($prods, function ($prod) use ($filterProds) {
+            /** @var RefProductPrint $prod */
+            /** @var CardProd $filterProd */
+
+            $addToProds = false;
+
+            foreach ($filterProds as $filterProd) {
+                if (($prod->blank_fk === $filterProd->prodId) && ($prod->print_fk === $filterProd->printFk->id)) {
+                    $addToProds = true;
+                    break;
+                }
+            }
+
+            return $addToProds;
+        });
+
+        return $prods;
     }
 }

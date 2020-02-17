@@ -29,4 +29,14 @@ class RefBlankGroup extends GiiRefBlankGroup
         return $this->hasMany(RefBlankClass::className(), ['group_fk' => 'id'])
             ->orderBy('title');
     }
+
+    /**
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public static function readAllSort()
+    {
+        return self::find()
+            ->orderBy('title')
+            ->all();
+    }
 }

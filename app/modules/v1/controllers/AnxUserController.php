@@ -153,7 +153,8 @@ class AnxUserController extends ActiveControllerExtended
             'login' => $user->login,
             'role' => $role,
             'permissions' => $permissions,
-            'accesstoken' => $user->accesstoken
+            'accesstoken' => $user->accesstoken,
+            'url_key' => $user->url_key
         ];
     }
 

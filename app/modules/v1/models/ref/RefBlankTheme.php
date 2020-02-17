@@ -16,4 +16,13 @@ class RefBlankTheme extends GiiRefBlankTheme
     {
         return str_pad($this->id, 3, '0', STR_PAD_LEFT);
     }
+
+    public function hThemeDescript()
+    {
+        if ($this->descript) {
+            return "{$this->title} ({$this->descript})";
+        } else {
+            return "{$this->title}";
+        }
+    }
 }

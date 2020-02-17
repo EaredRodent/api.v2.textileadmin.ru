@@ -13,6 +13,7 @@ use app\modules\AppMod;
 use app\modules\v1\classes\ExcelDescriptOrder;
 use app\modules\v1\classes\ExcelInvoicesOrder;
 use app\modules\v1\classes\ActiveControllerExtended;
+use app\modules\v1\classes\ExcelPrice2;
 use app\modules\v1\models\sls\SlsClient;
 use app\modules\v1\models\sls\SlsOrder;
 use app\modules\v1\models\sls\SlsOrg;
@@ -113,7 +114,6 @@ class FilesController extends Controller
                 return;
             }
 
-
             if ($dir === 'invoice') $path = Yii::getAlias(AppMod::pathDocInvoice) . "/invoice";
             if ($dir === 'waybill') $path = Yii::getAlias(AppMod::pathDocWaybill) . "/torg12";
 
@@ -135,4 +135,21 @@ class FilesController extends Controller
         }
     }
 
+    public function beforeAction($action)
+    {
+        $this->enableCsrfValidation = false;
+        return parent::beforeAction($action);
+    }
+
+    function actionGetPrice($form, $urlKey)
+    {
+        $userByUrlKey = AnxUser::findOne(['url_key' => $urlKey]);
+
+        if (!$userByUrlKey) {
+            throw new HttpException(200, 'Нет доступа.', 200);
+        }
+
+        $obj = new ExcelPrice2($form, null, null, null);
+        $obj->send();
+    }
 }

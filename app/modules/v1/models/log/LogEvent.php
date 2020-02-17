@@ -76,6 +76,8 @@ class LogEvent extends GiiLogEvent
         /** @var AnxUser $contact */
         $contact = Yii::$app->getUser()->getIdentity();
 
+        if(!$contact) return;
+
         $le = new static();
         $le->user_fk = $contact->id;
         $le->event = $event;

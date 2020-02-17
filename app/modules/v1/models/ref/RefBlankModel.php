@@ -63,4 +63,10 @@ class RefBlankModel extends GiiRefBlankModel
             return Sizes::adults[$fieldSize];
         }
     }
+
+    public function hModelTitleShort3()
+    {
+        $descriptStr = ($this->descript) ? " ({$this->descript})" : "";
+        return $this->title . $descriptStr;
+    }
 }

@@ -32,7 +32,8 @@
     "ext-fileinfo": "*",
     "phpmailer/phpmailer": "^6.1",
     "ext-curl": "*",
-    "phpoffice/phpspreadsheet": "^1.8"
+    "phpoffice/phpspreadsheet": "^1.8",
+    "ext-gd": "*"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.1.0",

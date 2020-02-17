@@ -414,4 +414,60 @@ class RefArtBlank extends GiiRefArtBlank
         $theme = $this->themeFk->hArt();
         return "{$group}.{$class}.{$sex}{$model}.{$fabric}.{$theme}";
     }
+
+    /**
+     * Вернуть изделия определенный группы и пола
+     * @param $groupId
+     * @param $sexId
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public static function readForPrice($groupId, $sexId, $filterProds)
+    {
+        // Добавление унисекса
+
+        if ($sexId == 1) {
+            $sexId = [1, 5];
+        }
+        if ($sexId == 2) {
+            $sexId = [2, 5];
+        }
+        if ($sexId == 3) {
+            $sexId = [3, 6];
+        }
+        if ($sexId == 4) {
+            $sexId = [4, 6];
+        }
+
+        /** @var RefArtBlank[] $prods */
+        $prods = self::find()
+            ->with('modelFk.classFk.groupFk')
+            ->with('modelFk.sexFk')
+            ->with('themeFk')
+            ->with('fabricTypeFk')
+            ->joinWith('modelFk.classFk.groupFk')
+            ->where([
+                'flag_price' => 1,
+                'ref_blank_group.id' => $groupId,
+                'ref_blank_model.sex_fk' => $sexId
+            ])
+            ->orderBy('id DESC')
+            ->all();
+
+        $prods = array_filter($prods, function ($prod) use($filterProds) {
+            /** @var RefArtBlank $prod */
+            /** @var CardProd $filterProd */
+
+            $addToProds = false;
+
+            foreach($filterProds as $filterProd) {
+                if(($prod->id === $filterProd->prodId) && $filterProd->printFk->id === 1) {
+                    $addToProds = true;
+                    break;
+                }
+            }
+
+            return $addToProds;
+        });
+        return $prods;
+    }
 }
