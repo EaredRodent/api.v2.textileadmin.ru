@@ -31,7 +31,8 @@
     "omnilight/yii2-scheduling": "^1.1",
     "ext-fileinfo": "*",
     "phpmailer/phpmailer": "^6.1",
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "phpoffice/phpspreadsheet": "^1.8"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.1.0",
