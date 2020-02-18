@@ -123,12 +123,14 @@ class ExcelPrice2
 
         /// Рендерить лист прайса изделий с принтом
         $prodsPrint = RefProductPrint::readForPrice($filterProds);
-        $this->renderProdPrintSheet(
-            $numSheet,
-            "Изделия с принтом",
-            "FFEB3B",
-            $prodsPrint
-        );
+        if(count($prodsPrint) > 0) {
+            $this->renderProdPrintSheet(
+                $numSheet,
+                "Изделия с принтом",
+                "FFEB3B",
+                $prodsPrint
+            );
+        }
 
 
         // Устанавливает активный лист при открытии
@@ -157,7 +159,7 @@ class ExcelPrice2
     private function renderIndexSheet($num)
     {
         $sheet = $this->objExcel->createSheet($num);
-        $sheet->setTitle("SARTORIA UNO");
+        $sheet->setTitle("Пояснения");
         $sheet->getTabColor()->setRGB('FFEB3B');
         //$sheet->getProtection()->setSheet(true);
 
@@ -228,8 +230,8 @@ class ExcelPrice2
 
         $sheet->getRowDimension('13')->setRowHeight(30);
         $sheet->setCellValue('B13',
-            '* Для перехода по ссылкам без CTRL (В LibreOffice) зайдите в меню Сервис/Параметры/LibreOffice' .
-            '/Безопасность/Параметры и снимите галочку "Ctrl-щелчок необходим для перехода по ссылкам"'
+            "* Для перехода по ссылкам без CTRL (В LibreOffice) зайдите в меню Сервис/Параметры/LibreOffice" .
+            "/Безопасность/Параметры\n и снимите галочку \"Ctrl-щелчок необходим для перехода по ссылкам\""
         );
 
     }
@@ -344,8 +346,8 @@ class ExcelPrice2
             // Бордер заказа
             $styleArray = [
                 'borders' => [
-                    'allborders' => [
-                        'style' => Border::BORDER_THIN,
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN,
                         'color' => ['rgb' => '646369'],
                     ]
                 ]
@@ -533,8 +535,8 @@ class ExcelPrice2
             // Бордер заказа
             $styleArray = [
                 'borders' => [
-                    'allborders' => [
-                        'style' => Border::BORDER_THIN,
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN,
                         'color' => ['rgb' => '646369'],
                     ]
                 ]
