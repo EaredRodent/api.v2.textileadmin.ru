@@ -39,6 +39,11 @@ server.on('connection', (client, req) => {
       if (wsMessage.type === 'TABLES_UPDATE') {
         clientList.broadcast(wsMessage, client)
       }
+
+      // Рассылка сообщения
+      if (wsMessage.type === 'RELOAD') {
+        clientList.broadcast(wsMessage, client)
+      }
     }
   })
 
