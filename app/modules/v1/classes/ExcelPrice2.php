@@ -167,25 +167,11 @@ class ExcelPrice2
         //$sheet->getDefaultRowDimension()->setRowHeight(-1);
 
         $sheet->getRowDimension('1')->setRowHeight(30);
-        $sheet->getRowDimension('2')->setRowHeight(30);
-        $sheet->getRowDimension('3')->setRowHeight(30);
-        $sheet->getRowDimension('4')->setRowHeight(25);
 
 
         $sheet->getColumnDimension('A')->setWidth(3);
         $sheet->getColumnDimension('B')->setWidth(120);
 
-
-        $styleArray = [
-            'font' => [
-                'size' => 20
-            ],
-            'alignment' => [
-                'horizontal' => 'center',
-                'vertical' => 'center',
-            ]
-        ];
-        $sheet->getStyle("B1:B3")->applyFromArray($styleArray);
 
         // Цена в прайсе указана без учёта НДС
         $styleArray = [
@@ -197,39 +183,35 @@ class ExcelPrice2
                 'vertical' => 'center',
             ]
         ];
-        $sheet->getStyle("B4")->applyFromArray($styleArray);
+        $sheet->getStyle("B1")->applyFromArray($styleArray);
 
         // Перенос на всей колонке
         $styleArray = ['alignment' => ['wrap' => true]];
         $sheet->getStyle("B1:B20")->applyFromArray($styleArray);
 
 
-        $sheet->setCellValue('B1', date('d.m.Y'));
-        $sheet->setCellValue('B2', 'OXOUNO');
-        $sheet->setCellValue('B3', 'ООО «САРТОРИЯ УНО»');
-
         if ($this->nds > 0) {
-            $sheet->setCellValue('B4', 'Цена в прайсе указана с учетом НДС');
+            $sheet->setCellValue('B1', 'Цена в прайсе указана с учетом НДС');
         } else {
-            $sheet->setCellValue('B4', 'Цена в прайсе указана без учёта НДС');
+            $sheet->setCellValue('B1', 'Цена в прайсе указана без учёта НДС');
         }
 
 
-        $sheet->setCellValue('B7', 'Прайс размещен на вкладках этого документа, разбит по группам товаров. Цветовые обозначения:');
-        $sheet->setCellValue('B8', '- на складе более 10 шт.');
-        $sheet->setCellValue('B9', '- на складе менее 10 шт.');
-        $sheet->setCellValue('B10', '- товар отсутствует на складе');
+        $sheet->setCellValue('B4', 'Прайс размещен на вкладках этого документа, разбит по группам товаров. Цветовые обозначения:');
+        $sheet->setCellValue('B5', '- на складе более 10 шт.');
+        $sheet->setCellValue('B6', '- на складе менее 10 шт.');
+        $sheet->setCellValue('B7', '- товар отсутствует на складе');
 
-        $sheet->getStyle('A8')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()
+        $sheet->getStyle('A5')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()
             ->setRGB("C8E6C9");
-        $sheet->getStyle('A9')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()
+        $sheet->getStyle('A6')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()
             ->setRGB("FFE0B2");
-        $sheet->getStyle('A10')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()
+        $sheet->getStyle('A7')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()
             ->setRGB("FFCDD2");
 
 
-        $sheet->getRowDimension('13')->setRowHeight(30);
-        $sheet->setCellValue('B13',
+        $sheet->getRowDimension('10')->setRowHeight(30);
+        $sheet->setCellValue('B10',
             "* Для перехода по ссылкам без CTRL (В LibreOffice) зайдите в меню Сервис/Параметры/LibreOffice" .
             "/Безопасность/Параметры\n и снимите галочку \"Ctrl-щелчок необходим для перехода по ссылкам\""
         );
