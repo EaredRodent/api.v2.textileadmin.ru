@@ -26,6 +26,7 @@ use app\modules\v1\controllers\SlsBalanceParamController;
 use app\modules\v1\controllers\SlsClientController;
 use app\modules\v1\controllers\SlsCurrencyController;
 use app\modules\v1\controllers\SlsInvoiceController;
+use app\modules\v1\controllers\SlsInvoiceTypeController;
 use app\modules\v1\controllers\SlsItemController;
 use app\modules\v1\controllers\SlsMessageController;
 use app\modules\v1\controllers\SlsMessageStateController;
@@ -107,6 +108,7 @@ class Permissions
             self::taskStorRests,
             self::taskEnterpriseBalance,
             self::taskUsersOnline,
+            self::taskManagementInvoiceType,
         ],
         self::roleFinDir => [
             self::taskRegPaysPageAccess,
@@ -117,6 +119,7 @@ class Permissions
             self::taskStorRests,
             self::taskEnterpriseBalance,
             self::taskEnterpriseBalanceEdit,
+            self::taskManagementInvoiceType,
         ],
         self::roleBuhMain => [
             self::taskRegPaysPageAccess,
@@ -226,6 +229,8 @@ class Permissions
 
     const pageUsersOnline = 'pageUsersOnline';
 
+    const pageManagementInvoiceType = 'pageManagementInvoiceType';
+
     const pages = [
         self::pageRegPays => 'Реестры платежей',
         self::pageTestApi => 'Тестирование API проекта',
@@ -241,7 +246,8 @@ class Permissions
         self::pageReportsProdRest2 => 'Склад готовой продукции 2',
         self::pageReportsEnterpriseBalance => 'Баланс предприятия',
         self::pageReportsEnterpriseBalanceEdit => 'Баланс предприятия (редактирование)',
-        self::pageUsersOnline => 'Пользователи онлайн'
+        self::pageUsersOnline => 'Пользователи онлайн',
+        self::pageManagementInvoiceType => 'Категории счета',
     ];
 
 
@@ -368,6 +374,11 @@ class Permissions
      * Экшены для страницы /users/online
      */
     const taskUsersOnline = 'taskUsersOnline';
+
+    /**
+     * Экшены для страницы /management/invoice-type
+     */
+    const taskManagementInvoiceType = 'taskManagementInvoiceType';
 
     const tasks = [
 
@@ -655,6 +666,14 @@ class Permissions
         self::taskUsersOnline => [
             self::pageUsersOnline,
             ServiceController::actionGetWssMonitoringInfo,
+        ],
+
+        self::taskManagementInvoiceType => [
+            self::pageManagementInvoiceType,
+            SlsInvoiceTypeController::actionGetAll,
+            SlsInvoiceTypeController::actionCreateEdit,
+            SlsInvoiceTypeController::actionApplySortArrayForTypes,
+            SlsInvoiceTypeController::actionDeleteType,
         ]
     ];
 
