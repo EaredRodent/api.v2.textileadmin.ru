@@ -10,9 +10,11 @@ namespace app\modules\v1\controllers;
 
 use app\extension\Helper;
 use app\gii\GiiSlsInvoice;
+use app\models\AnxUser;
 use app\modules\AppMod;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\sls\SlsInvoice;
+use app\modules\v1\models\sls\SlsInvoiceType;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\web\HttpException;
@@ -73,28 +75,28 @@ class SlsInvoiceController extends ActiveControllerExtended
     public function actionGetWait()
     {
         $resp = [];
-        $usersList = [
-            // АМ
-            9 => 'Едуш',
-            // ЕИ
-            11 => 'Кривоносова',
-            // Юра
-            12 => 'Калашников',
-            // Алена
-            //8 => 'Молодцова',
-            // Тюрнева
-            85 => 'Тюрнева',
+        /** @var SlsInvoiceType[] $invoiceTypes */
+        $invoiceTypes = SlsInvoiceType::find()->all();
 
-        ];
-        foreach ($usersList as $key => $name) {
-
-            $elm['name'] = $name;
+        foreach ($invoiceTypes as $invoiceType) {
+            $elm['id'] = $invoiceType->id;
+            $elm['name'] = $invoiceType->name;
             $elm['items'] = SlsInvoice::find()
-                ->where(['user_fk' => $key, 'state' => SlsInvoice::stateWait])
-                ->orderBy('sort')
+                ->where(['type_fk' => $invoiceType->id, 'state' => SlsInvoice::stateWait])
+                ->orderBy('important DESC, ts_pay')
                 ->all();
             $resp[] = $elm;
         }
+
+        $resp[] = [
+            'id' => 0,
+            'name' => 'Счета без категории',
+            'items' => SlsInvoice::find()
+                ->where(['type_fk' => null, 'state' => SlsInvoice::stateWait])
+                ->orderBy('important DESC, ts_pay')
+                ->all()
+        ];
+
         return $resp;
     }
 
@@ -156,41 +158,6 @@ class SlsInvoiceController extends ActiveControllerExtended
         $invoice->ts_reject = null;
         $invoice->save();
         return 'ok';
-    }
-
-
-    const actionSortUp = 'POST /v1/sls-invoice/sort-up';
-
-    /**
-     * Поднять счет на позицию вверх
-     * @param $id
-     * @throws HttpException
-     */
-    public function actionSortUp($id)
-    {
-        $invoice = SlsInvoice::get($id);
-
-        $userId = $invoice->user_fk;
-
-//        if (Yii::$app->user->getId() !== $userId) {
-//            throw new HttpException(200, 'Не трогай чужой документ');
-//        }
-
-        $state = $invoice->state;
-
-        $prevSort = $invoice->sort;
-        $newSort = $prevSort - 1;
-
-        if ($prevSort > 1) {
-            $upperInvoice = SlsInvoice::readSortItem($state, $userId, $newSort);
-            $upperInvoice->sort = $prevSort;
-            $upperInvoice->save();
-
-            $invoice->sort = $newSort;
-            $invoice->save();
-        } else {
-            throw new HttpException(200, 'Счет уже первый в очереди', 200);
-        }
     }
 
 
@@ -304,24 +271,30 @@ class SlsInvoiceController extends ActiveControllerExtended
 
     /**
      * Создании счета вручную
-     * @param $user_fk
      * @param $title
+     * @param $type_fk
      * @param $summ
+     * @param $important
      * @param null $ts_pay
      * @return array
      * @throws HttpException
+     * @throws \Throwable
      */
-    public function actionCreate($user_fk, $title, $summ, $ts_pay = null)
+    public function actionCreate($title, $type_fk, $summ, $important = false, $ts_pay = null)
     {
         $invoice = new SlsInvoice();
 
-        $invoice->user_fk = $user_fk;
-        $invoice->title = $title;
-        $invoice->summ = $summ;
-        $invoice->ts_pay = $ts_pay;
+        /** @var AnxUser $currentUser */
+        $currentUser = Yii::$app->getUser()->getIdentity();
 
+        $invoice->user_fk = $currentUser->id;
+        $invoice->title = $title;
+        $invoice->type_fk = $type_fk;
+        $invoice->summ = $summ;
+        $invoice->important = (int) $important;
+        $invoice->ts_pay = $ts_pay;
         $invoice->state = SlsInvoice::stateWait;
-        $invoice->sort = SlsInvoice::calcCount(SlsInvoice::stateWait, $user_fk) + 1;
+        $invoice->sort = 0;
         $invoice->save();
 
         return ['_result_' => 'success'];
@@ -329,27 +302,13 @@ class SlsInvoiceController extends ActiveControllerExtended
 
     const actionEdit = 'POST /v1/sls-invoice/edit';
 
-    public function actionEdit($id, $user_fk, $title, $summ, $ts_pay = null, $cur_pay = null)
+    public function actionEdit($id, $title, $type_fk, $summ, $important = false, $ts_pay = null, $cur_pay = null)
     {
-        $invoice = SlsInvoice::get($id);
-
-        // Произошло изменение юзера
-        if ($user_fk !== $invoice->user_fk) {
-            // Убрать дырку с инвойсов предыдущего юзера
-            $waitInvoices = SlsInvoice::readSortDown(SlsInvoice::stateWait, $invoice->user_fk, $invoice->sort);
-            foreach ($waitInvoices as $waitInvoice) {
-                $waitInvoice->sort = $waitInvoice->sort - 1;
-                $waitInvoice->save();
-            }
-
-            // Добавить в конец новых
-            $invoice->sort = SlsInvoice::calcCount(SlsInvoice::stateWait, $user_fk) + 1;
-
-        }
-
-        $invoice->user_fk = $user_fk;
+        $invoice = SlsInvoice::findOne(['id' => $id]);
         $invoice->title = $title;
+        $invoice->type_fk = $type_fk;
         $invoice->summ = $summ;
+        $invoice->important = (int) $important;
         $invoice->ts_pay = $ts_pay;
         $invoice->cur_pay = $cur_pay;
         $invoice->save();

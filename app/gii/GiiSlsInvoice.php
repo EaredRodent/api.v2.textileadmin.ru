@@ -4,6 +4,7 @@ namespace app\gii;
 
 use app\models\AnxUser;
 use app\modules\v1\classes\ActiveRecordExtended;
+use app\modules\v1\models\sls\SlsInvoiceType;
 use app\modules\v1\models\sls\SlsMoney;
 use yii\db\ActiveQuery;
 
@@ -13,21 +14,24 @@ use yii\db\ActiveQuery;
  * @property int $id
  * @property string $ts_create
  * @property int $user_fk
+ * @property int|null $type_fk
  * @property string $state
  * @property string $title
- * @property string $summ общая сумма
- * @property string $cur_pay Сумма текущей оплаты
- * @property string $summ_pay
+ * @property float $summ общая сумма
+ * @property float|null $cur_pay Сумма текущей оплаты
+ * @property float $summ_pay
  * @property int $sort
- * @property int $email_id
- * @property string $ts_pay
- * @property string $comment
- * @property string $forex валюта. если пусто - значит рубли
- * @property string $forex_summ
- * @property string $forex_summ_pay
- * @property string $ts_reject
+ * @property int|null $email_id
+ * @property string|null $ts_pay
+ * @property string|null $comment
+ * @property string|null $forex валюта. если пусто - значит рубли
+ * @property float|null $forex_summ
+ * @property float|null $forex_summ_pay
+ * @property string|null $ts_reject
+ * @property int $important
  *
  * @property AnxUser $userFk
+ * @property SlsInvoiceType $typeFk
  * @property SlsMoney[] $slsMoneys
  */
 class GiiSlsInvoice extends ActiveRecordExtended
@@ -48,12 +52,13 @@ class GiiSlsInvoice extends ActiveRecordExtended
         return [
             [['ts_create', 'ts_pay', 'ts_reject'], 'safe'],
             [['user_fk', 'state', 'title', 'summ', 'sort'], 'required'],
-            [['user_fk', 'sort', 'email_id'], 'integer'],
+            [['user_fk', 'type_fk', 'sort', 'email_id', 'important'], 'integer'],
             [['state', 'forex'], 'string'],
             [['summ', 'cur_pay', 'summ_pay', 'forex_summ', 'forex_summ_pay'], 'number'],
             [['title'], 'string', 'max' => 250],
             [['comment'], 'string', 'max' => 255],
             [['user_fk'], 'exist', 'skipOnError' => true, 'targetClass' => AnxUser::className(), 'targetAttribute' => ['user_fk' => 'id']],
+            [['type_fk'], 'exist', 'skipOnError' => true, 'targetClass' => SlsInvoiceType::className(), 'targetAttribute' => ['type_fk' => 'id']],
         ];
     }
 
@@ -66,9 +71,10 @@ class GiiSlsInvoice extends ActiveRecordExtended
             'id' => 'ID',
             'ts_create' => 'Ts Create',
             'user_fk' => 'User Fk',
+            'type_fk' => 'Type Fk',
             'state' => 'State',
             'title' => 'Title',
-            'summ' => 'Сумма счета',
+            'summ' => 'Summ',
             'cur_pay' => 'Cur Pay',
             'summ_pay' => 'Summ Pay',
             'sort' => 'Sort',
@@ -79,11 +85,14 @@ class GiiSlsInvoice extends ActiveRecordExtended
             'forex_summ' => 'Forex Summ',
             'forex_summ_pay' => 'Forex Summ Pay',
             'ts_reject' => 'Ts Reject',
+            'important' => 'Important',
         ];
     }
 
     /**
-     * @return ActiveQuery
+     * Gets query for [[UserFk]].
+     *
+     * @return \yii\db\ActiveQuery
      */
     public function getUserFk()
     {
@@ -91,7 +100,19 @@ class GiiSlsInvoice extends ActiveRecordExtended
     }
 
     /**
-     * @return ActiveQuery
+     * Gets query for [[TypeFk]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTypeFk()
+    {
+        return $this->hasOne(SlsInvoiceType::className(), ['id' => 'type_fk']);
+    }
+
+    /**
+     * Gets query for [[SlsMoneys]].
+     *
+     * @return \yii\db\ActiveQuery
      */
     public function getSlsMoneys()
     {
