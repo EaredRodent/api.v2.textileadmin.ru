@@ -72,8 +72,17 @@ class SlsInvoiceController extends ActiveControllerExtended
 
     const actionGetWait = 'GET /v1/sls-invoice/get-wait';
 
-    public function actionGetWait()
+    /**
+     * Получить счета на подготовке
+     * mode - actual - счета в этом и прошедших месяцах
+     * mode - future - счета в будущем
+     * @param string $mode
+     * @return array
+     */
+    public function actionGetWait($mode = 'actual')
     {
+        $lastDayOnCurrentMonth = date('Y-m-t 23:59:59', time());
+
         $resp = [];
         /** @var SlsInvoiceType[] $invoiceTypes */
         $invoiceTypes = SlsInvoiceType::find()->all();
@@ -81,20 +90,31 @@ class SlsInvoiceController extends ActiveControllerExtended
         foreach ($invoiceTypes as $invoiceType) {
             $elm['id'] = $invoiceType->id;
             $elm['name'] = $invoiceType->name;
-            $elm['items'] = SlsInvoice::find()
-                ->where(['type_fk' => $invoiceType->id, 'state' => SlsInvoice::stateWait])
-                ->orderBy('important DESC, ts_pay')
-                ->all();
+
+            $query = SlsInvoice::find()
+                ->where(['type_fk' => $invoiceType->id, 'state' => SlsInvoice::stateWait]);
+            if($mode === 'actual') {
+                $query->andWhere(['or', ['<=', 'ts_pay', $lastDayOnCurrentMonth], 'ts_pay IS NULL']);
+            } else {
+                $query->andWhere(['>', 'ts_pay', $lastDayOnCurrentMonth]);
+            }
+
+            $elm['items'] = $query->orderBy('important DESC, ts_pay')->all();
             $resp[] = $elm;
+        }
+
+        $query = SlsInvoice::find()
+            ->where(['type_fk' => null, 'state' => SlsInvoice::stateWait]);
+        if($mode === 'actual') {
+            $query->andWhere(['or', ['<=', 'ts_pay', $lastDayOnCurrentMonth], 'ts_pay IS NULL']);
+        } else {
+            $query->andWhere(['>', 'ts_pay', $lastDayOnCurrentMonth]);
         }
 
         $resp[] = [
             'id' => 0,
             'name' => 'Счета без категории',
-            'items' => SlsInvoice::find()
-                ->where(['type_fk' => null, 'state' => SlsInvoice::stateWait])
-                ->orderBy('important DESC, ts_pay')
-                ->all()
+            'items' => $query->orderBy('important DESC, ts_pay')->all()
         ];
 
         return $resp;
@@ -280,7 +300,7 @@ class SlsInvoiceController extends ActiveControllerExtended
      * @throws HttpException
      * @throws \Throwable
      */
-    public function actionCreate($title, $type_fk, $summ, $important = false, $ts_pay = null)
+    public function actionCreate($title, $type_fk, $summ, $ts_pay, $important = false)
     {
         $invoice = new SlsInvoice();
 
@@ -291,7 +311,7 @@ class SlsInvoiceController extends ActiveControllerExtended
         $invoice->title = $title;
         $invoice->type_fk = $type_fk;
         $invoice->summ = $summ;
-        $invoice->important = (int) $important;
+        $invoice->important = (int)$important;
         $invoice->ts_pay = $ts_pay;
         $invoice->state = SlsInvoice::stateWait;
         $invoice->sort = 0;
@@ -302,13 +322,13 @@ class SlsInvoiceController extends ActiveControllerExtended
 
     const actionEdit = 'POST /v1/sls-invoice/edit';
 
-    public function actionEdit($id, $title, $type_fk, $summ, $important = false, $ts_pay = null, $cur_pay = null)
+    public function actionEdit($id, $title, $type_fk, $summ, $ts_pay, $important = false, $cur_pay = null)
     {
         $invoice = SlsInvoice::findOne(['id' => $id]);
         $invoice->title = $title;
         $invoice->type_fk = $type_fk;
         $invoice->summ = $summ;
-        $invoice->important = (int) $important;
+        $invoice->important = (int)$important;
         $invoice->ts_pay = $ts_pay;
         $invoice->cur_pay = $cur_pay;
         $invoice->save();
