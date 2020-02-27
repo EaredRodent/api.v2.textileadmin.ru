@@ -81,8 +81,6 @@ class SlsInvoiceController extends ActiveControllerExtended
      */
     public function actionGetWait($mode = 'actual')
     {
-        $lastDayOnCurrentMonth = date('Y-m-t 23:59:59', time());
-
         $resp = [];
         /** @var SlsInvoiceType[] $invoiceTypes */
         $invoiceTypes = SlsInvoiceType::find()->all();
@@ -90,34 +88,51 @@ class SlsInvoiceController extends ActiveControllerExtended
         foreach ($invoiceTypes as $invoiceType) {
             $elm['id'] = $invoiceType->id;
             $elm['name'] = $invoiceType->name;
-
-            $query = SlsInvoice::find()
-                ->where(['type_fk' => $invoiceType->id, 'state' => SlsInvoice::stateWait]);
-            if($mode === 'actual') {
-                $query->andWhere(['or', ['<=', 'ts_pay', $lastDayOnCurrentMonth], 'ts_pay IS NULL']);
-            } else {
-                $query->andWhere(['>', 'ts_pay', $lastDayOnCurrentMonth]);
-            }
-
-            $elm['items'] = $query->orderBy('important DESC, ts_pay')->all();
+            $elm['items'] = $this->getWaitGetInvoices($invoiceType->id, $mode);
             $resp[] = $elm;
-        }
-
-        $query = SlsInvoice::find()
-            ->where(['type_fk' => null, 'state' => SlsInvoice::stateWait]);
-        if($mode === 'actual') {
-            $query->andWhere(['or', ['<=', 'ts_pay', $lastDayOnCurrentMonth], 'ts_pay IS NULL']);
-        } else {
-            $query->andWhere(['>', 'ts_pay', $lastDayOnCurrentMonth]);
         }
 
         $resp[] = [
             'id' => 0,
             'name' => 'Счета без категории',
-            'items' => $query->orderBy('important DESC, ts_pay')->all()
+            'items' => $this->getWaitGetInvoices(null, $mode)
         ];
 
         return $resp;
+    }
+
+    private function getWaitGetInvoices($invoiceTypeID, $mode)
+    {
+        $lastDayOnCurrentMonth = date('Y-m-t 23:59:59', time());
+
+        $query = SlsInvoice::find()
+            ->where(['type_fk' => $invoiceTypeID])
+            ->andWhere(['IN', 'state', [SlsInvoice::stateWait, SlsInvoice::statePartPay, SlsInvoice::stateAccept]]);
+
+        if ($mode === 'actual') {
+            $query->andWhere(['or', ['<=', 'ts_pay', $lastDayOnCurrentMonth], 'ts_pay IS NULL']);
+        } else {
+            $query->andWhere(['>', 'ts_pay', $lastDayOnCurrentMonth]);
+        }
+
+        /** @var SlsInvoice[] $invoices */
+        $invoices = $query
+            ->orderBy('important DESC, ts_pay')
+            ->all();
+
+        $items = [];
+
+        foreach ($invoices as $invoice) {
+            $invoice->sum_rest = $invoice->summ -
+                $invoice->summ_pay -
+                ($invoice->state === SlsInvoice::stateAccept ? $invoice->cur_pay : 0);
+
+            if ($invoice->sum_rest > 0 || $invoice->summ === 0) {
+                $items[] = $invoice;
+            }
+        }
+
+        return $items;
     }
 
     const actionReject = 'POST /v1/sls-invoice/reject';
@@ -223,28 +238,11 @@ class SlsInvoiceController extends ActiveControllerExtended
      */
     public function actionAccept($id, $cur_pay, $comment = '')
     {
-        // Позиция в сортировке
-        $newSort = SlsInvoice::calcCount(SlsInvoice::stateAccept) + 1;
-
         $invoice = SlsInvoice::get($id);
-
-        $prevSort = $invoice->sort;
-        $userId = $invoice->user_fk;
-
         $invoice->state = SlsInvoice::stateAccept;
-        $invoice->sort = $newSort;
         $invoice->cur_pay = $cur_pay;
         $invoice->comment = $comment;
         $invoice->save();
-
-        if ($invoice->summ_pay == 0) {
-            // Закрыть "дырку" если из подготавливаемых
-            $waitInvoices = SlsInvoice::readSortDown(SlsInvoice::stateWait, $userId, $prevSort);
-            foreach ($waitInvoices as $waitInvoice) {
-                $waitInvoice->sort = $waitInvoice->sort - 1;
-                $waitInvoice->save();
-            }
-        }
 
         return ['_result_' => 'success'];
     }

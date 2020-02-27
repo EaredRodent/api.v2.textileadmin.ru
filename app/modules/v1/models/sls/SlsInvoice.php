@@ -14,6 +14,11 @@ use app\modules\AppMod;
 use Yii;
 use yii\db\ActiveRecord;
 
+/**
+ * Class SlsInvoice
+ * @package app\modules\v1\models\sls
+ * @property int $sum_rest
+ */
 class SlsInvoice extends GiiSlsInvoice
 {
     const stateReject = 'reject';
@@ -40,8 +45,13 @@ class SlsInvoice extends GiiSlsInvoice
                     $files[] = \basename($path);
                 }
                 return $files;
-            },
+            }
         ]);
+    }
+
+    public function attributes()
+    {
+        return array_merge(parent::attributes(), ['sum_rest']);
     }
 
     /**

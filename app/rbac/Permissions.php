@@ -58,6 +58,8 @@ class Permissions
     const roleSallerMain = 'roleSallerMain'; // Руководитель отдела продаж
     const roleOxouno = 'roleOxouno'; // Пользователь розничного магазина oxouno
     const roleTechnolog = 'roleTechnolog'; //
+    const roleYuri = 'roleYuri';    // Юра (счета)
+    const roleOlga = 'roleOlga';    // Ольга (счета)
 
     const roleV3Alena = 'roleV3Alena';
     const roleV3Edush = 'roleV3Edush';
@@ -90,6 +92,7 @@ class Permissions
             self::taskOxounoApi,
             self::taskSalesStatisticsB2BAccess,
             self::taskSalesStatisticsB2BWrite,
+            self::taskManagementRegPaysLite,
             ///
             AnxUserController::postCreateUser,
             BaseController::actionPostTestData,
@@ -155,6 +158,13 @@ class Permissions
         self::roleTechnolog => [
             self::taskReportProduction,
         ],
+        self::roleYuri => [
+            self::taskManagementRegPaysLite,
+        ],
+        self::roleOlga => [
+            self::taskManagementRegPaysLite,
+        ],
+
 
 
         // v3
@@ -231,6 +241,8 @@ class Permissions
 
     const pageManagementInvoiceType = 'pageManagementInvoiceType';
 
+    const pageManagementRegPaysLite = 'pageManagementRegPaysLite';
+
     const pages = [
         self::pageRegPays => 'Реестры платежей',
         self::pageTestApi => 'Тестирование API проекта',
@@ -248,6 +260,7 @@ class Permissions
         self::pageReportsEnterpriseBalanceEdit => 'Баланс предприятия (редактирование)',
         self::pageUsersOnline => 'Пользователи онлайн',
         self::pageManagementInvoiceType => 'Категории счета',
+        self::pageManagementRegPaysLite => 'Счета',
     ];
 
 
@@ -379,6 +392,11 @@ class Permissions
      * Экшены для страницы /management/invoice-type
      */
     const taskManagementInvoiceType = 'taskManagementInvoiceType';
+
+    /**
+     * Экшены для страницы /management/reg-pays-lite
+     */
+    const taskManagementRegPaysLite = 'taskManagementRegPaysLite';
 
     const tasks = [
 
@@ -673,6 +691,10 @@ class Permissions
             SlsInvoiceTypeController::actionCreateEdit,
             SlsInvoiceTypeController::actionApplySortArrayForTypes,
             SlsInvoiceTypeController::actionDeleteType,
+        ],
+
+        self::taskManagementRegPaysLite => [
+            self::pageManagementRegPaysLite,
         ]
     ];
 
