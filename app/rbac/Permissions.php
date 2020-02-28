@@ -39,6 +39,7 @@ use app\modules\v1\controllers\V3BoxController;
 use app\modules\v1\controllers\V3InvoiceController;
 use app\modules\v1\controllers\V3InvoiceTypeController;
 use app\modules\v1\controllers\V3MoneyEventController;
+use app\modules\v1\models\sls\SlsInvoice;
 
 class Permissions
 {
@@ -695,6 +696,16 @@ class Permissions
 
         self::taskManagementRegPaysLite => [
             self::pageManagementRegPaysLite,
+            SlsInvoiceController::actionCurrentUserGetPrep,
+            SlsInvoiceController::actionCurrentUserGetAccept,
+            SlsInvoiceController::actionCurrentUserGetPartPay,
+            SlsInvoiceController::actionCurrentUserGetFullPay,
+            SlsInvoiceTypeController::actionGetAll,
+            SlsInvoiceController::actionCreate,
+            SlsInvoiceController::actionEdit,
+            SlsInvoiceController::actionUploadFile,
+            SlsInvoiceController::actionDeleteFile,
+            SlsInvoiceController::actionGetAttachment,
         ]
     ];
 

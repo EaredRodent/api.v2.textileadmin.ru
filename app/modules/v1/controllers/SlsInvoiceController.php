@@ -200,6 +200,7 @@ class SlsInvoiceController extends ActiveControllerExtended
 
     /**
      * @param $id
+     * @throws HttpException
      */
     public function actionReturn($id)
     {
@@ -288,7 +289,7 @@ class SlsInvoiceController extends ActiveControllerExtended
     const actionCreate = 'POST /v1/sls-invoice/create';
 
     /**
-     * Создании счета вручную
+     * Создать счет вручную
      * @param $title
      * @param $type_fk
      * @param $summ
@@ -320,6 +321,18 @@ class SlsInvoiceController extends ActiveControllerExtended
 
     const actionEdit = 'POST /v1/sls-invoice/edit';
 
+    /**
+     * Редактировать счет
+     * @param $id
+     * @param $title
+     * @param $type_fk
+     * @param $summ
+     * @param $ts_pay
+     * @param bool $important
+     * @param null $cur_pay
+     * @return array
+     * @throws HttpException
+     */
     public function actionEdit($id, $title, $type_fk, $summ, $ts_pay, $important = false, $cur_pay = null)
     {
         $invoice = SlsInvoice::findOne(['id' => $id]);
@@ -336,6 +349,10 @@ class SlsInvoiceController extends ActiveControllerExtended
 
     const actionUploadFile = 'POST /v1/sls-invoice/upload-file';
 
+    /**
+     * Прикрепить файл к счету
+     * @param $id
+     */
     public function actionUploadFile($id)
     {
         $pathToInvoiceAttachement = Yii::getAlias(AppMod::filesRout[AppMod::filesInvoiceAttachement]);
@@ -344,24 +361,121 @@ class SlsInvoiceController extends ActiveControllerExtended
             $fileName = $pathToInvoiceAttachement . '/' . $id . '-' . $translitName;
             move_uploaded_file($file['tmp_name'], $fileName);
         }
+
+        // Модель не обновлялась, но нужно уведомить о загруженном файле
+
+        Yii::$app->getModule('v1')->cmdTables[] = 'sls_invoice';
     }
 
     const actionDeleteFile = 'POST /v1/sls-invoice/delete-file';
 
+    /**
+     * Удалить файл
+     * @param $fileName
+     */
     public function actionDeleteFile($fileName)
     {
         $filePath = Yii::getAlias(AppMod::filesRout[AppMod::filesInvoiceAttachement]) . '/' . $fileName;
         if (file_exists($filePath)) {
             unlink($filePath);
         }
+
+        // Модель не обновлялась, но нужно уведомить о загруженном файле
+
+        Yii::$app->getModule('v1')->cmdTables[] = 'sls_invoice';
     }
 
     const actionGetAttachment = 'GET /v1/sls-invoice/get-attachment';
 
+    /**
+     * Получить прикрепленные с счету файлы
+     * @param $id
+     * @return mixed
+     */
     public function actionGetAttachment($id)
     {
+        return SlsInvoice::findOne(['id' => $id])->toArray(['attachment'])['attachment'];
+    }
 
-        $attachment = SlsInvoice::findOne(['id' => $id])->toArray(['attachment'])['attachment'];
-        return $attachment;
+    const actionCurrentUserGetPrep = 'GET /v1/sls-invoice/current-user-get-prep';
+
+    /**
+     * Получить счета на подготовке для текущего пользователя
+     * @throws \Throwable
+     */
+    public function actionCurrentUserGetPrep()
+    {
+        /** @var AnxUser $currentUser */
+        $currentUser = Yii::$app->getUser()->getIdentity();
+
+        return SlsInvoice::find()
+            ->where(['user_fk' => $currentUser->id])
+            ->andWhere(['state' => SlsInvoice::stateWait])
+            ->orderBy('important DESC, ts_create')
+            ->all();
+    }
+
+    const actionCurrentUserGetAccept = 'GET /v1/sls-invoice/current-user-get-accept';
+
+    /**
+     * Получить акцептованные счета для текущего пользователя
+     * @return array|ActiveRecord[]
+     * @throws \Throwable
+     */
+    public function actionCurrentUserGetAccept()
+    {
+        /** @var AnxUser $currentUser */
+        $currentUser = Yii::$app->getUser()->getIdentity();
+
+        return SlsInvoice::find()
+            ->where(['user_fk' => $currentUser->id])
+            ->andWhere(['state' => SlsInvoice::stateAccept])
+            ->orderBy('important DESC, ts_pay')
+            ->all();
+    }
+
+    const actionCurrentUserGetPartPay = 'GET /v1/sls-invoice/current-user-get-part-pay';
+
+    /**
+     * Получить частично опл. счета для текущего пользователя
+     * @return array|void|ActiveRecord[]
+     * @throws \Throwable
+     */
+    public function actionCurrentUserGetPartPay()
+    {
+        /** @var AnxUser $currentUser */
+        $currentUser = Yii::$app->getUser()->getIdentity();
+
+        return SlsInvoice::find()
+            ->where(['user_fk' => $currentUser->id])
+            ->andWhere(['or',
+                ['state' => SlsInvoice::statePartPay],
+                ['and', ['state' => SlsInvoice::stateAccept], 'summ != (summ_pay + cur_pay)']
+            ])
+            ->orderBy('important DESC, ts_pay')
+            ->all();
+    }
+
+    const actionCurrentUserGetFullPay = 'GET /v1/sls-invoice/current-user-get-full-pay';
+
+    /**
+     * Получить полностью опл. счета для текущего пользователя
+     * @return array|void|ActiveRecord[]
+     * @throws \Throwable
+     */
+    public function actionCurrentUserGetFullPay($date)
+    {
+        /** @var AnxUser $currentUser */
+        $currentUser = Yii::$app->getUser()->getIdentity();
+
+        $dateStart = date('Y-m-01 00:00:00', strtotime($date));
+        $dateEnd = date('Y-m-t 23:59:59', strtotime($date));
+
+        return SlsInvoice::find()
+            ->where(['user_fk' => $currentUser->id])
+            ->andWhere(['state' => SlsInvoice::stateFullPay])
+            ->andWhere(['and', ['>=', 'ts_create', $dateStart], ['<=', 'ts_create', $dateEnd]])
+            ->orderBy('important DESC, ts_create')
+            ->all();
     }
 }

@@ -34,6 +34,7 @@ class SlsInvoice extends GiiSlsInvoice
     {
         return array_merge(parent::fields(), [
             'userFk',
+            'typeFk',
             'attachment' => function () {
                 $files = [];
                 $alias = AppMod::filesRout[AppMod::filesInvoiceAttachement];
