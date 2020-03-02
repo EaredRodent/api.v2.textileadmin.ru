@@ -46,6 +46,12 @@ class SlsInvoice extends GiiSlsInvoice
                     $files[] = \basename($path);
                 }
                 return $files;
+            },
+            'expired' => function () {
+                if (!$this->ts_pay) {
+                    return false;
+                }
+                return date('Y-m-d 23:59:59', strtotime($this->ts_pay)) < date('Y-m-d H:i:s');
             }
         ]);
     }
@@ -74,20 +80,6 @@ class SlsInvoice extends GiiSlsInvoice
         return self::find()
             ->where(['state' => self::statePartPay])
             ->orderBy('sort')
-            ->all();
-    }
-
-    /**
-     * @param $state
-     * @param $userId
-     * @param $sortPos
-     * @return array|ActiveRecord[]|self[]
-     */
-    public static function readSortDown($state, $userId, $sortPos)
-    {
-        return self::find()
-            ->where(['user_fk' => $userId, 'state' => $state])
-            ->andWhere(['>', 'sort', $sortPos])
             ->all();
     }
 

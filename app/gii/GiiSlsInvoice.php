@@ -29,6 +29,7 @@ use yii\db\ActiveQuery;
  * @property float|null $forex_summ_pay
  * @property string|null $ts_reject
  * @property int $important
+ * @property string $type_pay
  *
  * @property AnxUser $userFk
  * @property SlsInvoiceType $typeFk
@@ -53,7 +54,7 @@ class GiiSlsInvoice extends ActiveRecordExtended
             [['ts_create', 'ts_pay', 'ts_reject'], 'safe'],
             [['user_fk', 'state', 'title', 'summ', 'sort'], 'required'],
             [['user_fk', 'type_fk', 'sort', 'email_id', 'important'], 'integer'],
-            [['state', 'forex'], 'string'],
+            [['state', 'forex', 'type_pay'], 'string'],
             [['summ', 'cur_pay', 'summ_pay', 'forex_summ', 'forex_summ_pay'], 'number'],
             [['title'], 'string', 'max' => 250],
             [['comment'], 'string', 'max' => 255],
@@ -86,6 +87,7 @@ class GiiSlsInvoice extends ActiveRecordExtended
             'forex_summ_pay' => 'Forex Summ Pay',
             'ts_reject' => 'Ts Reject',
             'important' => 'Important',
+            'type_pay' => 'Type Pay',
         ];
     }
 

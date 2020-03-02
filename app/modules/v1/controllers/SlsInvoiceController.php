@@ -83,7 +83,9 @@ class SlsInvoiceController extends ActiveControllerExtended
     {
         $resp = [];
         /** @var SlsInvoiceType[] $invoiceTypes */
-        $invoiceTypes = SlsInvoiceType::find()->all();
+        $invoiceTypes = SlsInvoiceType::find()
+            ->orderBy('sort')
+            ->all();
 
         foreach ($invoiceTypes as $invoiceType) {
             $elm['id'] = $invoiceType->id;
@@ -146,9 +148,6 @@ class SlsInvoiceController extends ActiveControllerExtended
     {
         $invoice = SlsInvoice::get($id);
 
-        $userId = $invoice->user_fk;
-        $prevSort = $invoice->sort;
-
         // Новая позиция в конце отклоненных платежей
         // (позиция сортировки не нужна, сортировать будем по дате отклонения)
         //$newSort = SlsInvoice::calcCount(SlsInvoice::stateReject, $userId) + 1;
@@ -157,13 +156,6 @@ class SlsInvoiceController extends ActiveControllerExtended
         $invoice->sort = 0;
         $invoice->ts_reject = date('Y-m-d H:i:s');
         $invoice->save();
-
-        // Сдвиг всех ожидающих платежей вверх
-        $waitInvoices = SlsInvoice::readSortDown(SlsInvoice::stateWait, $userId, $prevSort);
-        foreach ($waitInvoices as $waitInvoice) {
-            $waitInvoice->sort--;
-            $waitInvoice->save();
-        }
     }
 
 
@@ -188,8 +180,6 @@ class SlsInvoiceController extends ActiveControllerExtended
         }
 
         $invoice->state = SlsInvoice::stateWait;
-        $countInvoices = SlsInvoice::calcCount(SlsInvoice::stateWait, $invoice->user_fk);
-        $invoice->sort = $countInvoices + 1;
         $invoice->ts_reject = null;
         $invoice->save();
         return 'ok';
@@ -212,20 +202,8 @@ class SlsInvoiceController extends ActiveControllerExtended
             $invoice->save();
         } else {
             // Убрать в подготавливаемые
-            $userId = $invoice->user_fk;
-            $sort = SlsInvoice::calcCount(SlsInvoice::stateWait, $userId) + 1;
-            $prevSort = $invoice->sort;
-
             $invoice->state = SlsInvoice::stateWait;
-            $invoice->sort = $sort;
             $invoice->save();
-
-            // Закрыть "дырку"
-            $acceptInvoices = SlsInvoice::readSortDown(SlsInvoice::stateAccept, $userId, $prevSort);
-            foreach ($acceptInvoices as $acceptInvoice) {
-                $acceptInvoice->sort--;
-                $acceptInvoice->save();
-            }
         }
     }
 
@@ -293,13 +271,14 @@ class SlsInvoiceController extends ActiveControllerExtended
      * @param $title
      * @param $type_fk
      * @param $summ
-     * @param $important
+     * @param $type_pay
      * @param null $ts_pay
+     * @param bool $important
      * @return array
      * @throws HttpException
      * @throws \Throwable
      */
-    public function actionCreate($title, $type_fk, $summ, $ts_pay, $important = false)
+    public function actionCreate($title, $type_fk, $summ, $type_pay, $ts_pay, $important = false)
     {
         $invoice = new SlsInvoice();
 
@@ -310,6 +289,7 @@ class SlsInvoiceController extends ActiveControllerExtended
         $invoice->title = $title;
         $invoice->type_fk = $type_fk;
         $invoice->summ = $summ;
+        $invoice->type_pay = $type_pay;
         $invoice->important = (int)$important;
         $invoice->ts_pay = $ts_pay;
         $invoice->state = SlsInvoice::stateWait;
@@ -333,12 +313,13 @@ class SlsInvoiceController extends ActiveControllerExtended
      * @return array
      * @throws HttpException
      */
-    public function actionEdit($id, $title, $type_fk, $summ, $ts_pay, $important = false, $cur_pay = null)
+    public function actionEdit($id, $title, $type_fk, $summ, $type_pay, $ts_pay, $important = false, $cur_pay = null)
     {
         $invoice = SlsInvoice::findOne(['id' => $id]);
         $invoice->title = $title;
         $invoice->type_fk = $type_fk;
         $invoice->summ = $summ;
+        $invoice->type_pay = $type_pay;
         $invoice->important = (int)$important;
         $invoice->ts_pay = $ts_pay;
         $invoice->cur_pay = $cur_pay;
