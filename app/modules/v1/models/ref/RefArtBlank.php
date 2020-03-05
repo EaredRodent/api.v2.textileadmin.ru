@@ -117,21 +117,21 @@ class RefArtBlank extends GiiRefArtBlank
                     $fileName = str_pad($this->id, 4, '0', STR_PAD_LEFT) . '_' . $i . '.jpg';
                     $fullPath = $path . '/' . $fileName;
                     if (file_exists($fullPath)) {
-                        $resp['large'][] = AppMod::domain .
+                        $resp['large'][] = AppMod::B2BAPIDomain .
                             '/v1/files/public/' . AppMod::filesImageBaseProds . '/' . $fileName;
                     }
 
                     $fileName = str_pad($this->id, 4, '0', STR_PAD_LEFT) . '_' . $i . '.md.jpg';
                     $fullPath = $path . '/' . $fileName;
                     if (file_exists($fullPath)) {
-                        $resp['medium'][] = AppMod::domain .
+                        $resp['medium'][] = AppMod::B2BAPIDomain .
                             '/v1/files/public/' . AppMod::filesImageBaseProds . '/' . $fileName;
                     }
 
                     $fileNameSmall = str_pad($this->id, 4, '0', STR_PAD_LEFT) . '_' . $i . '.sm.jpg';
                     $fullPathSmall = $path . '/' . $fileName;
                     if (file_exists($fullPathSmall)) {
-                        $resp['small'][] = AppMod::domain .
+                        $resp['small'][] = AppMod::B2BAPIDomain .
                             '/v1/files/public/' . AppMod::filesImageBaseProds . '/' . $fileNameSmall;
                     }
 

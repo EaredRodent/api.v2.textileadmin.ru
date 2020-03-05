@@ -99,7 +99,7 @@ class AnxUserController extends ActiveControllerExtended
             }
 
             // Для режима продакшн
-            if (YII_ENV_PROD) {
+//            if (YII_ENV_PROD) {
 
                 if (!$password) {
                     throw new HttpException(200, "Укажите пароль.", 200);
@@ -113,7 +113,7 @@ class AnxUserController extends ActiveControllerExtended
                         throw new HttpException(200, "Неверный пароль.", 200);
                     }
                 }
-            }
+//            }
 
             if (!$user->accesstoken) {
                 throw new HttpException(200, "Токен для этого аккаунта не создан.", 200);
@@ -235,7 +235,7 @@ class AnxUserController extends ActiveControllerExtended
         $anxUser = new AnxUser();
         $anxUser->attributes = $contact;
         $anxUser->role = Permissions::roleB2bClient;
-        $anxUser->status = 0;
+        $anxUser->status = AnxUser::STATUS_BLOCKED;
         $anxUser->hash = 'no hash';
         $anxUser->auth_key = 'no auth_key';
         $anxUser->project = 'b2b';
@@ -450,5 +450,57 @@ class AnxUserController extends ActiveControllerExtended
             ->where(['project' => 'v3'])
             ->andWhere('accesstoken IS NOT NULL')
             ->all();
+    }
+
+    const actionTryRestoreUser = 'POST /v1/anx-user/try-restore-user';
+
+    /**
+     * @param $login
+     * @return array
+     * @throws HttpException
+     * @throws \yii\base\Exception
+     */
+    public function actionTryRestoreUser($login)
+    {
+        /** @var AnxUser $user */
+        $user = AnxUser::find()
+            ->where(['status' => AnxUser::STATUS_ACTIVE])
+            ->where(['project' => 'b2b'])
+            ->andWhere(['login' => $login])
+            ->one();
+
+        if (!$user) {
+            throw new HttpException(200, 'Такой контакт не зарегистрирован.', 200);
+        }
+
+        $restoreID = Yii::$app->security->generateRandomString(32);
+        $user->restore_id = $restoreID;
+        $user->save();
+        $restoreLink = AppMod::B2BDomain . '/restore?restore_id=' . $restoreID;
+        $user->sendRestoreEmail($restoreLink);
+
+        return ['_result_' => 'success'];
+    }
+
+    const actionRestoreUser = 'POST /v1/anx-user/restore-user';
+
+    public function actionRestoreUser($restore_id)
+    {
+        /** @var AnxUser $user */
+        $user = AnxUser::find()
+            ->where(['project' => 'b2b'])
+            ->andWhere(['restore_id' => $restore_id])
+            ->one();
+
+        if (!$user) {
+            throw new HttpException(200, 'ID восстановления не найден.', 200);
+        }
+
+        $password = $user->fillAuthData(false);
+        $user->restore_id = null;
+        $user->save();
+        $user->sendSuccessEmail($password);
+
+        return ['_result_' => 'success', 'accesstoken' => $user->accesstoken];
     }
 }

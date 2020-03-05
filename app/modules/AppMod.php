@@ -10,7 +10,8 @@ class AppMod
 {
     const ean13Prefix = '4563721';
 
-    const domain = YII_ENV_PROD ? 'https://api.b2b.oxouno.ru' : 'http://api.textileadmin.loc';
+    const B2BAPIDomain = YII_ENV_PROD ? 'https://api.b2b.oxouno.ru' : 'http://api.textileadmin.loc';
+    const B2BDomain = YII_ENV_PROD ? 'https://b2b.oxouno.ru' : 'http://localhost:3020';
 
     const fileToGitJson = '@app/web/deploy/deploy.json';
 

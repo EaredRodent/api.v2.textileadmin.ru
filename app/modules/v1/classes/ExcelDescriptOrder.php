@@ -130,7 +130,7 @@ class ExcelDescriptOrder
                             $fullPath = $path . '/' . $fileName;
 
                             if (file_exists($fullPath)) {
-                                $url = AppMod::domain . '/v1/files/public/' . AppMod::filesImageBaseProds . '/' . $fileName;
+                                $url = AppMod::B2BAPIDomain . '/v1/files/public/' . AppMod::filesImageBaseProds . '/' . $fileName;
                             }
                         } else {
                             $path = realpath(\Yii::getAlias(AppMod::filesRout[AppMod::filesImageProdsPrints]));
@@ -138,7 +138,7 @@ class ExcelDescriptOrder
                                 str_pad($item->print_fk, 3, '0', STR_PAD_LEFT) . '_' . $num . '.jpg';
                             $fullPath = $path . '/' . $fileName;
                             if (file_exists($fullPath)) {
-                                $url = AppMod::domain . '/v1/files/public/' . AppMod::filesImageProdsPrints . '/' . $fileName;
+                                $url = AppMod::B2BAPIDomain . '/v1/files/public/' . AppMod::filesImageProdsPrints . '/' . $fileName;
                             }
                         }
 

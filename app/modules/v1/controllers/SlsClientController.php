@@ -340,7 +340,7 @@ class SlsClientController extends ActiveControllerExtended
                     $basename = pathinfo($file)['basename'];
                     $docTypeObj['files'][] = [
                         'name' => $filename,
-                        'url' => AppMod::domain . '/v1/files/get/6spdsd4d44fsdaf89034/' . $docTypeDir . '/' . $basename
+                        'url' => AppMod::B2BAPIDomain . '/v1/files/get/6spdsd4d44fsdaf89034/' . $docTypeDir . '/' . $basename
                     ];
                 }
 

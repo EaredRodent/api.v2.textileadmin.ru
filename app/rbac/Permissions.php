@@ -79,6 +79,8 @@ class Permissions
             ServiceController::actionDeploy,
             ServiceController::actionGetDeployJson,
             LogEventController::actionLogBrowser,
+            AnxUserController::actionTryRestoreUser,
+            AnxUserController::actionRestoreUser,
         ],
         self::roleMaster => [
             self::pageTestApi,

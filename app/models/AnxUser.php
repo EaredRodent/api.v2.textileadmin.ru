@@ -3,6 +3,7 @@
 namespace app\models;
 
 use app\gii\GiiAnxUser;
+use app\modules\AppMod;
 use app\modules\v1\models\log\LogEvent;
 use app\services\ServMailSend;
 use Yii;
@@ -124,28 +125,33 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
     /**
      * Активация контактного лица B2B кабинета.
      * Заполнить данные пользователя необходимые для авторизации и вернуть пароль для этого пользователя
+     * @param bool $urlKey
+     * @return string
+     * @throws \yii\base\Exception
      */
-    public function fillAuthData()
+    public function fillAuthData($urlKey = true)
     {
         $password = AnxUser::createPasswordForB2BContact();
         $hash = Yii::$app->security->generatePasswordHash($password);
         $accesstoken = Yii::$app->security->generateRandomString(32);
-        $url_key = Yii::$app->security->generateRandomString(16);
 
         $this->hash = $hash;
         $this->accesstoken = $accesstoken;
-        $this->url_key = $url_key;
+
+        if ($urlKey) {
+            $url_key = Yii::$app->security->generateRandomString(16);
+            $this->url_key = $url_key;
+        }
 
         return $password;
     }
 
     public function sendSuccessEmail($password)
     {
-        $email = $this->login;
         $body =
             "<p>Ваша учетная запись активирована. " .
             "Для входа в <a href='b2b.oxouno.ru'>B2B-кабинет</a> используйте:" .
-            "<br>Логин: {$email}" .
+            "<br>Логин: {$this->login}" .
             "<br>Пароль: <b>{$password}</b></p>";
 
         $result = ServMailSend::send($this->login, 'Доступ к B2B-кабинету OXOUNO', $body);
@@ -161,6 +167,19 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
                 'sls_org.name' => $this->orgFk->name
             ], JSON_UNESCAPED_UNICODE);
             $logEvent->save();
+        }
+    }
+
+    public function sendRestoreEmail($restoreLink)
+    {
+        $body =
+            "<p>Если вы не запрашивали восстановление пароля, то не переходите по ссылке ниже.<br>Ваш пароль будет изменен.<br><br>" .
+            "<a href=\"$restoreLink\">Нажмите для восстановления пароля</a></p>";
+
+        $result = ServMailSend::send($this->login, 'B2B-кабинет OXOUNO - восстановление пароля', $body);
+
+        if ($result['resp'] !== 'ok') {
+            throw new HttpException(200, 'Ошибка отправки почты "' . $result['resp'] . '"', 200);
         }
     }
 
