@@ -99,7 +99,7 @@ class AnxUserController extends ActiveControllerExtended
             }
 
             // Для режима продакшн
-//            if (YII_ENV_PROD) {
+            if (YII_ENV_PROD) {
 
                 if (!$password) {
                     throw new HttpException(200, "Укажите пароль.", 200);
@@ -113,7 +113,7 @@ class AnxUserController extends ActiveControllerExtended
                         throw new HttpException(200, "Неверный пароль.", 200);
                     }
                 }
-//            }
+            }
 
             if (!$user->accesstoken) {
                 throw new HttpException(200, "Токен для этого аккаунта не создан.", 200);

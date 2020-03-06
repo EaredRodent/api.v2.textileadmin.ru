@@ -246,6 +246,8 @@ class Permissions
 
     const pageManagementRegPaysLite = 'pageManagementRegPaysLite';
 
+    const pageB2BAny = 'pageB2BAny';
+
     const pages = [
         self::pageRegPays => 'Реестры платежей',
         self::pageTestApi => 'Тестирование API проекта',
@@ -264,6 +266,7 @@ class Permissions
         self::pageUsersOnline => 'Пользователи онлайн',
         self::pageManagementInvoiceType => 'Категории счета',
         self::pageManagementRegPaysLite => 'Счета',
+        self::pageB2BAny => 'Доступ к любой странице B2B кабинета',
     ];
 
 
@@ -523,6 +526,8 @@ class Permissions
             AnxUserController::actionGetContacts,
             SlsClientController::actionUploadDocsFromContact,
             SlsClientController::actionGetDocsForContact,
+
+            self::pageB2BAny,
         ],
 
         self::taskTest => [
