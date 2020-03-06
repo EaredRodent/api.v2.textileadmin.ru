@@ -8,6 +8,7 @@ use app\extension\Sizes;
 use app\modules\AppMod;
 use app\modules\v1\models\ref\RefEan;
 use app\modules\v1\models\sls\SlsItem;
+use app\objects\Prices;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
@@ -38,6 +39,8 @@ class ExcelDescriptOrder
         $this->objExcel->getActiveSheet()->getColumnDimension('G')->setWidth(8);
         $this->objExcel->getActiveSheet()->getColumnDimension('H')->setWidth(8);
         $this->objExcel->getActiveSheet()->getColumnDimension('I')->setWidth(17);
+        $this->objExcel->getActiveSheet()->getColumnDimension('J')->setWidth(15);
+        $this->objExcel->getActiveSheet()->getColumnDimension('K')->setWidth(15);
 
 
         $this->objExcel->getActiveSheet()->getStyle('A1:K1')->getFont()->setBold(true);
@@ -52,7 +55,9 @@ class ExcelDescriptOrder
             ->setCellValue('F1', 'Кол-во')
             ->setCellValue('G1', 'Цена')
             ->setCellValue('H1', 'Сумма')
-            ->setCellValue('I1', 'Штрихкод');
+            ->setCellValue('I1', 'Штрихкод')
+            ->setCellValue('J1', 'Базовая цена')
+            ->setCellValue('K1', "Рекомендуемая розничная цена");
 
         //$sheet->getCell("G{$pos}")->getHyperlink()->setUrl('https://textileadmin.ru' . ApiController::urlGetPhoto . '?name=' . $name);
 
@@ -74,6 +79,8 @@ class ExcelDescriptOrder
 
         $summTotal = 0;
         $countTotal = 0;
+
+        $prices = new Prices();
 
         foreach ($items as $item) {
 
@@ -106,6 +113,8 @@ class ExcelDescriptOrder
                     } else {
                         $ean13 = 'не назначен';
                     }
+                    $basePrice = $prices->getPrice($item->blank_fk, $item->print_fk, $size);
+                    $recommendedPrice = $basePrice * 2;
 
 
                     $activeSheet->setCellValue('A' . $row, $row - 1);
@@ -117,8 +126,10 @@ class ExcelDescriptOrder
                     $activeSheet->setCellValue('G' . $row, $price);
                     $activeSheet->setCellValue('H' . $row, $summ);
                     $activeSheet->setCellValue('I' . $row, $ean13);
+                    $activeSheet->setCellValue('J' . $row, $basePrice);
+                    $activeSheet->setCellValue('K' . $row, $recommendedPrice);
 
-                    $arr = ['J' => 1, 'K' => 2, 'L' => 3];
+                    $arr = ['L' => 1, 'M' => 2, 'N' => 3, 'O' => 4];
 
                     //#ref - ссылки в экселе
                     foreach ($arr as $letter => $num) {

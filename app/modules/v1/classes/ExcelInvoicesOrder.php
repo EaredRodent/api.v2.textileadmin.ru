@@ -6,6 +6,7 @@ use app\extension\Sizes;
 use app\modules\v1\models\ref\RefEan;
 use app\modules\v1\models\sls\SlsItem;
 use app\modules\v1\models\sls\SlsOrder;
+use app\objects\Prices;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
@@ -32,8 +33,10 @@ class ExcelInvoicesOrder
         $this->objExcel->getActiveSheet()->getColumnDimension('H')->setWidth(30);
         $this->objExcel->getActiveSheet()->getColumnDimension('I')->setWidth(25);
         $this->objExcel->getActiveSheet()->getColumnDimension('J')->setWidth(10);
+        $this->objExcel->getActiveSheet()->getColumnDimension('K')->setWidth(15);
+        $this->objExcel->getActiveSheet()->getColumnDimension('L')->setWidth(15);
 
-        $this->objExcel->getActiveSheet()->getStyle('A1:K1')->getFont()->setBold(true);
+        $this->objExcel->getActiveSheet()->getStyle('A1:L1')->getFont()->setBold(true);
 
         //
         $this->objExcel->getActiveSheet()->setTitle('articles')
@@ -46,7 +49,9 @@ class ExcelInvoicesOrder
             ->setCellValue('G1', 'Внутренний артикул')
             ->setCellValue('H1', 'Производственный артикул')
             ->setCellValue('I1', 'Группа')
-            ->setCellValue('J1', 'Id группы');
+            ->setCellValue('J1', 'Id группы')
+            ->setCellValue('K1', 'Базовая цена')
+            ->setCellValue('L1', 'Рекомендуемая розничная цена');
 
         $activeSheet = $this->objExcel->getActiveSheet();
         $row = 2;
@@ -68,6 +73,7 @@ class ExcelInvoicesOrder
         }
 
         $activeSheet->setCellValue('A2', $inn);
+        $prices = new Prices();
 
         foreach ($items as $item) {
 
@@ -115,6 +121,8 @@ class ExcelInvoicesOrder
                     $price = $item->hPrice3($size);
                     $groupName = $item->blankFk->modelFk->classFk->groupFk->title;
                     $groupId = $item->blankFk->modelFk->classFk->groupFk->id;
+                    $basePrice = $prices->getPrice($item->blank_fk, $item->print_fk, $size);
+                    $recommendedPrice = $basePrice * 2;
 
                     $activeSheet->setCellValue('B' . $row, $row - 1);
                     $activeSheet->setCellValue('C' . $row, $nameStr);
@@ -125,6 +133,8 @@ class ExcelInvoicesOrder
                     $activeSheet->setCellValue('H' . $row, $artStr);
                     $activeSheet->setCellValue('I' . $row, $groupName);
                     $activeSheet->setCellValue('J' . $row, $groupId);
+                    $activeSheet->setCellValue('K' . $row, $basePrice);
+                    $activeSheet->setCellValue('L' . $row, $recommendedPrice);
                     $row++;
 
                 }
