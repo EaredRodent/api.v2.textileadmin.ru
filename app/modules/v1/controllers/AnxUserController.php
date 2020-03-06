@@ -249,8 +249,6 @@ class AnxUserController extends ActiveControllerExtended
             throw new HttpException(200, 'Такой контакт уже зарегистрирован.', 200);
         }
 
-        sleep(50);
-
         // Юр лица
         foreach ($legalEntities as $legalEntity) {
 
