@@ -51,7 +51,7 @@ class ExcelInvoicesOrder
             ->setCellValue('I1', 'Группа')
             ->setCellValue('J1', 'Id группы')
             ->setCellValue('K1', 'Базовая цена')
-            ->setCellValue('L1', 'Рекомендуемая розничная цена');
+            ->setCellValue('L1', 'МРРЦ');
 
         $activeSheet = $this->objExcel->getActiveSheet();
         $row = 2;

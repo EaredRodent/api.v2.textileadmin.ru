@@ -57,7 +57,7 @@ class ExcelDescriptOrder
             ->setCellValue('H1', 'Сумма')
             ->setCellValue('I1', 'Штрихкод')
             ->setCellValue('J1', 'Базовая цена')
-            ->setCellValue('K1', "Рекомендуемая розничная цена");
+            ->setCellValue('K1', "МРРЦ");
 
         //$sheet->getCell("G{$pos}")->getHyperlink()->setUrl('https://textileadmin.ru' . ApiController::urlGetPhoto . '?name=' . $name);
 

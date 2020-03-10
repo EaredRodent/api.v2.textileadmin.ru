@@ -713,6 +713,7 @@ class Permissions
             SlsInvoiceController::actionUploadFile,
             SlsInvoiceController::actionDeleteFile,
             SlsInvoiceController::actionGetAttachment,
+            SlsInvoiceController::actionReject,
         ]
     ];
 
