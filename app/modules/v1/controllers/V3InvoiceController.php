@@ -75,6 +75,20 @@ class V3InvoiceController extends ActiveControllerExtended
                     throw new HttpException(200, 'Forbidden.', 200);
                 }
             }
+
+            $moneyEvents = V3MoneyEvent::find()
+                ->where(['invoice_fk' => $invoice->id])
+                ->andWhere(['state' => V3MoneyEvent::state['pay']])
+                ->all();
+
+            $invoicePaySum = 0;
+            foreach ($moneyEvents as $moneyEvent) {
+                $invoicePaySum += -$moneyEvent->summ;
+            }
+
+            if ($invoicePaySum && $form['summ'] < $invoicePaySum) {
+                throw new HttpException(200, 'Счет оплачен на ' . $invoicePaySum . 'р., сумма счета не может быть ' . $form['summ'] . 'р.', 200);
+            }
         } else {
             $invoice = new V3Invoice();
             $invoice->user_fk = $clientID;
