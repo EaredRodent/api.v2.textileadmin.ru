@@ -132,6 +132,7 @@ class Permissions
             self::taskRegPaysInvoiceManage,
             self::taskBuh,
             self::taskReferenceAccess,
+            self::taskManagementInvoiceType,
         ],
         self::roleBuh => [
             self::taskRegPaysPageAccess,
@@ -449,6 +450,7 @@ class Permissions
             SlsInvoiceController::actionDeleteFile,
             SlsInvoiceController::actionGetAttachment,
             SlsMoneyController::postEditPay,
+            SlsInvoiceTypeController::actionGetAll,
         ],
 
         self::taskBuh => [
