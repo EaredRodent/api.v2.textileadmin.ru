@@ -380,12 +380,13 @@ class PrStorProdController extends ActiveControllerExtended
 
             // Скидка
             $discount = $prices->getDiscount($rec->blank_fk, $rec->print_fk);
+            $discountMultiplier = 1 - $discount / 100;
 
             $sizes = [];
             $totalMoneyProd = 0;
             foreach (Sizes::fields as $fSize) {
                 $sizes[$fSize] = $rec->$fSize;
-                $price = round($prices->getPrice($rec->blank_fk, $rec->print_fk, $fSize) * 0.71);
+                $price = round($prices->getPrice($rec->blank_fk, $rec->print_fk, $fSize) * 0.71 * $discountMultiplier);
                 $totalMoneyProd += $rec->$fSize * $price;
             }
             $totalMoney += $totalMoneyProd;
