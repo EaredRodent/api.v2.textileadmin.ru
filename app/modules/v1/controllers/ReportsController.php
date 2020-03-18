@@ -72,12 +72,9 @@ class ReportsController extends ActiveControllerExtended
         $storProd = PrStorProd::readRest(null);
         $prices = new Prices();
         foreach ($storProd as $prod) {
-            // Скидка
-            $discount = $prices->getDiscount($prod->blank_fk, $prod->print_fk);
-            $discountMultiplier = 1 - $discount / 100;
             foreach (Sizes::prices as $fSize => $fPrice) {
                 $price = $prices->getPrice($prod->blank_fk, $prod->print_fk, $fSize);
-                $sumStor += $prod->$fSize * round($price * 0.71 * $discountMultiplier);
+                $sumStor += $prod->$fSize * round($price * 0.71);
             }
         }
         $active[] = [
