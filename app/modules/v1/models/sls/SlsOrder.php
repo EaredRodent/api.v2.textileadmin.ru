@@ -172,14 +172,16 @@ class SlsOrder extends GiiSlsOrder
         if (!$dateEnd) {
             return self::find()
                 ->where(['pay_type' => SlsOrder::payBank])
-                ->andWhere(['!=', 'status', self::s0_del])
+                ->andWhere(['status' => self::s7_send])
+                //->andWhere(['!=', 'status', self::s0_del])
                 ->andWhere(['<=', 'ts_doc', $dateStart])
                 ->andWhere(['!=', 'flag_pre', 1])
                 ->all();
         } else {
             return self::find()
                 ->where(['pay_type' => SlsOrder::payBank])
-                ->andWhere(['!=', 'status', self::s0_del])
+                ->andWhere(['status' => self::s7_send])
+                //->andWhere(['!=', 'status', self::s0_del])
                 ->andWhere(['>=', 'ts_doc', $dateStart])
                 ->andWhere(['<=', 'ts_doc', $dateEnd])
                 ->andWhere(['!=', 'flag_pre', 1])
@@ -198,14 +200,16 @@ class SlsOrder extends GiiSlsOrder
         if (!$dateEnd) {
             return self::find()
                 ->where(['pay_type' => SlsOrder::payCash])
-                ->andWhere(['!=', 'status', self::s0_del])
+                ->andWhere(['status' => self::s7_send])
+                //->andWhere(['!=', 'status', self::s0_del])
                 ->andWhere(['<=', 'ts_assembl', $dateStart])
                 ->andWhere(['!=', 'flag_pre', 1])
                 ->all();
         } else {
             return self::find()
                 ->where(['pay_type' => SlsOrder::payCash])
-                ->andWhere(['!=', 'status', self::s0_del])
+                ->andWhere(['status' => self::s7_send])
+                //->andWhere(['!=', 'status', self::s0_del])
                 ->andWhere(['>=', 'ts_assembl', $dateStart])
                 ->andWhere(['<=', 'ts_assembl', $dateEnd])
                 ->andWhere(['!=', 'flag_pre', 1])
