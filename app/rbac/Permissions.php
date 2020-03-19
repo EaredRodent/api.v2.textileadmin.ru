@@ -7,6 +7,7 @@ namespace app\rbac;
 use app\modules\v1\controllers\AnxUserController;
 use app\modules\v1\controllers\BaseController;
 use app\modules\v1\controllers\CardProdController;
+use app\modules\v1\controllers\LogErrorController;
 use app\modules\v1\controllers\LogEventController;
 use app\modules\v1\controllers\OxounoApiController;
 use app\modules\v1\controllers\PrStorProdController;
@@ -81,6 +82,7 @@ class Permissions
             LogEventController::actionLogBrowser,
             AnxUserController::actionTryRestoreUser,
             AnxUserController::actionRestoreUser,
+            LogErrorController::actionLog,
         ],
         self::roleMaster => [
             self::pageTestApi,
