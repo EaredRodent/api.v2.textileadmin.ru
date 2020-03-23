@@ -42,20 +42,23 @@ $config = [
                 $bodyParams = $request->bodyParams;
                 $fullParams = array_merge($getParams, $bodyParams);
                 $fullParamsStr = json_encode($fullParams,JSON_UNESCAPED_UNICODE);
-                $arr =[
-                    'ip' => $request->userIP,
-                    'project' => (Yii::$app->user->isGuest) ? '-' : Yii::$app->user->identity->getProject(),
-                    'user_id' => (Yii::$app->user->isGuest) ? 0 : Yii::$app->user->id,
-                    'login' => (Yii::$app->user->isGuest) ? 'GUEST' : Yii::$app->user->identity->getLogin(),
-                    'method' => $request->method,
-                    'url' => explode('?' , $request->url)[0],
-                    'params' => $fullParamsStr,
-                    'app_time' => $appTime,
-                    'app_db' => $dbCountQuery,
-                    'app_memory' => str_replace(' ', '', $appMemory),
 
-                ];
-                Yii::$app->db->createCommand()->insert('log_api', $arr)->execute();
+                if($request->method !== 'OPTIONS') {
+                    $arr =[
+                        'ip' => $request->userIP,
+                        'project' => (Yii::$app->user->isGuest) ? '-' : Yii::$app->user->identity->getProject(),
+                        'user_id' => (Yii::$app->user->isGuest) ? 0 : Yii::$app->user->id,
+                        'login' => (Yii::$app->user->isGuest) ? 'GUEST' : Yii::$app->user->identity->getLogin(),
+                        'method' => $request->method,
+                        'url' => explode('?' , $request->url)[0],
+                        'params' => $fullParamsStr,
+                        'app_time' => $appTime,
+                        'app_db' => $dbCountQuery,
+                        'app_memory' => str_replace(' ', '', $appMemory),
+
+                    ];
+                    Yii::$app->db->createCommand()->insert('log_api', $arr)->execute();
+                }
 
                 $headers = Yii::$app->response->headers;
                 $headers->add('Log-Dbcount', $dbCountQuery);

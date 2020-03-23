@@ -13,5 +13,10 @@ use app\gii\GiiLogError;
 
 class LogError extends GiiLogError
 {
-
+    public function fields()
+    {
+        return array_merge(parent::fields(), [
+            'contactFk',
+        ]);
+    }
 }

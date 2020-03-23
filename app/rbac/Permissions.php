@@ -98,6 +98,7 @@ class Permissions
             self::taskSalesStatisticsB2BAccess,
             self::taskSalesStatisticsB2BWrite,
             self::taskManagementRegPaysLite,
+            self::taskLogError,
             ///
             AnxUserController::postCreateUser,
             BaseController::actionPostTestData,
@@ -170,7 +171,6 @@ class Permissions
         self::roleOlga => [
             self::taskManagementRegPaysLite,
         ],
-
 
 
         // v3
@@ -251,6 +251,8 @@ class Permissions
 
     const pageB2BAny = 'pageB2BAny';
 
+    const pageLogError = 'pageLogError';
+
     const pages = [
         self::pageRegPays => 'Реестры платежей',
         self::pageTestApi => 'Тестирование API проекта',
@@ -270,6 +272,7 @@ class Permissions
         self::pageManagementInvoiceType => 'Категории счета',
         self::pageManagementRegPaysLite => 'Счета',
         self::pageB2BAny => 'Доступ к любой странице B2B кабинета',
+        self::pageLogError => 'Страница с логом ошибок',
     ];
 
 
@@ -406,6 +409,11 @@ class Permissions
      * Экшены для страницы /management/reg-pays-lite
      */
     const taskManagementRegPaysLite = 'taskManagementRegPaysLite';
+
+    /**
+     * Экшены для страницы /base/log-error
+     */
+    const taskLogError = 'taskLogError';
 
     const tasks = [
 
@@ -718,6 +726,12 @@ class Permissions
             SlsInvoiceController::actionDeleteFile,
             SlsInvoiceController::actionGetAttachment,
             SlsInvoiceController::actionReject,
+        ],
+
+        self::taskLogError => [
+            self::pageLogError,
+            LogErrorController::actionGetClientAll,
+            LogErrorController::actionGetServerAll,
         ]
     ];
 

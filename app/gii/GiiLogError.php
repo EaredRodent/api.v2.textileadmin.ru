@@ -2,6 +2,7 @@
 
 namespace app\gii;
 
+use app\models\AnxUser;
 use Yii;
 
 /**
@@ -9,7 +10,12 @@ use Yii;
  *
  * @property int $id
  * @property string $ts_create
+ * @property string|null $page
+ * @property int|null $contact_fk
  * @property string|null $props
+ * @property string|null $screenshot
+ *
+ * @property AnxUser $contactFk
  */
 class GiiLogError extends \yii\db\ActiveRecord
 {
@@ -28,7 +34,10 @@ class GiiLogError extends \yii\db\ActiveRecord
     {
         return [
             [['ts_create'], 'safe'],
-            [['props'], 'string'],
+            [['contact_fk'], 'integer'],
+            [['props', 'screenshot'], 'string'],
+            [['page'], 'string', 'max' => 255],
+            [['contact_fk'], 'exist', 'skipOnError' => true, 'targetClass' => AnxUser::className(), 'targetAttribute' => ['contact_fk' => 'id']],
         ];
     }
 
@@ -40,7 +49,20 @@ class GiiLogError extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'ts_create' => 'Ts Create',
+            'page' => 'Page',
+            'contact_fk' => 'Contact Fk',
             'props' => 'Props',
+            'screenshot' => 'Screenshot',
         ];
+    }
+
+    /**
+     * Gets query for [[ContactFk]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getContactFk()
+    {
+        return $this->hasOne(AnxUser::className(), ['id' => 'contact_fk']);
     }
 }
