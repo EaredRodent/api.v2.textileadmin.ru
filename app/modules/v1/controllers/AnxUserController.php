@@ -137,6 +137,9 @@ class AnxUserController extends ActiveControllerExtended
         /** @var $user AnxUser */
         $am = Yii::$app->getAuthManager();
         $user = Yii::$app->getUser()->getIdentity();
+        if (!$user) {
+            throw new HttpException(200, "Гость не имеет пользовательских данных.", 200);
+        }
         $roles = $am->getAssignments($user->getId());
         if (count($roles) > 1) {
             throw new ServerErrorHttpException("Assigned user roles more than once.");
