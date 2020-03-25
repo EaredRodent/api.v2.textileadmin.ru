@@ -5,7 +5,6 @@ namespace app\services;
 
 
 use Exception;
-use PHPMailer\PHPMailer\PHPMailer;
 
 /**
  * https://github.com/PHPMailer/PHPMailer
@@ -29,7 +28,7 @@ class ServMailSend
     static function send($email, $subject, $body)
     {
         // Instantiation and passing `true` enables exceptions
-        $mail = new PHPMailer(true);
+        $mail = new Mailer(true);
 
         try {
 
@@ -93,7 +92,9 @@ class ServMailSend
             // Приложение
             //$mail->addAttachment(__DIR__ . '/image.jpg');
 
-            $mail->send();
+            if($mail->send()) {
+                $mail->copyToFolder("Sent"); // Will save into Sent folder
+            }
             return ['resp' => 'ok'];
 
         } catch (Exception $e) {
