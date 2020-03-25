@@ -16,6 +16,8 @@ class ProdWeight
     // Матрица [id модели][тип ткани][размер] = вес
     private $matrix;
 
+    private $epithetsArr = [];
+
     function __construct()
     {
         // Без принта
@@ -27,6 +29,7 @@ class ProdWeight
                     $this->matrix[$rec->model_fk][$rec->fabric_fk][$fSize] = $rec->$fSize;
                 }
             }
+            $this->epithetsArr[$rec->model_fk][$rec->fabric_fk] = $rec->epithets;
         }
     }
 
@@ -44,5 +47,40 @@ class ProdWeight
         return (isset($this->matrix[$modelId][$fabricId][$fSize])) ?
             $this->matrix[$modelId][$fabricId][$fSize] : null;
     }
+
+    /**
+     * Вернуть эпитет
+     * @param $modelId
+     * @param $fabricId
+     * @return mixed|string
+     */
+    public function getEpithets($modelId, $fabricId)
+    {
+        if (isset($this->epithetsArr[$modelId][$fabricId])) {
+            return $this->epithetsArr[$modelId][$fabricId];
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * Проверить существуют ли эпитеты
+     * @param $modelId
+     * @param $fabricId
+     * @return bool
+     */
+    public function getFlagEpithets($modelId, $fabricId)
+    {
+        if (isset($this->epithetsArr[$modelId][$fabricId])) {
+            if (trim($this->epithetsArr[$modelId][$fabricId])) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
 
 }
