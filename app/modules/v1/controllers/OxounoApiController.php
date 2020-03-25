@@ -108,6 +108,9 @@ class OxounoApiController extends ActiveControllerExtended
             $item['weight'] = $weight->getWeight(
                 $ean->blankFk->model_fk, $ean->blankFk->fabric_type_fk, $ean->size
             );
+            $item['modelFabricEpithets'] = $weight->getEpithets(
+                $ean->blankFk->model_fk, $ean->blankFk->fabric_type_fk
+            );
 
             $item['photos'] = $prodObj->fields()['photos']();
 

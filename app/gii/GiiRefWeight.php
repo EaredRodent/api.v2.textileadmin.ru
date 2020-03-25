@@ -14,23 +14,24 @@ use Yii;
  * @property string $ts_create
  * @property int $model_fk
  * @property int $fabric_fk
- * @property int $size_5xs
- * @property int $size_4xs
- * @property int $size_3xs
- * @property int $size_2xs
- * @property int $size_xs
- * @property int $size_s
- * @property int $size_m
- * @property int $size_l
- * @property int $size_xl
- * @property int $size_2xl
- * @property int $size_3xl
- * @property int $size_4xl
+ * @property int|null $size_5xs
+ * @property int|null $size_4xs
+ * @property int|null $size_3xs
+ * @property int|null $size_2xs
+ * @property int|null $size_xs
+ * @property int|null $size_s
+ * @property int|null $size_m
+ * @property int|null $size_l
+ * @property int|null $size_xl
+ * @property int|null $size_2xl
+ * @property int|null $size_3xl
+ * @property int|null $size_4xl
+ * @property string|null $epithets
  *
  * @property RefBlankModel $modelFk
  * @property RefFabricType $fabricFk
  */
-class GiiRefWeight extends ActiveRecordExtended
+class GiiRefWeight extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -49,6 +50,7 @@ class GiiRefWeight extends ActiveRecordExtended
             [['ts_create'], 'safe'],
             [['model_fk', 'fabric_fk'], 'required'],
             [['model_fk', 'fabric_fk', 'size_5xs', 'size_4xs', 'size_3xs', 'size_2xs', 'size_xs', 'size_s', 'size_m', 'size_l', 'size_xl', 'size_2xl', 'size_3xl', 'size_4xl'], 'integer'],
+            [['epithets'], 'string'],
             [['model_fk'], 'exist', 'skipOnError' => true, 'targetClass' => RefBlankModel::className(), 'targetAttribute' => ['model_fk' => 'id']],
             [['fabric_fk'], 'exist', 'skipOnError' => true, 'targetClass' => RefFabricType::className(), 'targetAttribute' => ['fabric_fk' => 'id']],
         ];
@@ -76,10 +78,13 @@ class GiiRefWeight extends ActiveRecordExtended
             'size_2xl' => 'Size 2xl',
             'size_3xl' => 'Size 3xl',
             'size_4xl' => 'Size 4xl',
+            'epithets' => 'Epithets',
         ];
     }
 
     /**
+     * Gets query for [[ModelFk]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getModelFk()
@@ -88,6 +93,8 @@ class GiiRefWeight extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[FabricFk]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getFabricFk()
