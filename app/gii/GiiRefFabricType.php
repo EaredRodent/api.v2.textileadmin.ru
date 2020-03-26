@@ -12,24 +12,25 @@ use Yii;
  * @property string $dt_create
  * @property string $type
  * @property string $type_price
- * @property string $type_en
- * @property string $struct
- * @property string $struct_en
- * @property int $desity
- * @property string $epithets
- * @property string $care1
- * @property string $care2
- * @property string $care3
- * @property string $care4
- * @property string $care5
- * @property string $care6
+ * @property string|null $type_en
+ * @property string|null $struct
+ * @property string|null $struct_en
+ * @property int|null $desity
+ * @property string|null $epithets
+ * @property string|null $care1
+ * @property string|null $care2
+ * @property string|null $care3
+ * @property string|null $care4
+ * @property string|null $care5
+ * @property string|null $care6
+ * @property string|null $collection
  *
  * @property PrStorFabric[] $prStorFabrics
  * @property RefArtBlank[] $refArtBlanks
  * @property RefWeight[] $refWeights
  * @property SpecCurve[] $specCurves
  */
-class GiiRefFabricType extends ActiveRecordExtended
+class GiiRefFabricType extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -52,6 +53,7 @@ class GiiRefFabricType extends ActiveRecordExtended
             [['type', 'type_price', 'type_en'], 'string', 'max' => 45],
             [['struct', 'struct_en'], 'string', 'max' => 245],
             [['care1', 'care2', 'care3', 'care4', 'care5', 'care6'], 'string', 'max' => 25],
+            [['collection'], 'string', 'max' => 100],
         ];
     }
 
@@ -76,10 +78,13 @@ class GiiRefFabricType extends ActiveRecordExtended
             'care4' => 'Care4',
             'care5' => 'Care5',
             'care6' => 'Care6',
+            'collection' => 'Collection',
         ];
     }
 
     /**
+     * Gets query for [[PrStorFabrics]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getPrStorFabrics()
@@ -88,6 +93,8 @@ class GiiRefFabricType extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[RefArtBlanks]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getRefArtBlanks()
@@ -96,6 +103,8 @@ class GiiRefFabricType extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[RefWeights]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getRefWeights()
@@ -104,6 +113,8 @@ class GiiRefFabricType extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[SpecCurves]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getSpecCurves()

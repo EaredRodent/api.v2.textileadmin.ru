@@ -88,6 +88,9 @@ class RefArtBlank extends GiiRefArtBlank
             'fabricCare' => function () { //
                 return $this->fabricTypeFk->calcCare();
             },
+            'collection' => function () { //
+                return $this->fabricTypeFk->collection;
+            },
             'modelId' => function () { //
                 return $this->model_fk;
             },

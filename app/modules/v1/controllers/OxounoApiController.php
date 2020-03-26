@@ -100,6 +100,7 @@ class OxounoApiController extends ActiveControllerExtended
             $item['fabricDensity'] = $prodObj->fields()['fabricDensity']();
             $item['fabricEpithets'] = $prodObj->fields()['fabricEpithets']();
             $item['fabricCare'] = $prodObj->fields()['fabricCare']();
+            $item['collection'] = $prodObj->fields()['collection']();
             $item['flagInPrice'] = $flagInPrice;
             $item['assortment'] = $prodObj->fields()['assortment']();
             $item['flagStopProd'] = $flagStopProd;

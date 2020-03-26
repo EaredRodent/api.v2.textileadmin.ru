@@ -92,6 +92,9 @@ class RefProductPrint extends GiiRefProductPrint
             'fabricCare' => function () { //
                 return $this->blankFk->fabricTypeFk->calcCare();
             },
+            'collection' => function () { //
+                return $this->blankFk->fabricTypeFk->collection;
+            },
             'modelId' => function () { //
                 return $this->blankFk->model_fk;
             },
