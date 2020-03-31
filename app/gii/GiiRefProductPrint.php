@@ -44,7 +44,7 @@ use Yii;
  * @property RefDescript $descriptFk
  * @property RefProdPrint $printFk
  */
-class GiiRefProductPrint extends \yii\db\ActiveRecord
+class GiiRefProductPrint extends ActiveRecordExtended
 {
     /**
      * {@inheritdoc}

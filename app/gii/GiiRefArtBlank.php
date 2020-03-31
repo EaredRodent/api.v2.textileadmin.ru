@@ -62,7 +62,7 @@ use Yii;
  * @property SlsPreorderItem[] $slsPreorderItems
  * @property SlsPreorderReserv[] $slsPreorderReservs
  */
-class GiiRefArtBlank extends \yii\db\ActiveRecord
+class GiiRefArtBlank extends ActiveRecordExtended
 {
     /**
      * {@inheritdoc}
