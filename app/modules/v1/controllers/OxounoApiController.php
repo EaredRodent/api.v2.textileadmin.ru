@@ -91,7 +91,6 @@ class OxounoApiController extends ActiveControllerExtended
             $item['themeId'] = $prodObj->fields()['themeId']();
             $item['themeStr'] = $prodObj->fields()['themeStr']();
             $item['themeDescript'] = $prodObj->fields()['themeDescript']();
-
             $item['print'] = $prodObj->fields()['printOxo']();
             $item['article'] = $prodObj->fields()['art']();
             $item['size'] = $ean->size;
@@ -101,6 +100,7 @@ class OxounoApiController extends ActiveControllerExtended
             $item['fabricEpithets'] = $prodObj->fields()['fabricEpithets']();
             $item['fabricCare'] = $prodObj->fields()['fabricCare']();
             $item['collection'] = $prodObj->fields()['collection']();
+            $item['prodDescription'] = $prodObj->fields()['prodDescription']();
             $item['flagInPrice'] = $flagInPrice;
             $item['assortment'] = $prodObj->fields()['assortment']();
             $item['flagStopProd'] = $flagStopProd;
@@ -109,9 +109,9 @@ class OxounoApiController extends ActiveControllerExtended
             $item['weight'] = $weight->getWeight(
                 $ean->blankFk->model_fk, $ean->blankFk->fabric_type_fk, $ean->size
             );
-            $item['modelFabricEpithets'] = $weight->getEpithets(
-                $ean->blankFk->model_fk, $ean->blankFk->fabric_type_fk
-            );
+//            $item['modelFabricEpithets'] = $weight->getEpithets(
+//                $ean->blankFk->model_fk, $ean->blankFk->fabric_type_fk
+//            );
 
             $item['photos'] = $prodObj->fields()['photos']();
 

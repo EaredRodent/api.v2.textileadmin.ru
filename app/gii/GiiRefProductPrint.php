@@ -4,6 +4,8 @@ namespace app\gii;
 
 use app\modules\v1\classes\ActiveRecordExtended;
 use app\modules\v1\models\ref\RefArtBlank;
+use app\modules\v1\models\ref\RefCollection;
+use app\modules\v1\models\ref\RefDescript;
 use app\modules\v1\models\ref\RefProdPrint;
 use Yii;
 
@@ -19,26 +21,30 @@ use Yii;
  * @property int $flag_price_on
  * @property int $flag_bazar
  * @property int $flag_bazar_on
- * @property int $price_5xs
- * @property int $price_4xs
- * @property int $price_3xs
- * @property int $price_2xs
- * @property int $price_xs
- * @property int $price_s
- * @property int $price_m
- * @property int $price_l
- * @property int $price_xl
- * @property int $price_2xl
- * @property int $price_3xl
- * @property int $price_4xl
- * @property string $assortiment
+ * @property int|null $price_5xs
+ * @property int|null $price_4xs
+ * @property int|null $price_3xs
+ * @property int|null $price_2xs
+ * @property int|null $price_xs
+ * @property int|null $price_s
+ * @property int|null $price_m
+ * @property int|null $price_l
+ * @property int|null $price_xl
+ * @property int|null $price_2xl
+ * @property int|null $price_3xl
+ * @property int|null $price_4xl
+ * @property string|null $assortiment
  * @property int $flag_stop_prod
  * @property int $discount
+ * @property int|null $collection_fk
+ * @property int|null $descript_fk
  *
  * @property RefArtBlank $blankFk
+ * @property RefCollection $collectionFk
+ * @property RefDescript $descriptFk
  * @property RefProdPrint $printFk
  */
-class GiiRefProductPrint extends ActiveRecordExtended
+class GiiRefProductPrint extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -56,9 +62,11 @@ class GiiRefProductPrint extends ActiveRecordExtended
         return [
             [['ts_create', 'ts_update'], 'safe'],
             [['blank_fk', 'print_fk'], 'required'],
-            [['blank_fk', 'print_fk', 'flag_price', 'flag_price_on', 'flag_bazar', 'flag_bazar_on', 'price_5xs', 'price_4xs', 'price_3xs', 'price_2xs', 'price_xs', 'price_s', 'price_m', 'price_l', 'price_xl', 'price_2xl', 'price_3xl', 'price_4xl', 'flag_stop_prod', 'discount'], 'integer'],
+            [['blank_fk', 'print_fk', 'flag_price', 'flag_price_on', 'flag_bazar', 'flag_bazar_on', 'price_5xs', 'price_4xs', 'price_3xs', 'price_2xs', 'price_xs', 'price_s', 'price_m', 'price_l', 'price_xl', 'price_2xl', 'price_3xl', 'price_4xl', 'flag_stop_prod', 'discount', 'collection_fk', 'descript_fk'], 'integer'],
             [['assortiment'], 'string'],
             [['blank_fk'], 'exist', 'skipOnError' => true, 'targetClass' => RefArtBlank::className(), 'targetAttribute' => ['blank_fk' => 'id']],
+            [['collection_fk'], 'exist', 'skipOnError' => true, 'targetClass' => RefCollection::className(), 'targetAttribute' => ['collection_fk' => 'id']],
+            [['descript_fk'], 'exist', 'skipOnError' => true, 'targetClass' => RefDescript::className(), 'targetAttribute' => ['descript_fk' => 'id']],
             [['print_fk'], 'exist', 'skipOnError' => true, 'targetClass' => RefProdPrint::className(), 'targetAttribute' => ['print_fk' => 'id']],
         ];
     }
@@ -93,10 +101,14 @@ class GiiRefProductPrint extends ActiveRecordExtended
             'assortiment' => 'Assortiment',
             'flag_stop_prod' => 'Flag Stop Prod',
             'discount' => 'Discount',
+            'collection_fk' => 'Collection Fk',
+            'descript_fk' => 'Descript Fk',
         ];
     }
 
     /**
+     * Gets query for [[BlankFk]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getBlankFk()
@@ -105,6 +117,28 @@ class GiiRefProductPrint extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[CollectionFk]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCollectionFk()
+    {
+        return $this->hasOne(RefCollection::className(), ['id' => 'collection_fk']);
+    }
+
+    /**
+     * Gets query for [[DescriptFk]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDescriptFk()
+    {
+        return $this->hasOne(RefDescript::className(), ['id' => 'descript_fk']);
+    }
+
+    /**
+     * Gets query for [[PrintFk]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getPrintFk()

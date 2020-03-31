@@ -6,6 +6,8 @@ use app\modules\v1\classes\ActiveRecordExtended;
 use app\modules\v1\models\pr\PrStorProd;
 use app\modules\v1\models\ref\RefBlankModel;
 use app\modules\v1\models\ref\RefBlankTheme;
+use app\modules\v1\models\ref\RefCollection;
+use app\modules\v1\models\ref\RefDescript;
 use app\modules\v1\models\ref\RefFabricType;
 use app\modules\v1\models\ref\RefProductPrint;
 use app\modules\v1\models\sls\SlsItem;
@@ -19,27 +21,29 @@ use Yii;
  * @property int $model_fk
  * @property int $fabric_type_fk
  * @property int $theme_fk
- * @property string $comment
- * @property int $weight_fabric
+ * @property string|null $comment
+ * @property int|null $weight_fabric
  * @property int $flag_price
- * @property int $price_5xs
- * @property int $price_4xs
- * @property int $price_3xs
- * @property int $price_2xs
- * @property int $price_xs
- * @property int $price_s
- * @property int $price_m
- * @property int $price_l
- * @property int $price_xl
- * @property int $price_2xl
- * @property int $price_3xl
- * @property int $price_4xl
- * @property int $flag_best_photo
- * @property int $min_rest
- * @property int $mid_rest
- * @property string $assortment
+ * @property int|null $price_5xs
+ * @property int|null $price_4xs
+ * @property int|null $price_3xs
+ * @property int|null $price_2xs
+ * @property int|null $price_xs
+ * @property int|null $price_s
+ * @property int|null $price_m
+ * @property int|null $price_l
+ * @property int|null $price_xl
+ * @property int|null $price_2xl
+ * @property int|null $price_3xl
+ * @property int|null $price_4xl
+ * @property int|null $flag_best_photo
+ * @property int|null $min_rest
+ * @property int|null $mid_rest
+ * @property string|null $assortment
  * @property int $flag_stop_prod
  * @property int $discount
+ * @property int|null $collection_fk
+ * @property int|null $descript_fk
  *
  * @property PrInventItem[] $prInventItems
  * @property PrLot[] $prLots
@@ -47,6 +51,8 @@ use Yii;
  * @property PrTaskCutItem[] $prTaskCutItems
  * @property PrWaybillItem[] $prWaybillItems
  * @property PrWsCut[] $prWsCuts
+ * @property RefCollection $collectionFk
+ * @property RefDescript $descriptFk
  * @property RefBlankModel $modelFk
  * @property RefFabricType $fabricTypeFk
  * @property RefBlankTheme $themeFk
@@ -56,7 +62,7 @@ use Yii;
  * @property SlsPreorderItem[] $slsPreorderItems
  * @property SlsPreorderReserv[] $slsPreorderReservs
  */
-class GiiRefArtBlank extends ActiveRecordExtended
+class GiiRefArtBlank extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -74,9 +80,11 @@ class GiiRefArtBlank extends ActiveRecordExtended
         return [
             [['dt_create'], 'safe'],
             [['model_fk', 'fabric_type_fk', 'theme_fk'], 'required'],
-            [['model_fk', 'fabric_type_fk', 'theme_fk', 'weight_fabric', 'flag_price', 'price_5xs', 'price_4xs', 'price_3xs', 'price_2xs', 'price_xs', 'price_s', 'price_m', 'price_l', 'price_xl', 'price_2xl', 'price_3xl', 'price_4xl', 'flag_best_photo', 'min_rest', 'mid_rest', 'flag_stop_prod', 'discount'], 'integer'],
+            [['model_fk', 'fabric_type_fk', 'theme_fk', 'weight_fabric', 'flag_price', 'price_5xs', 'price_4xs', 'price_3xs', 'price_2xs', 'price_xs', 'price_s', 'price_m', 'price_l', 'price_xl', 'price_2xl', 'price_3xl', 'price_4xl', 'flag_best_photo', 'min_rest', 'mid_rest', 'flag_stop_prod', 'discount', 'collection_fk', 'descript_fk'], 'integer'],
             [['assortment'], 'string'],
             [['comment'], 'string', 'max' => 245],
+            [['collection_fk'], 'exist', 'skipOnError' => true, 'targetClass' => RefCollection::className(), 'targetAttribute' => ['collection_fk' => 'id']],
+            [['descript_fk'], 'exist', 'skipOnError' => true, 'targetClass' => RefDescript::className(), 'targetAttribute' => ['descript_fk' => 'id']],
             [['model_fk'], 'exist', 'skipOnError' => true, 'targetClass' => RefBlankModel::className(), 'targetAttribute' => ['model_fk' => 'id']],
             [['fabric_type_fk'], 'exist', 'skipOnError' => true, 'targetClass' => RefFabricType::className(), 'targetAttribute' => ['fabric_type_fk' => 'id']],
             [['theme_fk'], 'exist', 'skipOnError' => true, 'targetClass' => RefBlankTheme::className(), 'targetAttribute' => ['theme_fk' => 'id']],
@@ -115,10 +123,14 @@ class GiiRefArtBlank extends ActiveRecordExtended
             'assortment' => 'Assortment',
             'flag_stop_prod' => 'Flag Stop Prod',
             'discount' => 'Discount',
+            'collection_fk' => 'Collection Fk',
+            'descript_fk' => 'Descript Fk',
         ];
     }
 
     /**
+     * Gets query for [[PrInventItems]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getPrInventItems()
@@ -127,6 +139,8 @@ class GiiRefArtBlank extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[PrLots]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getPrLots()
@@ -135,6 +149,8 @@ class GiiRefArtBlank extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[PrStorProds]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getPrStorProds()
@@ -143,6 +159,8 @@ class GiiRefArtBlank extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[PrTaskCutItems]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getPrTaskCutItems()
@@ -151,6 +169,8 @@ class GiiRefArtBlank extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[PrWaybillItems]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getPrWaybillItems()
@@ -159,6 +179,8 @@ class GiiRefArtBlank extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[PrWsCuts]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getPrWsCuts()
@@ -167,6 +189,28 @@ class GiiRefArtBlank extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[CollectionFk]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCollectionFk()
+    {
+        return $this->hasOne(RefCollection::className(), ['id' => 'collection_fk']);
+    }
+
+    /**
+     * Gets query for [[DescriptFk]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDescriptFk()
+    {
+        return $this->hasOne(RefDescript::className(), ['id' => 'descript_fk']);
+    }
+
+    /**
+     * Gets query for [[ModelFk]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getModelFk()
@@ -175,6 +219,8 @@ class GiiRefArtBlank extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[FabricTypeFk]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getFabricTypeFk()
@@ -183,6 +229,8 @@ class GiiRefArtBlank extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[ThemeFk]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getThemeFk()
@@ -191,6 +239,8 @@ class GiiRefArtBlank extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[RefEans]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getRefEans()
@@ -199,6 +249,8 @@ class GiiRefArtBlank extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[RefProductPrints]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getRefProductPrints()
@@ -207,6 +259,8 @@ class GiiRefArtBlank extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[SlsItems]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getSlsItems()
@@ -215,6 +269,8 @@ class GiiRefArtBlank extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[SlsPreorderItems]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getSlsPreorderItems()
@@ -223,6 +279,8 @@ class GiiRefArtBlank extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[SlsPreorderReservs]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getSlsPreorderReservs()
