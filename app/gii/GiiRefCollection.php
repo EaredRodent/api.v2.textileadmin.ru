@@ -2,8 +2,7 @@
 
 namespace app\gii;
 
-use app\modules\v1\models\ref\RefArtBlank;
-use app\modules\v1\models\ref\RefProductPrint;
+use app\modules\v1\classes\ActiveRecordExtended;
 use Yii;
 
 /**
@@ -13,11 +12,13 @@ use Yii;
  * @property string $ts_create
  * @property string $name
  * @property string|null $comment
+ * @property int $flag_in_price
+ * @property string|null $epithets
  *
  * @property RefArtBlank[] $refArtBlanks
  * @property RefProductPrint[] $refProductPrints
  */
-class GiiRefCollection extends \yii\db\ActiveRecord
+class GiiRefCollection extends ActiveRecordExtended
 {
     /**
      * {@inheritdoc}
@@ -35,8 +36,10 @@ class GiiRefCollection extends \yii\db\ActiveRecord
         return [
             [['ts_create'], 'safe'],
             [['name'], 'required'],
+            [['flag_in_price'], 'integer'],
+            [['epithets'], 'string'],
             [['name'], 'string', 'max' => 50],
-            [['comment'], 'string', 'max' => 255],
+            [['comment'], 'string', 'max' => 200],
         ];
     }
 
@@ -50,6 +53,8 @@ class GiiRefCollection extends \yii\db\ActiveRecord
             'ts_create' => 'Ts Create',
             'name' => 'Name',
             'comment' => 'Comment',
+            'flag_in_price' => 'Flag In Price',
+            'epithets' => 'Epithets',
         ];
     }
 

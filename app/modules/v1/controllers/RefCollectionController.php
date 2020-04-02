@@ -26,6 +26,7 @@ class RefCollectionController extends ActiveControllerExtended
     {
         return RefCollection::find()
             ->innerJoin('ref_art_blank', 'ref_art_blank.collection_fk = ref_collection.id')
+            ->andWhere(['flag_in_price' => 1])
             ->all();
     }
 }
