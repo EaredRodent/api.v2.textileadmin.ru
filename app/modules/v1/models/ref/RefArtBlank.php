@@ -377,7 +377,7 @@ class RefArtBlank extends GiiRefArtBlank
      * @param $fabTypeTags
      * @return array|self[]
      */
-    public static function readFilterProds($newProdIDs, $discountOnly, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags)
+    public static function readFilterProds($newProdIDs, $discountOnly, $sexTitles, $collectionIDs, $groupIDs, $classTags, $themeTags, $fabTypeTags)
     {
         $activeQuery = self::find()
             ->joinWith('modelFk.sexFk')
@@ -385,8 +385,10 @@ class RefArtBlank extends GiiRefArtBlank
             ->joinWith('modelFk.classFk.groupFk')
             ->joinWith('fabricTypeFk')
             ->joinWith('themeFk')
+            ->joinWith('collectionFk')
             ->filterWhere(['ref_art_blank.id' => $newProdIDs])
             ->andfilterWhere(['in', 'ref_blank_sex.title', $sexTitles])
+            ->andFilterWhere(['in', 'ref_collection.id', $collectionIDs])
             ->andfilterWhere(['in', 'ref_blank_group.id', $groupIDs])
             ->andFilterWhere(['in', 'ref_blank_class.oxouno', $classTags])
             ->andFilterWhere(['in', 'ref_blank_theme.title_price', $themeTags])

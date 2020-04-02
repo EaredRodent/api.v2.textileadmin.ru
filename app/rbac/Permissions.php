@@ -17,6 +17,7 @@ use app\modules\v1\controllers\RefBlankGroupController;
 use app\modules\v1\controllers\RefBlankModelController;
 use app\modules\v1\controllers\RefBlankSexController;
 use app\modules\v1\controllers\RefBlankThemeController;
+use app\modules\v1\controllers\RefCollectionController;
 use app\modules\v1\controllers\RefFabricTypeController;
 use app\modules\v1\controllers\RefProdPackController;
 use app\modules\v1\controllers\RefProdPrintController;
@@ -503,6 +504,7 @@ class Permissions
             RefFabricTypeController::actionGetFabricTypes,
             RefArtBlankController::actionGetByFilters,
             RefArtBlankController::actionGetByFilters2,
+            RefCollectionController::actionGetAll,
             CardProdController::actionGetByFilters,
 
             // Карта товара

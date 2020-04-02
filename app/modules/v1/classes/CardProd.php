@@ -138,6 +138,7 @@ class CardProd
         $search = isset($form['search']) ? $form['search'] : '';
         $newOnly = isset($form['newOnly']) ? $form['newOnly'] : false;
         $discountOnly = isset($form['discountOnly']) ? $form['discountOnly'] : false;
+        $collectionIDs = isset($form['collectionIDs']) ? $form['collectionIDs'] : [];
         $groupIDs = isset($form['groupIDs']) ? $form['groupIDs'] : [];
         $classTags = isset($form['classTags']) ? $form['classTags'] : [];
         $themeTags = isset($form['themeTags']) ? $form['themeTags'] : [];
@@ -166,14 +167,14 @@ class CardProd
         $filteredProdsPrint = [];
 
         if ($print === 'all') {
-            $filteredProds = RefArtBlank::readFilterProds($newProdIDs, $discountOnly, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
-            $filteredProdsPrint = RefProductPrint::readFilterProds($newPrintProdIDs, $discountOnly, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
+            $filteredProds = RefArtBlank::readFilterProds($newProdIDs, $discountOnly, $sexTitles, $collectionIDs, $groupIDs, $classTags, $themeTags, $fabTypeTags);
+            $filteredProdsPrint = RefProductPrint::readFilterProds($newPrintProdIDs, $discountOnly, $sexTitles, $collectionIDs, $groupIDs, $classTags, $themeTags, $fabTypeTags);
         }
         if ($print === 'yes') {
-            $filteredProdsPrint = RefProductPrint::readFilterProds($newPrintProdIDs, $discountOnly, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
+            $filteredProdsPrint = RefProductPrint::readFilterProds($newPrintProdIDs, $discountOnly, $sexTitles, $collectionIDs, $groupIDs, $classTags, $themeTags, $fabTypeTags);
         }
         if ($print === 'no') {
-            $filteredProds = RefArtBlank::readFilterProds($newProdIDs, $discountOnly, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags);
+            $filteredProds = RefArtBlank::readFilterProds($newProdIDs, $discountOnly, $sexTitles, $collectionIDs, $groupIDs, $classTags, $themeTags, $fabTypeTags);
         }
 
         $prodRests = new ProdRest();
@@ -195,14 +196,14 @@ class CardProd
         $filteredProdsPrint2 = [];
 
         if ($print === 'all') {
-            $filteredProds2 = RefArtBlank::readFilterProds($newProdIDs, $discountOnly, $sexTitles, $groupIDs, $classTags, [], []);
-            $filteredProdsPrint2 = RefProductPrint::readFilterProds($newPrintProdIDs, $discountOnly, $sexTitles, $groupIDs, $classTags, [], []);
+            $filteredProds2 = RefArtBlank::readFilterProds($newProdIDs, $discountOnly, $sexTitles, $collectionIDs, $groupIDs, $classTags, [], []);
+            $filteredProdsPrint2 = RefProductPrint::readFilterProds($newPrintProdIDs, $discountOnly, $sexTitles, $collectionIDs, $groupIDs, $classTags, [], []);
         }
         if ($print === 'yes') {
-            $filteredProdsPrint2 = RefProductPrint::readFilterProds($newPrintProdIDs, $discountOnly, $sexTitles, $groupIDs, $classTags, [], []);
+            $filteredProdsPrint2 = RefProductPrint::readFilterProds($newPrintProdIDs, $discountOnly, $sexTitles, $collectionIDs, $groupIDs, $classTags, [], []);
         }
         if ($print === 'no') {
-            $filteredProds2 = RefArtBlank::readFilterProds($newProdIDs, $discountOnly, $sexTitles, $groupIDs, $classTags, [], []);
+            $filteredProds2 = RefArtBlank::readFilterProds($newProdIDs, $discountOnly, $sexTitles, $collectionIDs, $groupIDs, $classTags, [], []);
         }
 
         /** @var CardProd[] $arrCards2 */

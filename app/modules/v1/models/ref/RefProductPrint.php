@@ -230,7 +230,7 @@ class RefProductPrint extends GiiRefProductPrint
      * @param $fabTypeTags
      * @return array|self[]
      */
-    public static function readFilterProds($newProdIDs, $discountOnly, $sexTitles, $groupIDs, $classTags, $themeTags, $fabTypeTags)
+    public static function readFilterProds($newProdIDs, $discountOnly, $sexTitles, $collectionIDs, $groupIDs, $classTags, $themeTags, $fabTypeTags)
     {
         $activeQuery = self::find()
             ->joinWith('blankFk.modelFk.sexFk')
@@ -238,8 +238,10 @@ class RefProductPrint extends GiiRefProductPrint
             ->joinWith('blankFk.modelFk.classFk.groupFk')
             ->joinWith('blankFk.fabricTypeFk')
             ->joinWith('blankFk.themeFk')
+            ->joinWith('collectionFk')
             ->filterWhere(['ref_product_print.id' => $newProdIDs])
             ->andfilterWhere(['in', 'ref_blank_sex.title', $sexTitles])
+            ->andFilterWhere(['in', 'ref_collection.id', $collectionIDs])
             ->andfilterWhere(['in', 'ref_blank_group.id', $groupIDs])
             ->andFilterWhere(['in', 'ref_blank_class.oxouno', $classTags])
             ->andFilterWhere(['in', 'ref_blank_theme.title_price', $themeTags])
