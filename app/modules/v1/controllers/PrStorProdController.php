@@ -8,6 +8,7 @@
 
 namespace app\modules\v1\controllers;
 
+use app\extension\ProdRest;
 use app\extension\Sizes;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\pr\PrStorProd;
@@ -661,4 +662,230 @@ class PrStorProdController extends ActiveControllerExtended
     }
 
 
+    const actionTree = 'GET /v1/pr-stor-prod/tree';
+
+    /**
+     * Возвращает список изделий для страницы "Склад v3"
+     * @return array
+     * @throws \Exception
+     */
+    public function actionTree()
+    {
+        /**
+         * Сгруппировать продукт по blank_fk, print_fk и pack_fk, суммировать размеры
+         * @return PrStorProd[]
+         */
+        function getProds()
+        {
+            return PrStorProd::find()
+                ->select(array_merge(['{{pr_stor_prod}}.*'], Sizes::selectSumAbs))
+                ->joinWith(['blankFk.modelFk.classFk.groupFk', 'blankFk.fabricTypeFk', 'blankFk.themeFk'])
+                ->having('totalSum > 0')
+                ->groupBy('blank_fk, print_fk, pack_fk')
+                ->orderBy('ref_blank_group.sort, ref_fabric_type.type, ref_blank_theme.title, blank_fk, print_fk, pack_fk')
+                ->all();
+        }
+
+        /**
+         * Сформировать массив объектов с нужными свойствами на основе массива сгруппированных продуктов
+         * @param $prods PrStorProd[]
+         * @return array
+         */
+        function normalizeProds($prods)
+        {
+            $sexMale = [
+                'value' => 1,
+                'text' => 'Мужчинам'
+            ];
+            $sexFemale = [
+                'value' => 2,
+                'text' => 'Женщинам'
+            ];
+
+            $sexKids = [
+                'value' => 3,
+                'text' => 'Детям'
+            ];
+
+            $sexTranslate = [
+                1 => $sexMale,
+                2 => $sexFemale,
+                3 => $sexKids,
+                4 => $sexKids,
+                5 => $sexFemale,
+                6 => $sexKids,
+            ];
+
+            $assortTranslate = [
+                'base' => 'Базовый ассортимент',
+                'period' => 'Периодический ассортимент',
+                null => 'Не определен',
+            ];
+
+            $prices = new Prices();
+
+            // Массив [объекты со свойствами]
+            $result = [];
+
+            foreach ($prods as $prod) {
+                // Пол
+                $sexValue = $prod->blankFk->modelFk->sex_fk;
+                $sexId = $sexTranslate[$sexValue]['value'];
+                $sexText = $sexTranslate[$sexValue]['text'];
+
+                // Ассортимент
+                $assortValue = $prod->blankFk->assortment;
+                $assortText = $assortTranslate[$assortValue];
+
+                // Группы
+                $groupId = $prod->blankFk->modelFk->classFk->group_fk;
+                $groupText = $prod->blankFk->modelFk->classFk->groupFk->title;
+                $groupSort = $prod->blankFk->modelFk->classFk->groupFk->sort;
+
+                // Наименование
+                $classId = $prod->blankFk->modelFk->class_fk;
+                $classText = $prod->blankFk->modelFk->classFk->title;
+
+                // Модель
+
+                $modelId = $prod->blankFk->model_fk;
+                $modelText = $prod->blankFk->modelFk->fashion;
+
+                // Скидка
+                $discount = $prices->getDiscount($prod->blank_fk, $prod->print_fk);
+
+                // Колллекция
+                if (!$prod->blankFk->collectionFk) {
+                    continue;
+                }
+                $collectionId = $prod->blankFk->collection_fk;
+                $collectionText = $prod->blankFk->collectionFk ? $prod->blankFk->collectionFk->name : 'Вне коллекции';
+
+                //Товары
+                $sizesFields = ($sexText == 'Детям') ? Sizes::fieldsRangeKids : Sizes::fieldsRangeAdult;
+                $sizesVal = [];
+                $totalMoney = 0;
+                foreach ($sizesFields as $fSize => $strSize) {
+                    $sizesVal[] = ['name' => $strSize, 'count' => $prod->$fSize];
+                    $price29 = round($prices->getPrice($prod->blank_fk, $prod->print_fk, $fSize) * 0.71);
+                    $totalMoney += $prod->$fSize * $price29;
+                }
+
+                $prod = [
+                    'prodId' => $prod->blank_fk,
+                    'printId' => $prod->print_fk,
+                    'packId' => $prod->pack_fk,
+                    'art' => $prod->blankFk->hClientArt($prod->print_fk),
+                    'fabric' => $prod->blankFk->fabricTypeFk->type,
+                    'color' => $prod->blankFk->themeFk->title,
+                    'print' => $prod->printFk->id === 1 ? "" : $prod->printFk->title,
+                    'basePrice' => $prices->getMinPrice($prod->blank_fk, $prod->print_fk),
+                    'flagInPrice' => $prices->getFlagInPrice($prod->blank_fk, $prod->print_fk),
+                    'flagInProd' => !(bool)$prod->blankFk->flag_stop_prod,
+                    'sizes' => $sizesVal,
+                    'count' => (int)$prod->totalSum,
+                    'price' => $totalMoney,
+                    'discount' => $discount,
+                    'sexId' => $sexId,
+                    'sex' => $sexText,
+                    'assort' => $assortText,
+                    'groupId' => $groupId,
+                    'group' => $groupText,
+                    'groupSort' => $groupSort,
+                    'class' => $classText,
+                    'collectionId' => $collectionId,
+                    'collection' => $collectionText,
+                    'modelId' => $modelId,
+                    'model' => $modelText
+                ];
+
+                $result[] = $prod;
+            }
+
+            return $result;
+        }
+
+        /**
+         * Создать дерево с уровнями group/collection/sex/model/prod из массива объектов
+         * Каждый уровень (кроме последнего prod) это массив объектов с структурой:
+         * { name: '', nextLevelArr: [] }
+         * @param $prods
+         * @return array
+         */
+        function makeTree($prods)
+        {
+            $tree['groupArr'] = [];
+            $tree['count'] = 0;
+            $tree['price'] = 0;
+
+            foreach ($prods as $prod) {
+                $groupArr = &$tree['groupArr'];
+
+                if (!isset($groupArr[$prod['groupSort']])) {
+                    $groupArr[$prod['groupSort']]['name'] = $prod['group'];
+                    $groupArr[$prod['groupSort']]['collectionArr'] = [];
+                    $groupArr[$prod['groupSort']]['prodArr'] = [];
+                    $groupArr[$prod['groupSort']]['count'] = 0;
+                    $groupArr[$prod['groupSort']]['price'] = 0;
+                }
+
+                $collectionArr = &$groupArr[$prod['groupSort']]['collectionArr'];
+
+                if (!isset($collectionArr[$prod['collectionId']])) {
+                    $collectionArr[$prod['collectionId']]['name'] = $prod['collection'];
+                    $collectionArr[$prod['collectionId']]['sexArr'] = [];
+                    $collectionArr[$prod['collectionId']]['prodArr'] = [];
+                    $collectionArr[$prod['collectionId']]['count'] = 0;
+                    $collectionArr[$prod['collectionId']]['price'] = 0;
+                }
+
+                $sexArr = &$collectionArr[$prod['collectionId']]['sexArr'];
+
+                if (!isset($sexArr[$prod['sexId']])) {
+                    $sexArr[$prod['sexId']]['name'] = $prod['sex'];
+                    $sexArr[$prod['sexId']]['modelArr'] = [];
+                    $sexArr[$prod['sexId']]['prodArr'] = [];
+                    $sexArr[$prod['sexId']]['count'] = 0;
+                    $sexArr[$prod['sexId']]['price'] = 0;
+                }
+
+                $modelArr = &$sexArr[$prod['sexId']]['modelArr'];
+
+                if (!isset($modelArr[$prod['modelId']])) {
+                    $modelArr[$prod['modelId']]['name'] = $prod['model'];
+                    $modelArr[$prod['modelId']]['prodArr'] = [];
+                    $modelArr[$prod['modelId']]['count'] = 0;
+                    $modelArr[$prod['modelId']]['price'] = 0;
+                }
+
+                $prodArrFromGroup = &$groupArr[$prod['groupSort']]['prodArr'];
+                $prodArrFromCollection = &$collectionArr[$prod['collectionId']]['prodArr'];
+                $prodArrFromSex = &$sexArr[$prod['sexId']]['prodArr'];
+                $prodArrFromModel = &$modelArr[$prod['modelId']]['prodArr'];
+
+                $prodArrFromGroup[] = $prod;
+                $prodArrFromCollection[] = $prod;
+                $prodArrFromSex[] = $prod;
+                $prodArrFromModel[] = $prod;
+
+                $tree['count'] += $prod['count'];
+                $groupArr[$prod['groupSort']]['count'] += $prod['count'];
+                $collectionArr[$prod['collectionId']]['count'] += $prod['count'];
+                $sexArr[$prod['sexId']]['count'] += $prod['count'];
+                $modelArr[$prod['modelId']]['count'] += $prod['count'];
+
+                $tree['price'] += $prod['price'];
+                $groupArr[$prod['groupSort']]['price'] += $prod['price'];
+                $collectionArr[$prod['collectionId']]['price'] += $prod['price'];
+                $sexArr[$prod['sexId']]['price'] += $prod['price'];
+                $modelArr[$prod['modelId']]['price'] += $prod['price'];
+            }
+            return $tree;
+        }
+
+        $prods = getProds();
+        $normalizedProds = normalizeProds($prods);
+        $tree = makeTree($normalizedProds);
+        return $tree;
+    }
 }

@@ -240,6 +240,7 @@ class Permissions
 
     const pageReportsProdRest = 'pageReportsProdRest';
     const pageReportsProdRest2 = 'pageReportsProdRest2';
+    const pageReportsProdRest3 = 'pageReportsProdRest3';
 
     const pageReportsEnterpriseBalance = 'pageReportsEnterpriseBalance';
     const pageReportsEnterpriseBalanceEdit = 'pageReportsEnterpriseBalanceEdit';
@@ -636,10 +637,15 @@ class Permissions
 
             RefArtBlankController::actionSetDiscount,
 
+            // Склад v3
+
+            PrStorProdController::actionTree,
+
             // Доступ к странице
 
             self::pageReportsProdRest,
             self::pageReportsProdRest2,
+            self::pageReportsProdRest3,
         ],
 
         self::taskV3Invoices => [
