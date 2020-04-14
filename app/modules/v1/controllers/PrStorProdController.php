@@ -679,10 +679,10 @@ class PrStorProdController extends ActiveControllerExtended
         {
             return PrStorProd::find()
                 ->select(array_merge(['{{pr_stor_prod}}.*'], Sizes::selectSumAbs))
-                ->joinWith(['blankFk.modelFk.classFk.groupFk', 'blankFk.fabricTypeFk', 'blankFk.themeFk'])
+                ->joinWith(['blankFk.modelFk.classFk.groupFk', 'blankFk.fabricTypeFk', 'blankFk.themeFk', 'blankFk.collectionFk'])
                 ->having('totalSum > 0')
                 ->groupBy('blank_fk, print_fk, pack_fk')
-                ->orderBy('ref_blank_group.sort, ref_fabric_type.type, ref_blank_theme.title, blank_fk, print_fk, pack_fk')
+                ->orderBy('ref_blank_group.sort, ref_collection.name, ref_blank_model.sort, ref_blank_theme.title, blank_fk, print_fk, pack_fk')
                 ->all();
         }
 
@@ -738,9 +738,8 @@ class PrStorProdController extends ActiveControllerExtended
                 $assortText = $assortTranslate[$assortValue];
 
                 // Группы
-                $groupId = $prod->blankFk->modelFk->classFk->group_fk;
+                $groupId = ' ' . $prod->blankFk->modelFk->classFk->group_fk;
                 $groupText = $prod->blankFk->modelFk->classFk->groupFk->title;
-                $groupSort = $prod->blankFk->modelFk->classFk->groupFk->sort;
 
                 // Наименование
                 $classId = $prod->blankFk->modelFk->class_fk;
@@ -748,7 +747,7 @@ class PrStorProdController extends ActiveControllerExtended
 
                 // Модель
 
-                $modelId = $prod->blankFk->model_fk;
+                $modelId = ' ' . $prod->blankFk->model_fk;
                 $modelText = $prod->blankFk->modelFk->fashion;
 
                 // Скидка
@@ -758,15 +757,26 @@ class PrStorProdController extends ActiveControllerExtended
                 if (!$prod->blankFk->collectionFk) {
                     continue;
                 }
-                $collectionId = $prod->blankFk->collection_fk;
+                $collectionId = ' ' . $prod->blankFk->collection_fk;
                 $collectionText = $prod->blankFk->collectionFk ? $prod->blankFk->collectionFk->name : 'Вне коллекции';
 
                 //Товары
                 $sizesFields = ($sexText == 'Детям') ? Sizes::fieldsRangeKids : Sizes::fieldsRangeAdult;
                 $sizesVal = [];
                 $totalMoney = 0;
-                foreach ($sizesFields as $fSize => $strSize) {
-                    $sizesVal[] = ['name' => $strSize, 'count' => $prod->$fSize];
+                $realSizes = [
+                    'size_xs',
+                    'size_s',
+                    'size_m',
+                    'size_l',
+                    'size_xl',
+                    'size_2xl',
+                    'size_3xl',
+                    'size_4xl',
+                ];
+                foreach ($realSizes as $fSize) {
+                    $sizesVal[] = ['name' => Sizes::adults[$fSize] . ' ' . Sizes::kids[$fSize], 'count' => $prod->$fSize];
+
                     $price29 = round($prices->getPrice($prod->blank_fk, $prod->print_fk, $fSize) * 0.71);
                     $totalMoney += $prod->$fSize * $price29;
                 }
@@ -791,7 +801,6 @@ class PrStorProdController extends ActiveControllerExtended
                     'assort' => $assortText,
                     'groupId' => $groupId,
                     'group' => $groupText,
-                    'groupSort' => $groupSort,
                     'class' => $classText,
                     'collectionId' => $collectionId,
                     'collection' => $collectionText,
@@ -821,15 +830,15 @@ class PrStorProdController extends ActiveControllerExtended
             foreach ($prods as $prod) {
                 $groupArr = &$tree['groupArr'];
 
-                if (!isset($groupArr[$prod['groupSort']])) {
-                    $groupArr[$prod['groupSort']]['name'] = $prod['group'];
-                    $groupArr[$prod['groupSort']]['collectionArr'] = [];
-                    $groupArr[$prod['groupSort']]['prodArr'] = [];
-                    $groupArr[$prod['groupSort']]['count'] = 0;
-                    $groupArr[$prod['groupSort']]['price'] = 0;
+                if (!isset($groupArr[$prod['groupId']])) {
+                    $groupArr[$prod['groupId']]['name'] = $prod['group'];
+                    $groupArr[$prod['groupId']]['collectionArr'] = [];
+                    $groupArr[$prod['groupId']]['prodArr'] = [];
+                    $groupArr[$prod['groupId']]['count'] = 0;
+                    $groupArr[$prod['groupId']]['price'] = 0;
                 }
 
-                $collectionArr = &$groupArr[$prod['groupSort']]['collectionArr'];
+                $collectionArr = &$groupArr[$prod['groupId']]['collectionArr'];
 
                 if (!isset($collectionArr[$prod['collectionId']])) {
                     $collectionArr[$prod['collectionId']]['name'] = $prod['collection'];
@@ -858,7 +867,7 @@ class PrStorProdController extends ActiveControllerExtended
                     $modelArr[$prod['modelId']]['price'] = 0;
                 }
 
-                $prodArrFromGroup = &$groupArr[$prod['groupSort']]['prodArr'];
+                $prodArrFromGroup = &$groupArr[$prod['groupId']]['prodArr'];
                 $prodArrFromCollection = &$collectionArr[$prod['collectionId']]['prodArr'];
                 $prodArrFromSex = &$sexArr[$prod['sexId']]['prodArr'];
                 $prodArrFromModel = &$modelArr[$prod['modelId']]['prodArr'];
@@ -869,13 +878,13 @@ class PrStorProdController extends ActiveControllerExtended
                 $prodArrFromModel[] = $prod;
 
                 $tree['count'] += $prod['count'];
-                $groupArr[$prod['groupSort']]['count'] += $prod['count'];
+                $groupArr[$prod['groupId']]['count'] += $prod['count'];
                 $collectionArr[$prod['collectionId']]['count'] += $prod['count'];
                 $sexArr[$prod['sexId']]['count'] += $prod['count'];
                 $modelArr[$prod['modelId']]['count'] += $prod['count'];
 
                 $tree['price'] += $prod['price'];
-                $groupArr[$prod['groupSort']]['price'] += $prod['price'];
+                $groupArr[$prod['groupId']]['price'] += $prod['price'];
                 $collectionArr[$prod['collectionId']]['price'] += $prod['price'];
                 $sexArr[$prod['sexId']]['price'] += $prod['price'];
                 $modelArr[$prod['modelId']]['price'] += $prod['price'];

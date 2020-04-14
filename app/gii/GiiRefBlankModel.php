@@ -16,16 +16,17 @@ use Yii;
  * @property string $ts_create
  * @property int $class_fk
  * @property int $sex_fk
+ * @property int $sort
  * @property string $title
- * @property string $title_en
- * @property string $descript
+ * @property string|null $title_en
+ * @property string|null $descript
  * @property string $cut1
- * @property string $cut2
- * @property string $cut3
- * @property string $cut4
- * @property string $cut5
- * @property string $epithets
- * @property string $fashion
+ * @property string|null $cut2
+ * @property string|null $cut3
+ * @property string|null $cut4
+ * @property string|null $cut5
+ * @property string|null $epithets
+ * @property string|null $fashion
  *
  * @property RefArtBlank[] $refArtBlanks
  * @property RefBlankClass $classFk
@@ -52,7 +53,7 @@ class GiiRefBlankModel extends ActiveRecordExtended
         return [
             [['ts_create'], 'safe'],
             [['class_fk', 'sex_fk', 'title'], 'required'],
-            [['class_fk', 'sex_fk'], 'integer'],
+            [['class_fk', 'sex_fk', 'sort'], 'integer'],
             [['epithets'], 'string'],
             [['title', 'title_en', 'fashion'], 'string', 'max' => 45],
             [['descript'], 'string', 'max' => 300],
@@ -72,6 +73,7 @@ class GiiRefBlankModel extends ActiveRecordExtended
             'ts_create' => 'Ts Create',
             'class_fk' => 'Class Fk',
             'sex_fk' => 'Sex Fk',
+            'sort' => 'Sort',
             'title' => 'Title',
             'title_en' => 'Title En',
             'descript' => 'Descript',
@@ -86,6 +88,8 @@ class GiiRefBlankModel extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[RefArtBlanks]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getRefArtBlanks()
@@ -94,6 +98,8 @@ class GiiRefBlankModel extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[ClassFk]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getClassFk()
@@ -102,6 +108,8 @@ class GiiRefBlankModel extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[SexFk]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getSexFk()
@@ -110,6 +118,8 @@ class GiiRefBlankModel extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[RefWeights]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getRefWeights()
@@ -118,6 +128,8 @@ class GiiRefBlankModel extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[SpecCurves]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getSpecCurves()
@@ -126,6 +138,8 @@ class GiiRefBlankModel extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[TsSchemes]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getTsSchemes()
