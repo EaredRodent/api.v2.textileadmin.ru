@@ -63,7 +63,7 @@ class Permissions
     const roleTechnolog = 'roleTechnolog'; //
     const roleYuri = 'roleYuri';    // Юра (счета)
     const roleOlga = 'roleOlga';    // Ольга (счета)
-    const roleKladovshik = 'roleKladovshik';
+    const roleStorRostov = 'roleStorRostov';
 
     const roleV3Alena = 'roleV3Alena';
     const roleV3Edush = 'roleV3Edush';
@@ -173,7 +173,7 @@ class Permissions
         self::roleOlga => [
             self::taskManagementRegPaysLite,
         ],
-        self::roleKladovshik => [
+        self::roleStorRostov => [
             self::taskStorRests,
         ],
 
