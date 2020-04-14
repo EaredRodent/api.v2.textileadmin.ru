@@ -43,8 +43,8 @@ $config = [
                 $fullParams = array_merge($getParams, $bodyParams);
                 $fullParamsStr = json_encode($fullParams,JSON_UNESCAPED_UNICODE);
 
-                if($request->method !== 'OPTIONS') {
-                    $arr =[
+                if($request->method == 'POST') {
+                    $arr = [
                         'ip' => $request->userIP,
                         'project' => (Yii::$app->user->isGuest) ? '-' : Yii::$app->user->identity->getProject(),
                         'user_id' => (Yii::$app->user->isGuest) ? 0 : Yii::$app->user->id,

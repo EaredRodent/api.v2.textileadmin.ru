@@ -593,6 +593,7 @@ class Permissions
         self::taskOxounoApi => [
             OxounoApiController::actionGetProductCatalog,
             OxounoApiController::actionGetStorRest,
+            OxounoApiController::actionGetCollections,
         ],
 
         self::taskSalesStatisticsB2BAccess => [

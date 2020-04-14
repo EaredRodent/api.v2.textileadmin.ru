@@ -5,7 +5,7 @@ const LOCAL_WORKSTATIONS = [
     // Danya
     ['DESKTOP-7Q5VD89', 'RABBIT'],
     // Sasha
-    ['tsrz-apc', 'apc', 'dell-apc']
+    ['tsrz-apc', 'apc', 'dell-apc', 'home-apc']
 ];
 
 if (in_array(gethostname(), array_merge(...LOCAL_WORKSTATIONS))) {

@@ -13,6 +13,7 @@ use app\extension\ProdRest;
 use app\modules\AppMod;
 use app\modules\v1\classes\ActiveControllerExtended;
 use app\modules\v1\models\ref\RefArtBlank;
+use app\modules\v1\models\ref\RefCollection;
 use app\modules\v1\models\ref\RefEan;
 use app\modules\v1\models\ref\RefProductPrint;
 use app\objects\Prices;
@@ -99,7 +100,10 @@ class OxounoApiController extends ActiveControllerExtended
             $item['fabricDensity'] = $prodObj->fields()['fabricDensity']();
             $item['fabricEpithets'] = $prodObj->fields()['fabricEpithets']();
             $item['fabricCare'] = $prodObj->fields()['fabricCare']();
-            $item['collection'] = $prodObj->fields()['collection']();
+
+            $item['collection'] = $prodObj->fields()['collection'](); // Потом убрать
+            $item['collectionId'] = $prodObj->fields()['collectionId']();
+
             $item['prodDescription'] = $prodObj->fields()['prodDescription']();
             $item['flagInPrice'] = $flagInPrice;
             $item['assortment'] = $prodObj->fields()['assortment']();
@@ -109,10 +113,6 @@ class OxounoApiController extends ActiveControllerExtended
             $item['weight'] = $weight->getWeight(
                 $ean->blankFk->model_fk, $ean->blankFk->fabric_type_fk, $ean->size
             );
-//            $item['modelFabricEpithets'] = $weight->getEpithets(
-//                $ean->blankFk->model_fk, $ean->blankFk->fabric_type_fk
-//            );
-
             $item['photos'] = $prodObj->fields()['photos']();
 
             $resp[] = $item;
@@ -145,6 +145,19 @@ class OxounoApiController extends ActiveControllerExtended
             $resp[] =$item;
         }
 
+        return $resp;
+    }
+
+
+    const actionGetCollections = 'GET /v1/oxouno-api/get-collections';
+
+    /**
+     * Вернуть таблицу с коллекциями
+     * @return array
+     */
+    public function actionGetCollections()
+    {
+        $resp = RefCollection::find()->all();
         return $resp;
     }
 

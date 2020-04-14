@@ -91,6 +91,9 @@ class RefArtBlank extends GiiRefArtBlank
             'collection' => function () { //
                 return ($this->collection_fk > 0) ? $this->collectionFk->name : '';
             },
+            'collectionId' => function () { //
+                return ($this->collection_fk > 0) ? $this->collection_fk : null;
+            },
             'prodDescription' => function () { //
                 return ($this->descript_fk > 0) ? $this->descriptFk->descript : '';
             },
