@@ -21,6 +21,16 @@ class RefBlankModel extends GiiRefBlankModel
         ]);
     }
 
+    public function hArt()
+    {
+        return $this->sexFk->code . $this->hCode();
+    }
+
+    public function hCode()
+    {
+        return str_pad($this->id, 3, '0', STR_PAD_LEFT);
+    }
+
     /**
      * Является ли модель детской
      * @return bool
@@ -32,11 +42,6 @@ class RefBlankModel extends GiiRefBlankModel
         } else {
             return false;
         }
-    }
-
-    public function hCode()
-    {
-        return str_pad($this->id, 3, '0', STR_PAD_LEFT);
     }
 
     /**

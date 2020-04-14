@@ -749,16 +749,29 @@ class PrStorProdController extends ActiveControllerExtended
 
                 $modelId = ' ' . $prod->blankFk->model_fk;
                 $modelText = $prod->blankFk->modelFk->fashion;
+                $modelArt = $prod->blankFk->modelFk->hArt();
 
                 // Скидка
                 $discount = $prices->getDiscount($prod->blank_fk, $prod->print_fk);
 
                 // Колллекция
-                if (!$prod->blankFk->collectionFk) {
-                    continue;
+                if ($prod->print_fk === 1) {
+                    $collection = $prod->blankFk->collectionFk;
+                } else {
+                    /** @var RefProductPrint $rpp */
+                    $rpp = RefProductPrint::find()
+                        ->where(['blank_fk' => $prod->blank_fk])
+                        ->andWhere(['print_fk' => $prod->print_fk])
+                        ->one();
+                    if ($rpp) {
+                        $collection = $rpp->collectionFk;
+                    } else {
+                        $collection = null;
+                    }
                 }
-                $collectionId = ' ' . $prod->blankFk->collection_fk;
-                $collectionText = $prod->blankFk->collectionFk ? $prod->blankFk->collectionFk->name : 'Вне коллекции';
+
+                $collectionId = $collection ? ' ' . $collection->id : null;
+                $collectionText = $collection ? $collection->name : 'Без коллекции';
 
                 //Товары
                 $sizesFields = ($sexText == 'Детям') ? Sizes::fieldsRangeKids : Sizes::fieldsRangeAdult;
@@ -805,7 +818,8 @@ class PrStorProdController extends ActiveControllerExtended
                     'collectionId' => $collectionId,
                     'collection' => $collectionText,
                     'modelId' => $modelId,
-                    'model' => $modelText
+                    'model' => $modelText,
+                    'modelArt' => $modelArt
                 ];
 
                 $result[] = $prod;
@@ -815,20 +829,24 @@ class PrStorProdController extends ActiveControllerExtended
         }
 
         /**
-         * Создать дерево с уровнями group/collection/sex/model/prod из массива объектов
-         * Каждый уровень (кроме последнего prod) это массив объектов с структурой:
-         * { name: '', nextLevelArr: [] }
+         * Создать дерево с уровнями groupArr/collectionArr/sexArr/modelArr/prodArr из массива объектов
+         * Каждый уровень (кроме последнего prodArr) это массив объектов с структурой:
+         * { name: '', nextLevelNameArr: [], prodArr: [], count: [], price: [] }
          * @param $prods
          * @return array
          */
-        function makeTree($prods)
+        function makeTopTree($prods)
         {
             $tree['groupArr'] = [];
             $tree['count'] = 0;
             $tree['price'] = 0;
 
+            $groupArr = &$tree['groupArr'];
+
             foreach ($prods as $prod) {
-                $groupArr = &$tree['groupArr'];
+                if (!$prod['collectionId']) {
+                    continue;
+                }
 
                 if (!isset($groupArr[$prod['groupId']])) {
                     $groupArr[$prod['groupId']]['name'] = $prod['group'];
@@ -892,9 +910,94 @@ class PrStorProdController extends ActiveControllerExtended
             return $tree;
         }
 
+        /**
+         * Создать дерево с уровнями discountArr/groupArr/sexArr/modelArr/prodArr из массива объектов
+         * Каждый уровень (кроме последнего prodArr) это Map, значения которого это объекы с структурой:
+         * { name: '', nextLevelNameArr: [], prodArr: [], count: [], price: [] }
+         * @param $prods
+         * @return array
+         */
+        function makeBottomTree($prods)
+        {
+            $tree['discountArr'] = [];
+            $tree['count'] = 0;
+            $tree['price'] = 0;
+
+
+            $discountArr = &$tree['discountArr'];
+
+            foreach ($prods as $prod) {
+                if (!isset($discountArr[$prod['discount']])) {
+                    $discountArr[$prod['discount']]['name'] = 'Скидка ' . $prod['discount'];
+                    $discountArr[$prod['discount']]['groupArr'] = [];
+                    $discountArr[$prod['discount']]['prodArr'] = [];
+                    $discountArr[$prod['discount']]['count'] = 0;
+                    $discountArr[$prod['discount']]['price'] = 0;
+                }
+
+                $groupArr = &$discountArr[$prod['discount']]['groupArr'];
+
+                if (!isset($groupArr[$prod['groupId']])) {
+                    $groupArr[$prod['groupId']]['name'] = $prod['group'];
+                    $groupArr[$prod['groupId']]['sexArr'] = [];
+                    $groupArr[$prod['groupId']]['prodArr'] = [];
+                    $groupArr[$prod['groupId']]['count'] = 0;
+                    $groupArr[$prod['groupId']]['price'] = 0;
+                }
+
+                $sexArr = &$groupArr[$prod['groupId']]['sexArr'];
+
+                if (!isset($sexArr[$prod['sexId']])) {
+                    $sexArr[$prod['sexId']]['name'] = $prod['sex'];
+                    $sexArr[$prod['sexId']]['modelArr'] = [];
+                    $sexArr[$prod['sexId']]['prodArr'] = [];
+                    $sexArr[$prod['sexId']]['count'] = 0;
+                    $sexArr[$prod['sexId']]['price'] = 0;
+                }
+
+                $modelArr = &$sexArr[$prod['sexId']]['modelArr'];
+
+                if (!isset($modelArr[$prod['modelId']])) {
+                    $modelArr[$prod['modelId']]['name'] = $prod['model'];
+                    $modelArr[$prod['modelId']]['prodArr'] = [];
+                    $modelArr[$prod['modelId']]['count'] = 0;
+                    $modelArr[$prod['modelId']]['price'] = 0;
+                }
+
+                $prodArrFromDiscount = &$discountArr[$prod['discount']]['prodArr'];
+                $prodArrFromGroup = &$groupArr[$prod['groupId']]['prodArr'];
+                $prodArrFromSex = &$sexArr[$prod['sexId']]['prodArr'];
+                $prodArrFromModel = &$modelArr[$prod['modelId']]['prodArr'];
+
+                $prodArrFromDiscount[] = $prod;
+                $prodArrFromGroup[] = $prod;
+                $prodArrFromSex[] = $prod;
+                $prodArrFromModel[] = $prod;
+
+                $tree['count'] += $prod['count'];
+                $discountArr[$prod['discount']]['count'] += $prod['count'];
+                $groupArr[$prod['groupId']]['count'] += $prod['count'];
+                $sexArr[$prod['sexId']]['count'] += $prod['count'];
+                $modelArr[$prod['modelId']]['count'] += $prod['count'];
+
+                $tree['price'] += $prod['price'];
+                $discountArr[$prod['discount']]['price'] += $prod['price'];
+                $groupArr[$prod['groupId']]['price'] += $prod['price'];
+                $sexArr[$prod['sexId']]['price'] += $prod['price'];
+                $modelArr[$prod['modelId']]['price'] += $prod['price'];
+            }
+
+            return $tree;
+        }
+
         $prods = getProds();
         $normalizedProds = normalizeProds($prods);
-        $tree = makeTree($normalizedProds);
-        return $tree;
+        $topTree = makeTopTree($normalizedProds);
+        $bottomTree = makeBottomTree($normalizedProds);
+
+        return [
+            'topTree' => $topTree,
+            'bottomTree' => $bottomTree
+        ];
     }
 }
