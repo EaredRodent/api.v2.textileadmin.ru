@@ -778,6 +778,7 @@ class PrStorProdController extends ActiveControllerExtended
                 $sizesVal = [];
                 $totalMoney = 0;
                 $realSizes = [
+                    'size_2xs',
                     'size_xs',
                     'size_s',
                     'size_m',
@@ -927,8 +928,12 @@ class PrStorProdController extends ActiveControllerExtended
             $discountArr = &$tree['discountArr'];
 
             foreach ($prods as $prod) {
+                if ($prod['collectionId']) {
+                    continue;
+                }
+
                 if (!isset($discountArr[$prod['discount']])) {
-                    $discountArr[$prod['discount']]['name'] = 'Скидка ' . $prod['discount'];
+                    $discountArr[$prod['discount']]['name'] = 'Скидка ' . $prod['discount'] . '%';
                     $discountArr[$prod['discount']]['groupArr'] = [];
                     $discountArr[$prod['discount']]['prodArr'] = [];
                     $discountArr[$prod['discount']]['count'] = 0;

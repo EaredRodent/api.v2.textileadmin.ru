@@ -64,7 +64,7 @@ class SlsMoneyController extends ActiveControllerExtended
         $dateStartSql = date('Y-m-d 00:00:00', strtotime($dateStart));
         $dateEndSql = date('Y-m-d 23:59:59', strtotime($dateEnd));
 
-        return SlsMoney::find()
+        $slsmoney = SlsMoney::find()
             ->joinWith(['orderFk', 'preorderFk'])
             ->where(['direct' => SlsMoney::directIn])
             ->andFilterWhere(['sls_order.client_fk' => $clientId])
@@ -77,6 +77,8 @@ class SlsMoneyController extends ActiveControllerExtended
             ->andWhere(['sls_order.preorder_fk' => null])
             ->orderBy('ts_incom')
             ->all();
+
+        return $slsmoney;
 
     }
 
