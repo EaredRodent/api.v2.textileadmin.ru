@@ -3,6 +3,7 @@
 namespace app\gii;
 
 use app\modules\v1\classes\ActiveRecordExtended;
+use app\modules\v1\models\ref\RefCollectDiv;
 use Yii;
 
 /**
@@ -10,12 +11,15 @@ use Yii;
  *
  * @property int $id
  * @property string $ts_create
+ * @property int $group_fk
+ * @property int $div_fk
  * @property string $name
  * @property string|null $comment
  * @property int $flag_in_price
  * @property string|null $epithets
  *
  * @property RefArtBlank[] $refArtBlanks
+ * @property RefCollectDiv $divFk
  * @property RefProductPrint[] $refProductPrints
  */
 class GiiRefCollection extends ActiveRecordExtended
@@ -35,11 +39,12 @@ class GiiRefCollection extends ActiveRecordExtended
     {
         return [
             [['ts_create'], 'safe'],
+            [['group_fk', 'div_fk', 'flag_in_price'], 'integer'],
             [['name'], 'required'],
-            [['flag_in_price'], 'integer'],
             [['epithets'], 'string'],
             [['name'], 'string', 'max' => 50],
             [['comment'], 'string', 'max' => 200],
+            [['div_fk'], 'exist', 'skipOnError' => true, 'targetClass' => RefCollectDiv::className(), 'targetAttribute' => ['div_fk' => 'id']],
         ];
     }
 
@@ -51,6 +56,8 @@ class GiiRefCollection extends ActiveRecordExtended
         return [
             'id' => 'ID',
             'ts_create' => 'Ts Create',
+            'group_fk' => 'Group Fk',
+            'div_fk' => 'Div Fk',
             'name' => 'Name',
             'comment' => 'Comment',
             'flag_in_price' => 'Flag In Price',
@@ -66,6 +73,16 @@ class GiiRefCollection extends ActiveRecordExtended
     public function getRefArtBlanks()
     {
         return $this->hasMany(RefArtBlank::className(), ['collection_fk' => 'id']);
+    }
+
+    /**
+     * Gets query for [[DivFk]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDivFk()
+    {
+        return $this->hasOne(RefCollectDiv::className(), ['id' => 'div_fk']);
     }
 
     /**
