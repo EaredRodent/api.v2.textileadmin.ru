@@ -14,18 +14,19 @@ use Yii;
  * @property string $ts_create
  * @property int $group_fk
  * @property string $title
- * @property string $title_client
- * @property string $title_en
+ * @property string|null $title_client
+ * @property string|null $title_en
  * @property string $code
- * @property string $kids_unisex
- * @property string $tag
- * @property string $oxouno для магазина oxouno
- * @property string $type
+ * @property string|null $kids_unisex
+ * @property string|null $tag
+ * @property string|null $oxouno для магазина oxouno
+ * @property string|null $type
+ * @property string|null $pack_size
  *
  * @property RefBlankGroup $groupFk
  * @property RefBlankModel[] $refBlankModels
  */
-class GiiRefBlankClass extends ActiveRecordExtended
+class GiiRefBlankClass extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -47,6 +48,7 @@ class GiiRefBlankClass extends ActiveRecordExtended
             [['kids_unisex', 'type'], 'string'],
             [['title', 'title_client', 'title_en', 'tag', 'oxouno'], 'string', 'max' => 45],
             [['code'], 'string', 'max' => 2],
+            [['pack_size'], 'string', 'max' => 12],
             [['code'], 'unique'],
             [['group_fk'], 'exist', 'skipOnError' => true, 'targetClass' => RefBlankGroup::className(), 'targetAttribute' => ['group_fk' => 'id']],
         ];
@@ -69,10 +71,13 @@ class GiiRefBlankClass extends ActiveRecordExtended
             'tag' => 'Tag',
             'oxouno' => 'Oxouno',
             'type' => 'Type',
+            'pack_size' => 'Pack Size',
         ];
     }
 
     /**
+     * Gets query for [[GroupFk]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getGroupFk()
@@ -81,6 +86,8 @@ class GiiRefBlankClass extends ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[RefBlankModels]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getRefBlankModels()

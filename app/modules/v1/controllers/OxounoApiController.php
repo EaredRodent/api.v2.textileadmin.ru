@@ -115,6 +115,7 @@ class OxounoApiController extends ActiveControllerExtended
             );
             $item['photos'] = $prodObj->fields()['photos']();
 
+            $item['packSizes'] = $prodObj->fields()['packSizes']();
             $resp[] = $item;
         }
 

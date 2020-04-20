@@ -179,7 +179,20 @@ class RefProductPrint extends GiiRefProductPrint
             'printFk',
             'discount' => function () {
                 return $this->discount;
-            }
+            },
+            'packSizes' => function () {
+                $sizes = $this->blankFk->modelFk->classFk->pack_size;
+                $sizesArr = explode('x', $sizes);
+                if (count($sizesArr) != 3) {
+                    $sizesArr = [null, null, null];
+                }
+                return [
+                    'width' => (int)$sizesArr[0],
+                    'length' => (int)$sizesArr[1],
+                    'height' => (int)$sizesArr[2],
+                ];
+            },
+
         ]);
     }
 

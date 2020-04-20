@@ -177,6 +177,19 @@ class RefArtBlank extends GiiRefArtBlank
             'modelFk',
             'discount' => function () {
                 return $this->discount;
+            },
+            'packSizes' => function () {
+                $sizes = $this->modelFk->classFk->pack_size;
+                $sizesArr = explode('x', $sizes);
+
+                if (count($sizesArr) != 3) {
+                    $sizesArr = [null, null, null];
+                }
+                return [
+                    'width' => (int)$sizesArr[0],
+                    'length' => (int)$sizesArr[1],
+                    'height' => (int)$sizesArr[2],
+                ];
             }
         ]);
     }
