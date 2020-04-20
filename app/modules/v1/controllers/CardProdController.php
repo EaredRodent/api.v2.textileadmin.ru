@@ -145,6 +145,7 @@ class CardProdController extends ActiveControllerExtended
                     'size' => $fSize,
                     'price' => $price,
                     'priceDiscount' => round($price * $totalDiscount),
+                    'doublePrice' => $price * 2,
                     'restStr' => $restStr,
                     'restColor' => $restColor,
                     'weight' => $weight->$fSize,
