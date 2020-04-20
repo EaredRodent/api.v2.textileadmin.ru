@@ -367,7 +367,7 @@ class ExcelPrice2
                 $fileName = $_fileName . '.jpg';
                 $fileNameSmall = $_fileName . '.sm.jpg';
                 $fullPath = $path . '/' . $fileNameSmall;
-                $url = AppMod::B2BAPIDomain . '/v1/files/public/' . AppMod::filesImageBaseProds . '/' . $fileName;
+                $url = CURRENT_API_URL . '/v1/files/public/' . AppMod::filesImageBaseProds . '/' . $fileName;
 
                 if (file_exists($fullPath)) {
                     $gdImage = imagecreatefromjpeg($fullPath);
@@ -557,7 +557,7 @@ class ExcelPrice2
                 $fileName = $_fileName . '.jpg';
                 $fileNameSmall = $_fileName . '.sm.jpg';
                 $fullPath = $path . '/' . $fileNameSmall;
-                $url = AppMod::B2BAPIDomain . '/v1/files/public/' . AppMod::filesImageProdsPrints . '/' . $fileName;
+                $url = CURRENT_API_URL . '/v1/files/public/' . AppMod::filesImageProdsPrints . '/' . $fileName;
 
                 if (file_exists($fullPath)) {
                     $gdImage = imagecreatefromjpeg($fullPath);

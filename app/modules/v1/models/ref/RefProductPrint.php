@@ -128,7 +128,7 @@ class RefProductPrint extends GiiRefProductPrint
                         str_pad($this->print_fk, 3, '0', STR_PAD_LEFT) . '_' . $i . '.jpg';
                     $fullPath = $path . '/' . $fileName;
                     if (file_exists($fullPath)) {
-                        $resp['large'][] = AppMod::B2BAPIDomain .
+                        $resp['large'][] = CURRENT_API_URL .
                             '/v1/files/public/' . AppMod::filesImageProdsPrints . '/' . $fileName;
                     }
 
@@ -136,7 +136,7 @@ class RefProductPrint extends GiiRefProductPrint
                         str_pad($this->print_fk, 3, '0', STR_PAD_LEFT) . '_' . $i . '.md.jpg';
                     $fullPath = $path . '/' . $fileName;
                     if (file_exists($fullPath)) {
-                        $resp['medium'][] = AppMod::B2BAPIDomain .
+                        $resp['medium'][] = CURRENT_API_URL .
                             '/v1/files/public/' . AppMod::filesImageProdsPrints . '/' . $fileName;
                     }
 
@@ -144,7 +144,7 @@ class RefProductPrint extends GiiRefProductPrint
                         str_pad($this->print_fk, 3, '0', STR_PAD_LEFT) . '_' . $i . '.sm.jpg';
                     $fullPathSmall = $path . '/' . $fileName;
                     if (file_exists($fullPathSmall)) {
-                        $resp['small'][] = AppMod::B2BAPIDomain .
+                        $resp['small'][] = CURRENT_API_URL .
                             '/v1/files/public/' . AppMod::filesImageProdsPrints . '/' . $fileNameSmall;
                     }
 

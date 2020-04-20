@@ -78,7 +78,7 @@ class SlsOrder extends GiiSlsOrder
                     /** @var AnxUser $contact */
                     $contact = Yii::$app->getUser()->getIdentity();
                     $urlKey = $contact->url_key;
-                    return AppMod::B2BAPIDomain . "/v1/files/get-order-doc/{$urlKey}/invoice/{$this->id}";
+                    return CURRENT_API_URL . "/v1/files/get-order-doc/{$urlKey}/invoice/{$this->id}";
                 } else {
                     return '';
                 }
@@ -89,7 +89,7 @@ class SlsOrder extends GiiSlsOrder
                     /** @var AnxUser $contact */
                     $contact = Yii::$app->getUser()->getIdentity();
                     $urlKey = $contact->url_key;
-                    return AppMod::B2BAPIDomain . "/v1/files/get-order-doc/{$urlKey}/waybill/{$this->id}";
+                    return CURRENT_API_URL . "/v1/files/get-order-doc/{$urlKey}/waybill/{$this->id}";
                 } else {
                     return '';
                 }
@@ -98,13 +98,13 @@ class SlsOrder extends GiiSlsOrder
                 /** @var AnxUser $contact */
                 $contact = Yii::$app->getUser()->getIdentity();
                 $urlKey = $contact->url_key;
-                return AppMod::B2BAPIDomain . "/v1/files/get-order-doc/{$urlKey}/export1c/{$this->id}";
+                return CURRENT_API_URL . "/v1/files/get-order-doc/{$urlKey}/export1c/{$this->id}";
             },
             'description' => function () {
                 /** @var AnxUser $contact */
                 $contact = Yii::$app->getUser()->getIdentity();
                 $urlKey = $contact->url_key;
-                return AppMod::B2BAPIDomain . "/v1/files/get-order-doc/{$urlKey}/description/{$this->id}";
+                return CURRENT_API_URL . "/v1/files/get-order-doc/{$urlKey}/description/{$this->id}";
             }
         ]);
     }

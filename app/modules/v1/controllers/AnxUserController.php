@@ -477,7 +477,7 @@ class AnxUserController extends ActiveControllerExtended
         $restoreID = Yii::$app->security->generateRandomString(32);
         $user->restore_id = $restoreID;
         $user->save();
-        $restoreLink = AppMod::B2BDomain . '/restore?restore_id=' . $restoreID;
+        $restoreLink = CURRENT_CLIENT_URL . '/restore?restore_id=' . $restoreID;
         $user->sendRestoreEmail($restoreLink);
 
         return ['_result_' => 'success'];

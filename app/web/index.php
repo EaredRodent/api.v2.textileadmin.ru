@@ -14,6 +14,9 @@ if (in_array(gethostname(), array_merge(...LOCAL_WORKSTATIONS))) {
     //xdebug_disable();
 }
 
+define('CURRENT_API_URL', isset($_SERVER['HTTPS']) ? 'https' : 'http' . '://' . $_SERVER['SERVER_NAME']);
+define('CURRENT_CLIENT_URL', $_SERVER['HTTP_ORIGIN']);
+
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../vendor/yiisoft/yii2/Yii.php';
 
