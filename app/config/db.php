@@ -1,15 +1,28 @@
 <?php
 
-$configDb = [
-    'class' => 'yii\db\Connection',
-    'dsn' => YII_ENV_DEV ?
-        'mysql:host=localhost:3309;dbname=textile' : 'mysql:host=localhost;dbname=textile',
-    'username' => YII_ENV_DEV ?
-        'root' : 'dbuser',
-    'password' => YII_ENV_DEV ?
-        '' : 'cnbdtyrbyu',
-    'charset' => 'utf8mb4',
-];
+switch (CURRENT_API_URL) {
+    case 'api.textileadmin.loc':
+        $configDb['class'] = 'yii\db\Connection';
+        $configDb['dsn'] = 'mysql:host=localhost:3309;dbname=textile';
+        $configDb['username'] = 'root';
+        $configDb['password'] = '';
+        $configDb['charset'] = 'utf8mb4';
+        break;
+    case 'api.b2b.oxouno.ru':
+        $configDb['class'] = 'yii\db\Connection';
+        $configDb['dsn'] = 'mysql:host=localhost;dbname=textile';
+        $configDb['username'] = 'dbuser';
+        $configDb['password'] = 'cnbdtyrbyu';
+        $configDb['charset'] = 'utf8mb4';
+        break;
+    case 'dev.api.b2b.oxouno.ru':
+        $configDb['class'] = 'yii\db\Connection';
+        $configDb['dsn'] = 'mysql:host=localhost:3309;dbname=textile';
+        $configDb['username'] = 'dbuser';
+        $configDb['password'] = 'kojure901zUq';
+        $configDb['charset'] = 'utf8mb4';
+        break;
+}
 
 // Schema cache options (for production environment)
 if (YII_ENV_PROD) {
