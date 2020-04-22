@@ -8,7 +8,7 @@ switch (CURRENT_API_URL) {
         $configDb['password'] = '';
         $configDb['charset'] = 'utf8mb4';
         break;
-    case 'https://api.b2b.oxouno.ru':
+    case 'https://api.textileadmin.ru':
         $configDb['class'] = 'yii\db\Connection';
         $configDb['dsn'] = 'mysql:host=localhost;dbname=textile';
         $configDb['username'] = 'dbuser';
