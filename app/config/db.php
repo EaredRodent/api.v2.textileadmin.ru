@@ -1,21 +1,21 @@
 <?php
 
 switch (CURRENT_API_URL) {
-    case 'api.textileadmin.loc':
+    case 'http://api.textileadmin.loc':
         $configDb['class'] = 'yii\db\Connection';
         $configDb['dsn'] = 'mysql:host=localhost:3309;dbname=textile';
         $configDb['username'] = 'root';
         $configDb['password'] = '';
         $configDb['charset'] = 'utf8mb4';
         break;
-    case 'api.b2b.oxouno.ru':
+    case 'https://api.b2b.oxouno.ru':
         $configDb['class'] = 'yii\db\Connection';
         $configDb['dsn'] = 'mysql:host=localhost;dbname=textile';
         $configDb['username'] = 'dbuser';
         $configDb['password'] = 'cnbdtyrbyu';
         $configDb['charset'] = 'utf8mb4';
         break;
-    case 'dev.api.b2b.oxouno.ru':
+    case 'https://dev.api.b2b.oxouno.ru':
         $configDb['class'] = 'yii\db\Connection';
         $configDb['dsn'] = 'mysql:host=localhost:3309;dbname=textile';
         $configDb['username'] = 'dbuser';
