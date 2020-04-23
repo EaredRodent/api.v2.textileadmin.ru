@@ -64,6 +64,7 @@ class Permissions
     const roleYuri = 'roleYuri';    // Юра (счета)
     const roleOlga = 'roleOlga';    // Ольга (счета)
     const roleStorRostov = 'roleStorRostov';
+    const roleSuperUser = 'roleSuperUser';
 
     const roleV3Alena = 'roleV3Alena';
     const roleV3Edush = 'roleV3Edush';
@@ -85,6 +86,9 @@ class Permissions
             AnxUserController::actionTryRestoreUser,
             AnxUserController::actionRestoreUser,
             LogErrorController::actionLog,
+        ],
+        self::roleSuperUser => [
+            self::roleMaster,
         ],
         self::roleMaster => [
             self::pageTestApi,
