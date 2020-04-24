@@ -666,14 +666,24 @@ class PrStorProdController extends ActiveControllerExtended
     }
 
 
+    const actionTreeLite = 'GET /v1/pr-stor-prod/tree-lite';
+
+    /**
+     * Вызывает actionTree c fillTree = false
+     * @param bool $fillTree
+     */
+    public function actionTreeLite($fillTree = false) {
+        return $this->actionTree(false);
+    }
+
     const actionTree = 'GET /v1/pr-stor-prod/tree';
 
     /**
      * Возвращает список изделий для страницы "Склад v3"
+     * @param bool $fillTree
      * @return array
-     * @throws \Exception
      */
-    public function actionTree()
+    public function actionTree($fillTree = false)
     {
         $male = [
             'name' => 'Мужчинам',
@@ -943,7 +953,7 @@ class PrStorProdController extends ActiveControllerExtended
             return $tree;
         }
 
-        function fillTopTree($tree, $prods)
+        function fillTopTree(&$tree, $prods)
         {
             foreach ($prods as $prod) {
                 if (!$prod['divId']) {
@@ -1033,6 +1043,23 @@ class PrStorProdController extends ActiveControllerExtended
                     $modelArr[$prod['modelId']]['count'] = 0;
                     $modelArr[$prod['modelId']]['price'] = 0;
                 }
+            }
+
+            return $tree;
+        }
+
+        function fillBottomTree($tree, $prods)
+        {
+            $prods = array_filter($prods, function ($prod) {
+                return $prod['divId'] === null;
+            });
+
+            $discountArr = &$tree['discountArr'];
+
+            foreach ($prods as $prod) {
+                $groupArr = &$discountArr[$prod['discount']]['groupArr'];
+                $sexArr = &$groupArr[$prod['groupId']]['sexArr'];
+                $modelArr = &$sexArr[$prod['sex']]['modelArr'];
 
                 $prodArrFromDiscount = &$discountArr[$prod['discount']]['prodArr'];
                 $prodArrFromGroup = &$groupArr[$prod['groupId']]['prodArr'];
@@ -1048,6 +1075,9 @@ class PrStorProdController extends ActiveControllerExtended
                 $discountArr[$prod['discount']]['count'] += $prod['count'];
                 $groupArr[$prod['groupId']]['count'] += $prod['count'];
                 $sexArr[$prod['sex']]['count'] += $prod['count'];
+                if(!isset($modelArr[$prod['modelId']]['count'])) {
+                    $dddd = 10;
+                }
                 $modelArr[$prod['modelId']]['count'] += $prod['count'];
 
                 $tree['price'] += $prod['price'];
@@ -1063,8 +1093,12 @@ class PrStorProdController extends ActiveControllerExtended
         $prods = getProds();
         $normalizedProds = normalizeProds($prods, $sexTranslate);
         $topTree = makeTopTree($sexLvlTree);
-        $topTree = fillTopTree($topTree, $normalizedProds);
         $bottomTree = makeBottomTree($normalizedProds);
+
+        if($fillTree) {
+            $topTree = fillTopTree($topTree, $normalizedProds);
+            $bottomTree = fillBottomTree($bottomTree, $normalizedProds);
+        }
 
         return [
             'topTree' => $topTree,

@@ -505,15 +505,7 @@ class Permissions
 
             // Фильтры
 
-            RefBlankSexController::actionGetSexTags,
-            RefBlankGroupController::actionGetGroups,
-            RefBlankClassController::actionGetClassesGroupType,
-            RefBlankThemeController::actionGetThemes,
-            RefFabricTypeController::actionGetFabricTypes,
-            RefArtBlankController::actionGetByFilters,
-            RefArtBlankController::actionGetByFilters2,
-            RefCollectionController::actionGetAll,
-            CardProdController::actionGetByFilters,
+            PrStorProdController::actionTreeLite,
 
             // Карта товара
 
