@@ -99,7 +99,12 @@ class RefProductPrint extends GiiRefProductPrint
                 return ($this->collection_fk > 0) ? $this->collection_fk : null;
             },
             'prodDescription' => function () { //
-                return ($this->descript_fk > 0) ? $this->descriptFk->descript : '';
+                //return ($this->descript_fk > 0) ? $this->descriptFk->descript : '';
+                if (trim($this->printFk->epithets) && ($this->blankFk->descript_fk > 0)) {
+                    return $this->blankFk->descriptFk->descript . "\r\n" . $this->printFk->epithets;
+                } else {
+                    return '';
+                }
             },
             'modelId' => function () { //
                 return $this->blankFk->model_fk;

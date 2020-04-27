@@ -11,7 +11,8 @@ use Yii;
  * @property int $id
  * @property string $dt_create
  * @property string $title
- * @property string $oxouno название для магазина
+ * @property string|null $oxouno название для магазина
+ * @property string|null $epithets
  *
  * @property PrInventItem[] $prInventItems
  * @property PrLot[] $prLots
@@ -44,6 +45,7 @@ class GiiRefProdPrint extends \app\modules\v1\classes\ActiveRecordExtended
         return [
             [['dt_create'], 'safe'],
             [['title'], 'required'],
+            [['epithets'], 'string'],
             [['title', 'oxouno'], 'string', 'max' => 45],
         ];
     }
@@ -58,10 +60,13 @@ class GiiRefProdPrint extends \app\modules\v1\classes\ActiveRecordExtended
             'dt_create' => 'Dt Create',
             'title' => 'Title',
             'oxouno' => 'Oxouno',
+            'epithets' => 'Epithets',
         ];
     }
 
     /**
+     * Gets query for [[PrInventItems]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getPrInventItems()
@@ -70,6 +75,8 @@ class GiiRefProdPrint extends \app\modules\v1\classes\ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[PrLots]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getPrLots()
@@ -78,6 +85,8 @@ class GiiRefProdPrint extends \app\modules\v1\classes\ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[PrStorProds]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getPrStorProds()
@@ -86,6 +95,8 @@ class GiiRefProdPrint extends \app\modules\v1\classes\ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[PrTaskCutItems]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getPrTaskCutItems()
@@ -94,6 +105,8 @@ class GiiRefProdPrint extends \app\modules\v1\classes\ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[PrWaybillItems]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getPrWaybillItems()
@@ -102,6 +115,8 @@ class GiiRefProdPrint extends \app\modules\v1\classes\ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[PrWsCuts]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getPrWsCuts()
@@ -110,6 +125,8 @@ class GiiRefProdPrint extends \app\modules\v1\classes\ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[RefEans]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getRefEans()
@@ -118,6 +135,8 @@ class GiiRefProdPrint extends \app\modules\v1\classes\ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[RefPostLinks]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getRefPostLinks()
@@ -126,6 +145,8 @@ class GiiRefProdPrint extends \app\modules\v1\classes\ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[RefProductPrints]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getRefProductPrints()
@@ -134,6 +155,8 @@ class GiiRefProdPrint extends \app\modules\v1\classes\ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[SlsItems]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getSlsItems()
@@ -142,6 +165,8 @@ class GiiRefProdPrint extends \app\modules\v1\classes\ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[SlsPreorderItems]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getSlsPreorderItems()
@@ -150,6 +175,8 @@ class GiiRefProdPrint extends \app\modules\v1\classes\ActiveRecordExtended
     }
 
     /**
+     * Gets query for [[SlsPreorderReservs]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getSlsPreorderReservs()
