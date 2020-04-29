@@ -48,7 +48,7 @@ class ServiceController extends ActiveControllerExtended
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\httpclient\Exception
      */
-    function actionDeploy($secret_key)
+    function actionDeploy($secret_key, $branch = 'master')
     {
         if ($secret_key !== AppMod::metaGenerateSecretKey) {
             throw new ForbiddenHttpException();
@@ -69,7 +69,7 @@ class ServiceController extends ActiveControllerExtended
         foreach ($metaFile as $projectName => &$projectInfo) {
             $response = $client->createRequest()
                 ->setMethod('GET')
-                ->setUrl('https://api.github.com/repos/ralex123/' . $projectName . '/branches/master')
+                ->setUrl('https://api.github.com/repos/ralex123/' . $projectName . '/branches/' . $branch)
                 ->setHeaders([
                     'User-Agent' => 'x3RABBITx3',
                     'Authorization' => AppMod::gitHubAuthorizationHeader
