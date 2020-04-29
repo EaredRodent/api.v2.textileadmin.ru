@@ -77,7 +77,7 @@ class CardProd
         if ($prodRest) {
             foreach (Sizes::fields as $fSize) {
                 $rest = $prodRest->getAvailForOrder($this->prodId, $this->printFk->id, 1, $fSize);
-                if($rest > 0) {
+                if ($rest > 0) {
                     $this->flagRest = 1;
                     break;
                 }
@@ -242,4 +242,41 @@ class CardProd
             'availableRefFabricType' => $availableRefFabricType
         ];
     }
+
+    /**
+     * Вернуть все изделия соответствующие фильтрам
+     * @param $form -
+     * @return array
+     * @throws \Exception
+     */
+    static public function getByFilters2($form)
+    {
+        $form = json_decode($form, true);
+        $categoryID = isset($form['categoryID']) ? $form['categoryID'] : null;
+        $collectionID = isset($form['collectionID']) ? $form['collectionID'] : null;
+        $sexName = isset($form['sexName']) ? $form['sexName'] : null;
+        $sexTitles = RefBlankSex::calcSexTagsToRealTitles([$sexName]);
+        $modelID = isset($form['modelID']) ? $form['modelID'] : null;
+        $discountNumber = isset($form['discountNumber']) ? $form['discountNumber'] : null;
+        $groupID = isset($form['groupID']) ? $form['groupID'] : null;
+
+
+        $filteredProds = RefArtBlank::readFilterProds2($categoryID, $collectionID, $sexTitles, $modelID, $discountNumber, $groupID);
+        $filteredProdsPrint = RefProductPrint::readFilterProds2($categoryID, $collectionID, $sexTitles, $modelID, $discountNumber, $groupID);
+
+        $prodRests = new ProdRest();
+
+        /** @var $arrCards CardProd[] */
+        $arrCards = [];
+        foreach (array_merge($filteredProds, $filteredProdsPrint) as $prod) {
+            $arrCards[] = new CardProd($prod, $prodRests);
+        }
+
+        CardProd::sort($arrCards);
+
+        LogEvent::log(LogEvent::filterCatalog);
+
+        return $arrCards;
+    }
+
 }

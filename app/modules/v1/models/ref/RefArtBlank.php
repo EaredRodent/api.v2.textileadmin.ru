@@ -494,4 +494,38 @@ class RefArtBlank extends GiiRefArtBlank
         });
         return $prods;
     }
+
+    /**
+     * Вернуть продукты по фильтрам
+     * @param $categoryID
+     * @param $collectionID
+     * @param $sexTitles
+     * @param $modelID
+     * @param $discountNumber
+     * @param $groupID
+     * @return array|self[]
+     */
+    static public function readFilterProds2($categoryID, $collectionID, $sexTitles, $modelID, $discountNumber, $groupID) {
+        $activeQuery = self::find()
+            ->joinWith('modelFk.sexFk')
+            ->joinWith('modelFk.classFk.groupFk')
+            ->joinWith('fabricTypeFk')
+            ->joinWith('themeFk')
+            ->joinWith('collectionFk.divFk')
+            ->filterWhere(['ref_collect_div.id' => $categoryID])
+            ->andFilterWhere(['ref_collection.id' => $collectionID])
+            ->andfilterWhere(['ref_blank_sex.title' => $sexTitles])
+            ->andfilterWhere(['ref_blank_model.id' => $modelID])
+            ->andFilterWhere(['ref_art_blank.discount' => $discountNumber])
+            ->andFilterWhere(['ref_blank_group.id' => $groupID])
+            ->andWhere(['ref_art_blank.flag_price' => 1]);
+
+        if($discountNumber === null) {
+            $activeQuery = $activeQuery->andWhere('ref_art_blank.collection_fk IS NOT NULL');
+        } else {
+            $activeQuery = $activeQuery->andWhere('ref_art_blank.collection_fk IS NULL');
+        }
+
+        return $activeQuery->all();
+    }
 }

@@ -771,6 +771,7 @@ class PrStorProdController extends ActiveControllerExtended
                 // Наименование
                 $classId = $prod->blankFk->modelFk->class_fk;
                 $classText = $prod->blankFk->modelFk->classFk->title;
+                $className = $prod->blankFk->modelFk->classFk->oxouno;
 
                 // Модель
 
@@ -852,6 +853,7 @@ class PrStorProdController extends ActiveControllerExtended
                     'group' => $groupText,
                     'groupSort' => $groupSort,
                     'class' => $classText,
+                    'className' => $className,
                     'collectionId' => $collectionId,
                     'collection' => $collectionText,
                     'modelId' => $modelId,
@@ -879,6 +881,7 @@ class PrStorProdController extends ActiveControllerExtended
 
             foreach ($list1 as $item1) {
                 $cDiv[' ' . $item1->id]['name'] = $item1->name;
+                $cDiv[' ' . $item1->id]['id'] = $item1->id;
                 $cDiv[' ' . $item1->id]['collectionArr'] = [];
                 $cDiv[' ' . $item1->id]['prodArr'] = [];
                 $cDiv[' ' . $item1->id]['count'] = 0;
@@ -891,6 +894,7 @@ class PrStorProdController extends ActiveControllerExtended
 
                 foreach ($list2 as $item2) {
                     $collectionArr[' ' . $item2->id]['name'] = $item2->name;
+                    $collectionArr[' ' . $item2->id]['id'] = $item2->id;
                     $collectionArr[' ' . $item2->id]['sexArr'] = [];
                     $collectionArr[' ' . $item2->id]['prodArr'] = [];
                     $collectionArr[' ' . $item2->id]['count'] = 0;
@@ -941,6 +945,8 @@ class PrStorProdController extends ActiveControllerExtended
                         foreach ($list4 as $item4) {
                             if (!isset($modelArr[' ' . $item4->id])) {
                                 $modelArr[' ' . $item4->id]['name'] = $item4->fashion;
+                                $modelArr[' ' . $item4->id]['id'] = $item4->id;
+                                $modelArr[' ' . $item4->id]['className'] = $item4->classFk->oxouno;
                                 $modelArr[' ' . $item4->id]['prodArr'] = [];
                                 $modelArr[' ' . $item4->id]['count'] = 0;
                                 $modelArr[' ' . $item4->id]['price'] = 0;
@@ -1009,6 +1015,7 @@ class PrStorProdController extends ActiveControllerExtended
             foreach ($prods as $prod) {
                 if (!isset($discountArr[$prod['discount']])) {
                     $discountArr[$prod['discount']]['name'] = 'Скидка ' . $prod['discount'] . '%';
+                    $discountArr[$prod['discount']]['value'] = $prod['discount'];
                     $discountArr[$prod['discount']]['groupArr'] = [];
                     $discountArr[$prod['discount']]['prodArr'] = [];
                     $discountArr[$prod['discount']]['count'] = 0;
@@ -1019,6 +1026,7 @@ class PrStorProdController extends ActiveControllerExtended
 
                 if (!isset($groupArr[$prod['groupId']])) {
                     $groupArr[$prod['groupId']]['name'] = $prod['group'];
+                    $groupArr[$prod['groupId']]['id'] = $prod['groupId'];
                     $groupArr[$prod['groupId']]['sexArr'] = [];
                     $groupArr[$prod['groupId']]['prodArr'] = [];
                     $groupArr[$prod['groupId']]['count'] = 0;
@@ -1039,6 +1047,7 @@ class PrStorProdController extends ActiveControllerExtended
 
                 if (!isset($modelArr[$prod['modelId']])) {
                     $modelArr[$prod['modelId']]['name'] = $prod['model'];
+                    $modelArr[$prod['modelId']]['id'] = $prod['modelId'];
                     $modelArr[$prod['modelId']]['prodArr'] = [];
                     $modelArr[$prod['modelId']]['count'] = 0;
                     $modelArr[$prod['modelId']]['price'] = 0;
