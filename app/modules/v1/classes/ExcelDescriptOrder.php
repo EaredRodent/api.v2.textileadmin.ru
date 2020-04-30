@@ -30,20 +30,21 @@ class ExcelDescriptOrder
         $this->objExcel->setActiveSheetIndex(0);
 
         $this->objExcel->getActiveSheet()->getColumnDimension('A')->setWidth(7);
-
         $this->objExcel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
         $this->objExcel->getActiveSheet()->getColumnDimension('C')->setWidth(30);
         $this->objExcel->getActiveSheet()->getColumnDimension('D')->setWidth(40);
-        $this->objExcel->getActiveSheet()->getColumnDimension('E')->setWidth(8);
-        $this->objExcel->getActiveSheet()->getColumnDimension('F')->setWidth(8);
+        $this->objExcel->getActiveSheet()->getColumnDimension('E')->setWidth(40);
+        $this->objExcel->getActiveSheet()->getColumnDimension('F')->setWidth(40);
         $this->objExcel->getActiveSheet()->getColumnDimension('G')->setWidth(8);
         $this->objExcel->getActiveSheet()->getColumnDimension('H')->setWidth(8);
-        $this->objExcel->getActiveSheet()->getColumnDimension('I')->setWidth(17);
-        $this->objExcel->getActiveSheet()->getColumnDimension('J')->setWidth(15);
-        $this->objExcel->getActiveSheet()->getColumnDimension('K')->setWidth(15);
+        $this->objExcel->getActiveSheet()->getColumnDimension('I')->setWidth(8);
+        $this->objExcel->getActiveSheet()->getColumnDimension('J')->setWidth(8);
+        $this->objExcel->getActiveSheet()->getColumnDimension('K')->setWidth(17);
+        $this->objExcel->getActiveSheet()->getColumnDimension('L')->setWidth(15);
+        $this->objExcel->getActiveSheet()->getColumnDimension('M')->setWidth(15);
 
 
-        $this->objExcel->getActiveSheet()->getStyle('A1:K1')->getFont()->setBold(true);
+        $this->objExcel->getActiveSheet()->getStyle('A1:M1')->getFont()->setBold(true);
 
         //
         $this->objExcel->getActiveSheet()->setTitle('articles')
@@ -51,13 +52,15 @@ class ExcelDescriptOrder
             ->setCellValue('B1', 'Артикул')
             ->setCellValue('C1', 'Наименование')
             ->setCellValue('D1', 'Декор')
-            ->setCellValue('E1', 'Размер')
-            ->setCellValue('F1', 'Кол-во')
-            ->setCellValue('G1', 'Цена')
-            ->setCellValue('H1', 'Сумма')
-            ->setCellValue('I1', 'Штрихкод')
-            ->setCellValue('J1', 'Базовая цена')
-            ->setCellValue('K1', "МРРЦ");
+            ->setCellValue('E1', 'Состав')
+            ->setCellValue('F1', 'Модель')
+            ->setCellValue('G1', 'Размер')
+            ->setCellValue('H1', 'Кол-во')
+            ->setCellValue('I1', 'Цена')
+            ->setCellValue('J1', 'Сумма')
+            ->setCellValue('K1', 'Штрихкод')
+            ->setCellValue('L1', 'Базовая цена')
+            ->setCellValue('M1', "МРРЦ");
 
         //$sheet->getCell("G{$pos}")->getHyperlink()->setUrl('https://textileadmin.ru' . ApiController::urlGetPhoto . '?name=' . $name);
 
@@ -95,6 +98,8 @@ class ExcelDescriptOrder
                     $art = $item->blankFk->hClientArt($item->print_fk);
                     $name = $item->blankFk->modelFk->hModelTitleShort6();
                     $theme = $item->blankFk->themeFk->title;
+                    $struct = $item->blankFk->fabricTypeFk->struct;
+                    $model = $item->blankFk->modelFk->descript;
                     $print = ($item->print_fk > 1) ? "/{$item->printFk->title}" : '';
 
                     $sizeStr = $item->blankFk->modelFk->hSizeStr($size);
@@ -121,15 +126,17 @@ class ExcelDescriptOrder
                     $activeSheet->setCellValue('B' . $row, $art);
                     $activeSheet->setCellValue('C' . $row, $name);
                     $activeSheet->setCellValue('D' . $row, $theme . $print);
-                    $activeSheet->setCellValue('E' . $row, $sizeStr);
-                    $activeSheet->setCellValue('F' . $row, $count);
-                    $activeSheet->setCellValue('G' . $row, $price);
-                    $activeSheet->setCellValue('H' . $row, $summ);
-                    $activeSheet->setCellValue('I' . $row, $ean13);
-                    $activeSheet->setCellValue('J' . $row, $basePrice);
-                    $activeSheet->setCellValue('K' . $row, $recommendedPrice);
+                    $activeSheet->setCellValue('E' . $row, $struct);
+                    $activeSheet->setCellValue('F' . $row, $model);
+                    $activeSheet->setCellValue('G' . $row, $sizeStr);
+                    $activeSheet->setCellValue('H' . $row, $count);
+                    $activeSheet->setCellValue('I' . $row, $price);
+                    $activeSheet->setCellValue('J' . $row, $summ);
+                    $activeSheet->setCellValue('K' . $row, $ean13);
+                    $activeSheet->setCellValue('L' . $row, $basePrice);
+                    $activeSheet->setCellValue('M' . $row, $recommendedPrice);
 
-                    $arr = ['L' => 1, 'M' => 2, 'N' => 3, 'O' => 4];
+                    $arr = ['N' => 1, 'O' => 2, 'P' => 3, 'Q' => 4];
 
                     //#ref - ссылки в экселе
                     foreach ($arr as $letter => $num) {
@@ -172,11 +179,11 @@ class ExcelDescriptOrder
             }
         }
 
-        $activeSheet->setCellValue('E' . $row, 'Итог:');
-        $activeSheet->setCellValue('F' . $row, $countTotal);
-        $activeSheet->setCellValue('G' . $row, '');
-        $activeSheet->setCellValue('H' . $row, $summTotal);
-        $this->objExcel->getActiveSheet()->getStyle("A{$row}:K{$row}")->getFont()->setBold(true);
+        $activeSheet->setCellValue('G' . $row, 'Итог:');
+        $activeSheet->setCellValue('H' . $row, $countTotal);
+        $activeSheet->setCellValue('I' . $row, '');
+        $activeSheet->setCellValue('J' . $row, $summTotal);
+        $this->objExcel->getActiveSheet()->getStyle("A{$row}:M{$row}")->getFont()->setBold(true);
 
     }
 
