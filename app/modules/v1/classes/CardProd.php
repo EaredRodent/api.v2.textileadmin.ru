@@ -14,6 +14,7 @@ use app\modules\v1\models\log\LogEvent;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefBlankSex;
 use app\modules\v1\models\ref\RefBlankTheme;
+use app\modules\v1\models\ref\RefCollection;
 use app\modules\v1\models\ref\RefEan;
 use app\modules\v1\models\ref\RefFabricType;
 use app\modules\v1\models\ref\RefProdPack;
@@ -276,7 +277,19 @@ class CardProd
 
         LogEvent::log(LogEvent::filterCatalog);
 
-        return $arrCards;
+
+        /** @var RefCollection $refCollection */
+        $refCollection = null;
+
+        if ($collectionID && !$sexName && !$modelID) {
+            /** @var RefCollection $refCollection */
+            $refCollection = RefCollection::findOne(['id' => $collectionID]);
+        }
+
+        return [
+            'prods' => $arrCards,
+            'collection' => $refCollection
+        ];
     }
 
 }
