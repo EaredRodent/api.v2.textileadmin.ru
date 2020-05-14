@@ -44,6 +44,9 @@ class CardProd
     public $flagRest; // 1 - если есть остатки на складе по этому изделию
     public $discount;
     public $discountPrice;
+    public $categoryStr;
+    public $collectionStr;
+    public $groupStr;
 
     /**
      * CardProd constructor.
@@ -51,7 +54,7 @@ class CardProd
      * @param ProdRest $prodRest
      * @throws \Exception
      */
-    function __construct($objProd, $prodRest = null)
+    function __construct($objProd, &$prodRest = null)
     {
         $this->prodId = $objProd->calcProdId();
         $this->titleStr = $objProd->fields()['titleStr']();
@@ -67,6 +70,10 @@ class CardProd
         $this->fabricTypeFk = $prod->fabricTypeFk;
         $this->modelFk = $prod->modelFk;
         $this->themeFk = $prod->themeFk;
+
+        $this->categoryStr = $objProd->collection_fk ? $objProd->collectionFk->divFk->name : '';
+        $this->collectionStr = $objProd->collection_fk ? $objProd->collectionFk->name : '';
+        $this->groupStr = $prod->modelFk->classFk->groupFk->title;
 
         $this->printFk = isset($objProd->print_fk) ? $objProd->printFk : RefProdPrint::findOne(['id' => 1]);
 
