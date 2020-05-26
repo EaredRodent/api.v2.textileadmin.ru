@@ -256,18 +256,23 @@ class AnxUserController extends ActiveControllerExtended
         foreach ($legalEntities as $legalEntity) {
 
             // Если приходит ИНН существующего клиента - то приоритет у существующей карточки
+            /** @var SlsClient $slsClient */
             $slsClient = SlsClient::find()
                 ->where(['inn' => $legalEntity['inn']])
                 ->one();
 
-            if (!$slsClient) {
+            if ($slsClient) {
+                if($slsClient->org_fk) {
+                    throw new HttpException(200, 'Организация с таким ИНН уже существует.', 200);
+                } else {
+                    $slsClient->org_fk = $slsOrg->id;
+                }
+            } else {
                 $slsClient = new SlsClient();
                 // todo безопасность
                 $slsClient->attributes = $legalEntity;
                 $slsClient->short_name = $slsClient->full_name;
             }
-
-            $slsClient->org_fk = $slsOrg->id;
 
             if (!$slsClient->save()) {
                 throw new HttpException(200, 'Внутренняя ошибка.', 200);
