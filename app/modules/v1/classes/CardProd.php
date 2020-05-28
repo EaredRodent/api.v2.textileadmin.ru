@@ -93,7 +93,7 @@ class CardProd
         }
 
         $this->discount = $objProd->fields()['discount']();
-        $this->discountPrice = $this->minPrice * (1 - $this->discount / 100);
+        $this->discountPrice = round($this->minPrice * (1 - $this->discount / 100));
     }
 
 
