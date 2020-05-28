@@ -502,7 +502,8 @@ class Permissions
             // Аппбар
             RefBlankSexController::actionGetAppBarTree,
             SlsMessageStateController::actionGetForContact,
-            CardProdController::actionGetAppBar,
+            CardProdController::actionGetAppBarAssort,
+            CardProdController::actionGetAppBarDiscount,
 
             // Фильтры
 

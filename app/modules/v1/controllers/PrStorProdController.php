@@ -1044,6 +1044,7 @@ class PrStorProdController extends ActiveControllerExtended
 
                 if (!isset($modelArr[$prod['modelId']])) {
                     $modelArr[$prod['modelId']]['name'] = $prod['model'];
+                    $modelArr[$prod['modelId']]['className'] = $prod['className'];
                     $modelArr[$prod['modelId']]['id'] = $id++;
                     $modelArr[$prod['modelId']]['prodArr'] = [];
                 }

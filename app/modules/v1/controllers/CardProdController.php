@@ -233,9 +233,9 @@ class CardProdController extends ActiveControllerExtended
     }
 
 
-    const actionGetAppBar = 'GET /v1/card-prod/get-app-bar';
+    const actionGetAppBarAssort = 'GET /v1/card-prod/get-app-bar-assort';
 
-    public function actionGetAppBar()
+    public function actionGetAppBarAssort()
     {
         $male = [
             'name' => 'Мужчинам',
@@ -300,17 +300,17 @@ class CardProdController extends ActiveControllerExtended
                 'sexSort' => $sexTranslate[$refProductPrint->blankFk->modelFk->sex_fk]['sort'],
                 'category' => $refProductPrint->collectionFk->divFk->name,
                 'categorySort' => $refProductPrint->collectionFk->divFk->sort,
-                'class' => $refProductPrint->blankFk->modelFk->classFk->oxouno,
-                'classID' => ' ' . $refProductPrint->blankFk->modelFk->classFk->id
+                'class' => $refProductPrint->blankFk->modelFk->classFk->oxouno
             ];
         }
 
         $sexSort = array_column($prods, 'sexSort');
         $categorySort = array_column($prods, 'categorySort');
         $class = array_column($prods, 'class');
-        array_multisort($sexSort, $categorySort, $class, $prods);
 
         $tree = [];
+
+        array_multisort($sexSort, $categorySort, $class, $prods);
 
         foreach ($prods as $prod) {
             if (!isset($tree[$prod['sexSort']])) {
@@ -331,6 +331,109 @@ class CardProdController extends ActiveControllerExtended
                 $classArr[] = $prod['class'];
             }
         }
+
+        return $tree;
+    }
+
+    const actionGetAppBarDiscount = 'GET /v1/card-prod/get-app-bar-discount';
+
+    public function actionGetAppBarDiscount()
+    {
+        $male = [
+            'name' => 'Мужчинам',
+            'ids' => [1],
+            'sort' => 2
+        ];
+
+        $female = [
+            'name' => 'Женщинам',
+            'ids' => [2, 5],
+            'sort' => 1
+        ];
+
+        $kidMale = [
+            'name' => 'Мальчикам',
+            'ids' => [3],
+            'sort' => 4
+        ];
+
+        $kidFemale = [
+            'name' => 'Девочкам',
+            'ids' => [4, 6],
+            'sort' => 3
+        ];
+
+        $sexTranslate = [
+            1 => $male,
+            2 => $female,
+            3 => $kidMale,
+            4 => $kidFemale,
+            5 => $female,
+            6 => $kidFemale,
+        ];
+
+        /** @var RefArtBlank[] $refArtBlanks */
+        $refArtBlanks = RefArtBlank::find()
+            ->where('collection_fk IS NULL')
+            ->andWhere(['flag_price' => 1])
+            ->all();
+
+        /** @var RefProductPrint[] $refProductPrints */
+        $refProductPrints = RefProductPrint::find()
+            ->where('collection_fk IS NULL')
+            ->andWhere(['flag_price' => 1])
+            ->all();
+
+        $prods = [];
+
+        foreach ($refArtBlanks as $refArtBlank) {
+            $prods[] = [
+                'sex' => $sexTranslate[$refArtBlank->modelFk->sex_fk]['name'],
+                'sexSort' => $sexTranslate[$refArtBlank->modelFk->sex_fk]['sort'],
+                'group' => $refArtBlank->modelFk->classFk->groupFk->title,
+                'groupSort' => $refArtBlank->modelFk->classFk->groupFk->sort,
+                'class' => $refArtBlank->modelFk->classFk->oxouno
+            ];
+        }
+
+        foreach ($refProductPrints as $refProductPrint) {
+            $prods[] = [
+                'sex' => $sexTranslate[$refProductPrint->blankFk->modelFk->sex_fk]['name'],
+                'sexSort' => $sexTranslate[$refProductPrint->blankFk->modelFk->sex_fk]['sort'],
+                'group' => $refProductPrint->blankFk->modelFk->classFk->groupFk->title,
+                'groupSort' => $refProductPrint->blankFk->modelFk->classFk->groupFk->sort,
+                'class' => $refProductPrint->blankFk->modelFk->classFk->oxouno
+            ];
+        }
+
+        $sexSort = array_column($prods, 'sexSort');
+        $groupSort = array_column($prods, 'groupSort');
+        $class = array_column($prods, 'class');
+
+        $tree = [];
+
+        array_multisort($sexSort, $groupSort, $class, $prods);
+
+        foreach ($prods as $prod) {
+            if (!isset($tree[$prod['sexSort']])) {
+                $tree[$prod['sexSort']]['name'] = $prod['sex'];
+                $tree[$prod['sexSort']]['groupArr'] = [];
+            }
+
+            $groupArr = &$tree[$prod['sexSort']]['groupArr'];
+
+            if (!isset($groupArr[$prod['groupSort']])) {
+                $groupArr[$prod['groupSort']]['name'] = $prod['group'];
+                $groupArr[$prod['groupSort']]['classArr'] = [];
+            }
+
+            $classArr = &$groupArr[$prod['groupSort']]['classArr'];
+
+            if (!in_array($prod['class'], $classArr)) {
+                $classArr[] = $prod['class'];
+            }
+        }
+
 
         return $tree;
     }
