@@ -13,5 +13,12 @@ use app\gii\GiiRefCollection;
 
 class RefCollection extends GiiRefCollection
 {
+    public function fields()
+    {
+        $fields = array_merge(parent::fields(), [
+            'divFk',
+        ]);
+        return $fields;
+    }
 
 }
