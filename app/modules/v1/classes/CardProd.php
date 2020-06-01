@@ -28,6 +28,7 @@ class CardProd
     // ? public $printId; // OXO-NNNN-PPP
 
     public $prodId; // OXO-NNNN
+    public $printId;
 
     public $titleStr;
     public $art;
@@ -47,6 +48,20 @@ class CardProd
     public $categoryStr;
     public $collectionStr;
     public $groupStr;
+    public $hClientArt;
+
+    public $price_5xs;
+    public $price_4xs;
+    public $price_3xs;
+    public $price_2xs;
+    public $price_xs;
+    public $price_s;
+    public $price_m;
+    public $price_l;
+    public $price_xl;
+    public $price_2xl;
+    public $price_3xl;
+    public $price_4xl;
 
     /**
      * CardProd constructor.
@@ -64,6 +79,10 @@ class CardProd
         $this->minPrice = $objProd->fields()['minPrice']();
         $this->sizes = $objProd->fields()['sizes']();
 
+        foreach (Sizes::prices as $fSize => $fPrice) {
+            $this->$fPrice = $objProd->$fPrice;
+        }
+
 
         $prod = isset($objProd->blank_fk) ? $objProd->blankFk : $objProd;
 
@@ -75,6 +94,7 @@ class CardProd
         $this->collectionStr = $objProd->collection_fk ? $objProd->collectionFk->name : '';
         $this->groupStr = $prod->modelFk->classFk->groupFk->title;
 
+        $this->printId = isset($objProd->print_fk) ? $objProd->print_fk : 1;
         $this->printFk = isset($objProd->print_fk) ? $objProd->printFk : RefProdPrint::findOne(['id' => 1]);
 
         // Всегда полиэтилен todo !!!
@@ -94,6 +114,8 @@ class CardProd
 
         $this->discount = $objProd->fields()['discount']();
         $this->discountPrice = round($this->minPrice * (1 - $this->discount / 100));
+
+        $this->hClientArt = $prod->hClientArt($this->printId);
     }
 
 

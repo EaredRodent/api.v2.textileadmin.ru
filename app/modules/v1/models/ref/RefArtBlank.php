@@ -442,10 +442,13 @@ class RefArtBlank extends GiiRefArtBlank
     /**
      * Вернуть изделия определенный группы и пола
      * @param $groupId
+     * @param $categoryId
      * @param $sexId
+     * @param $refArtBlanks
+     * @param $mode
      * @return array|\yii\db\ActiveRecord[]
      */
-    public static function readForPrice($groupId, $sexId, $filterProds)
+    public static function readForPrice($groupId, $categoryId, $sexId, $refArtBlanks, $mode)
     {
         // Добавление унисекса
 
@@ -462,36 +465,27 @@ class RefArtBlank extends GiiRefArtBlank
             $sexId = [4, 6];
         }
 
-        /** @var RefArtBlank[] $prods */
+        /** @var ActiveQuery $prods */
         $prods = self::find()
-            ->with('modelFk.classFk.groupFk')
-            ->with('modelFk.sexFk')
-            ->with('themeFk')
-            ->with('fabricTypeFk')
+            ->joinWith('modelFk.sexFk')
+            ->joinWith('collectionFk.divFk')
             ->joinWith('modelFk.classFk.groupFk')
             ->where([
                 'flag_price' => 1,
-                'ref_blank_group.id' => $groupId,
+                'ref_art_blank.id' => $refArtBlanks,
                 'ref_blank_model.sex_fk' => $sexId
-            ])
-            ->orderBy('id DESC')
-            ->all();
+            ]);
 
-        $prods = array_filter($prods, function ($prod) use($filterProds) {
-            /** @var RefArtBlank $prod */
-            /** @var CardProd $filterProd */
+        if ($mode === 'assort') {
+            $prods = $prods->andWhere(['ref_collect_div.id' => $categoryId]);
+        }
+        if ($mode === 'discount') {
+            $prods = $prods->andWhere(['ref_blank_group.id' => $groupId]);
+        }
 
-            $addToProds = false;
+        $prods = $prods->orderBy('id DESC')->all();
 
-            foreach($filterProds as $filterProd) {
-                if(($prod->id === $filterProd->prodId) && $filterProd->printFk->id === 1) {
-                    $addToProds = true;
-                    break;
-                }
-            }
-
-            return $addToProds;
-        });
+        /** @var RefArtBlank[] $prods */
         return $prods;
     }
 
@@ -505,7 +499,8 @@ class RefArtBlank extends GiiRefArtBlank
      * @param $groupID
      * @return array|self[]
      */
-    static public function readFilterProds2($categoryID, $collectionID, $sexTitles, $modelID, $discountNumber, $groupID) {
+    static public function readFilterProds2($categoryID, $collectionID, $sexTitles, $modelID, $discountNumber, $groupID)
+    {
         $activeQuery = self::find()
             ->joinWith('modelFk.sexFk')
             ->joinWith('modelFk.classFk.groupFk')
@@ -520,7 +515,7 @@ class RefArtBlank extends GiiRefArtBlank
             ->andFilterWhere(['ref_blank_group.id' => $groupID])
             ->andWhere(['ref_art_blank.flag_price' => 1]);
 
-        if($discountNumber === null) {
+        if ($discountNumber === null) {
             $activeQuery = $activeQuery->andWhere('ref_art_blank.collection_fk IS NOT NULL');
         } else {
             $activeQuery = $activeQuery->andWhere('ref_art_blank.collection_fk IS NULL');

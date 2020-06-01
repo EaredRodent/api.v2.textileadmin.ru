@@ -7,6 +7,7 @@ namespace app\rbac;
 use app\modules\v1\controllers\AnxUserController;
 use app\modules\v1\controllers\BaseController;
 use app\modules\v1\controllers\CardProdController;
+use app\modules\v1\controllers\GenerateController;
 use app\modules\v1\controllers\LogErrorController;
 use app\modules\v1\controllers\LogEventController;
 use app\modules\v1\controllers\OxounoApiController;
@@ -509,6 +510,7 @@ class Permissions
 
             PrStorProdController::actionTreeLite,
             CardProdController::actionGetByFilters2,
+            GenerateController::actionPrice,
 
             // Карта товара
 

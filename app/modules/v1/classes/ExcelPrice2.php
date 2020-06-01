@@ -5,10 +5,12 @@ namespace app\modules\v1\classes;
 
 use app\controllers\ApiController;
 use app\extension\Sizes;
+use app\models\AnxUser;
 use app\modules\AppMod;
 use app\modules\v1\models\pr\PrStorProd;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefBlankGroup;
+use app\modules\v1\models\ref\RefCollectDiv;
 use app\modules\v1\models\ref\RefProductPrint;
 use app\modules\v1\models\sls\SlsItem;
 use app\objects\Prices;
@@ -47,7 +49,8 @@ class ExcelPrice2
 
     /**
      * ExcelPrice2 constructor.
-     * @param $form
+     * @param $refArtBlanks
+     * @param $refProductPrints
      * @param $nds
      * @param $flagRest
      * @param $flagReport - флаг ренедеринга кол-ва проданного за период
@@ -55,7 +58,7 @@ class ExcelPrice2
      * @throws \Throwable
      * @throws \yii\web\HttpException
      */
-    function __construct($form, $nds, $flagRest, $flagReport)
+    function __construct($refArtBlanks, $refProductPrints, $mode, $nds, $flagRest, $flagReport)
     {
 
         if ((int)$nds > 0) {
@@ -80,7 +83,11 @@ class ExcelPrice2
         $this->prepRestProd();
         $this->prepRestProdPrint();
 
+        /** @var RefBlankGroup[] $groups */
         $groups = RefBlankGroup::readAllSort();
+
+        /** @var RefCollectDiv[] $categories */
+        $categories = RefCollectDiv::find()->all();
 
         $numSheet = 0;
 
@@ -90,70 +97,88 @@ class ExcelPrice2
         $this->renderIndexSheet(0);
         $numSheet++;
 
-        $filterProds = CardProd::getByFilters($form);
-        $filterProds = $filterProds['filteredProds'];
+        $sexArr = [
+            ['id' => 1, 'code' => 'МУЖ', 'color' => 'F44336'],
+            ['id' => 2, 'code' => 'ЖЕН', 'color' => '4CAF50'],
+            ['id' => 3, 'code' => 'МАЛ', 'color' => 'F44336'],
+            ['id' => 4, 'code' => 'ДЕВ', 'color' => '4CAF50'],
+        ];
 
-        /// Рендерить листы прайса изделий
-        foreach ($groups as $group) {
+        if ($mode === 'assort') {
+            // Рендерить листы прайса изделий (ассортиментная матрица)
+            foreach ($categories as $category) {
+                foreach ($sexArr as $sexInfo) {
+                    $prods = array_merge(
+                        RefArtBlank::readForPrice(null, $category->id, $sexInfo['id'], $refArtBlanks, 'assort'),
+                        RefProductPrint::readForPrice(null, $category->id, $sexInfo['id'], $refProductPrints, 'assort'));
 
-            // ДЕВ, МАЛ / ЖЕН, МУЖ
-            // $sexArr = ($group->flag_child_size) ? [4, 3] : [2, 1];
+                    $cardProds = [];
 
-            $sexArr = [2, 1, 4, 3];
-            $code = [2 => "ЖЕН", 1 => "МУЖ", 4 => "ДЕВ", 3 => "МАЛ"];
+                    foreach ($prods as $prod) {
+                        $cardProds[] = new CardProd($prod);
+                    }
 
-            // FFEB3B:ж 4CAF50:з F44336:к
-            $colors = [2 => "4CAF50", 1 => "F44336", 4 => "4CAF50", 3 => "F44336"];
-
-            foreach ($sexArr as $sexId) {
-
-
-                $prods = RefArtBlank::readForPrice($group->id, $sexId, $filterProds);
-                if (count($prods) > 0) {
-                    $this->renderProdSheet(
-                        $numSheet,
-                        $group->title . " " . $code[$sexId],
-                        $colors[$sexId],
-                        $prods
-                    );
-                    $numSheet++;
+                    if (count($cardProds) > 0) {
+                        $this->renderProdSheet(
+                            $numSheet,
+                            $category->name . " " . $sexInfo['code'],
+                            $sexInfo['color'],
+                            $cardProds
+                        );
+                        $numSheet++;
+                    }
                 }
             }
         }
 
-        /// Рендерить лист прайса изделий с принтом
-        $prodsPrint = RefProductPrint::readForPrice($filterProds);
-        if(count($prodsPrint) > 0) {
-            $this->renderProdPrintSheet(
-                $numSheet,
-                "Изделия с принтом",
-                "FFEB3B",
-                $prodsPrint
-            );
-        }
+        if ($mode === 'discount') {
+            // Рендерить листы прайса изделий (акционный товар)
+            foreach ($groups as $group) {
+                foreach ($sexArr as $sexInfo) {
+                    $prods = array_merge(
+                        RefArtBlank::readForPrice($group->id, null, $sexInfo['id'], $refArtBlanks, 'discount'),
+                        RefProductPrint::readForPrice($group->id, null, $sexInfo['id'], $refProductPrints, 'discount'));
 
+                    $cardProds = [];
+
+                    foreach ($prods as $prod) {
+                        $cardProds[] = new CardProd($prod);
+                    }
+
+                    if (count($cardProds) > 0) {
+                        $this->renderProdSheet(
+                            $numSheet,
+                            $group->title . " " . $sexInfo['code'],
+                            $sexInfo['color'],
+                            $cardProds
+                        );
+                        $numSheet++;
+                    }
+                }
+            }
+        }
 
         // Устанавливает активный лист при открытии
         $this->objExcel->setActiveSheetIndex(0);
     }
 
-    public function send()
+    public function save()
     {
         $objWriter = IOFactory::createWriter($this->objExcel, 'Xlsx');
+        /** @var AnxUser $user */
+        $user = Yii::$app->getUser()->getIdentity();
+        $userPricesDir = Yii::getAlias(AppMod::filesRout[AppMod::filesB2B_Prices]) . '/' . $user->url_key;
+        if (!file_exists($userPricesDir)) {
+            mkdir($userPricesDir);
+        }
 
-        ob_end_clean();
-        ob_start();
-
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-
-
-        $date = date('d.m.y');
-
-        $filename = "OXOUNO-price-{$date}.xlsx";
-
-        header('Content-Disposition: attachment;filename=' . $filename . ' ');
-        header('Cache-Control: max-age=0');
-        $objWriter->save('php://output');
+        $filename = Yii::$app->security->generateRandomString(128) . '.xlsx';
+        $userPricePath = $userPricesDir . '/' . $filename;
+        if (file_exists($userPricePath)) {
+            unlink($userPricePath);
+        }
+        $objWriter->save($userPricePath);
+        return $filename;
     }
 
     private function renderIndexSheet($num)
@@ -226,7 +251,7 @@ class ExcelPrice2
      * @param $prods RefArtBlank[]
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
-    private function renderProdSheet($numSheet, $nameSheet, $colorSheet, $prods)
+    private function renderProdSheet($numSheet, $nameSheet, $colorSheet, $cardProds)
     {
 
         $sheet = $this->objExcel->createSheet($numSheet);
@@ -243,12 +268,13 @@ class ExcelPrice2
         $line = 1;
         $posSumm = [];
 
-        foreach ($prods as $prod) {
+        /** @var CardProd $prod */
+        foreach ($cardProds as $prod) {
 
             ///
             ///  Характеристики
             ///
-            $sheet->setCellValue("A{$line}", $prod->modelFk->classFk->title . ' ' . $prod->hClientArt());
+            $sheet->setCellValue("A{$line}", $prod->modelFk->fashion . ' ' . $prod->hClientArt);
             $sheet->mergeCells("A{$line}:B{$line}");
             $sheet->getStyle("A{$line}:E{$line}")->getFont()->setBold(true);
             $sheet->getStyle("A{$line}:E{$line}")->getAlignment()
@@ -303,10 +329,12 @@ class ExcelPrice2
                 if ($prod->$fPrice > 0) {
                     $sheet->setCellValue("C{$sPos}", $prod->modelFk->hSizeStr($fSize));
                     $sheet->getStyle("D{$sPos}")->getFill()->setFillType(Fill::FILL_SOLID)
-                        ->getStartColor()->setRGB($this->getColorForCell($prod->id, $fSize));
+                        ->getStartColor()
+                        ->setRGB($prod->printId === 1 ? $this->getColorForCell($prod->prodId, $fSize)
+                            : $this->getColorForCellPrint($prod->prodId . '-' . $prod->printId, $fSize));
 
-                    $price = $this->prices->getPrice($prod->id, 1, $fSize);
-                    $price = round($price * (1 - $this->prices->getDiscount($prod->id, 1) / 100));
+                    $price = $this->prices->getPrice($prod->prodId, $prod->printId, $fSize);
+                    $price = round($price * (1 - $this->prices->getDiscount($prod->prodId, $prod->printId) / 100));
                     $sheet->setCellValue("E{$sPos}", $price);
 
 //                    if ($this->flagRest) {
@@ -361,13 +389,28 @@ class ExcelPrice2
             $hDst = 182;
             $imgItems = [1 => 'G', 2 => 'J', 3 => 'M', 4 => 'P'];
             foreach ($imgItems as $imgNum => $imgCol) {
+                if ($prod->printId === 1) {
+                    $path = realpath(Yii::getAlias(AppMod::filesRout[AppMod::filesImageBaseProds]));
+                } else {
+                    $path = realpath(Yii::getAlias(AppMod::filesRout[AppMod::filesImageProdsPrints]));
+                }
 
-                $path = realpath(Yii::getAlias(AppMod::filesRout[AppMod::filesImageBaseProds]));
-                $_fileName = str_pad($prod->id, 4, '0', STR_PAD_LEFT) . '_' . $imgNum;
+                if ($prod->printId === 1) {
+                    $_fileName = str_pad($prod->prodId, 4, '0', STR_PAD_LEFT) . '_' . $imgNum;
+                } else {
+                    $_fileName = str_pad($prod->prodId, 4, '0', STR_PAD_LEFT) . '-' .
+                        str_pad($prod->printId, 3, '0', STR_PAD_LEFT) . '_' . $imgNum;
+                }
+
                 $fileName = $_fileName . '.jpg';
                 $fileNameSmall = $_fileName . '.sm.jpg';
                 $fullPath = $path . '/' . $fileNameSmall;
-                $url = CURRENT_API_URL . '/v1/files/public/' . AppMod::filesImageBaseProds . '/' . $fileName;
+
+                if ($prod->printId === 1) {
+                    $url = CURRENT_API_URL . '/v1/files/public/' . AppMod::filesImageBaseProds . '/' . $fileName;
+                } else {
+                    $url = CURRENT_API_URL . '/v1/files/public/' . AppMod::filesImageProdsPrints . '/' . $fileName;
+                }
 
                 if (file_exists($fullPath)) {
                     $gdImage = imagecreatefromjpeg($fullPath);

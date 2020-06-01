@@ -45,6 +45,9 @@ class AppMod
     // Файлы FFF юр.лиц
     const filesB2B_DOC6 = 'filesB2B_DOC6';
 
+    // Сгенерированные прайс-листы для B2B
+    const filesB2B_Prices = 'filesB2B_Prices';
+
     // Типы документов для ИП
     const filesB2B_DocTypes_IP = [
         self::filesB2B_DOC1 => 'Документ 1',
@@ -70,6 +73,7 @@ class AppMod
         self::filesB2B_DOC4 => '@app/../../textile/files/b2b-docs/doc4',
         self::filesB2B_DOC5 => '@app/../../textile/files/b2b-docs/doc5',
         self::filesB2B_DOC6 => '@app/../../textile/files/b2b-docs/doc6',
+        self::filesB2B_Prices => '@app/../../textile/files/b2b-prices',
     ];
 
     const pathProdPhoto = "@app/../../textile/files/ref/prod";
