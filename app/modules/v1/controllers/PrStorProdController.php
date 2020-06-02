@@ -671,7 +671,7 @@ class PrStorProdController extends ActiveControllerExtended
 
     /**
      * Вызывает actionTree c fillTree = false
-     * @param bool $fillTree
+     * @return array
      */
     public function actionTreeLite()
     {
@@ -897,6 +897,7 @@ class PrStorProdController extends ActiveControllerExtended
 
             foreach ($list1 as $item1) {
                 $cDiv[' ' . $item1->id]['name'] = $item1->name;
+                $cDiv[' ' . $item1->id]['type'] = 'category';
                 $cDiv[' ' . $item1->id]['id'] = $id++;
                 $cDiv[' ' . $item1->id]['children'] = [];
 
@@ -907,9 +908,11 @@ class PrStorProdController extends ActiveControllerExtended
 
                 foreach ($list2 as $item2) {
                     $collectionArr[' ' . $item2->id]['name'] = $item2->name;
+                    $collectionArr[' ' . $item2->id]['type'] = 'collection';
                     $collectionArr[' ' . $item2->id]['id'] = $id++;
                     $collectionArr[' ' . $item2->id]['children'] = [];
                     $collectionArr[' ' . $item2->id]['collectionDescription'] = $item2->epithets;
+                    $collectionArr[' ' . $item2->id]['comment'] = $item2->comment;
 
                     $sexArr = &$collectionArr[' ' . $item2->id]['children'];
 
@@ -917,6 +920,7 @@ class PrStorProdController extends ActiveControllerExtended
 
                     foreach ($list3 as $item3) {
                         $sexArr[$item3['name']]['name'] = $item3['name'];
+                        $sexArr[$item3['name']]['type'] = 'sex';
                         $sexArr[$item3['name']]['id'] = $id++;
                         $sexArr[$item3['name']]['children'] = [];
 
@@ -954,6 +958,7 @@ class PrStorProdController extends ActiveControllerExtended
                         foreach ($list4 as $item4) {
                             if (!isset($modelArr[' ' . $item4->id])) {
                                 $modelArr[' ' . $item4->id]['name'] = $item4->fashion;
+                                $modelArr[' ' . $item4->id]['type'] = 'model';
                                 $modelArr[' ' . $item4->id]['id'] = $id++;
                                 $modelArr[' ' . $item4->id]['className'] = $item4->classFk->oxouno;
                                 $modelArr[' ' . $item4->id]['prodArr'] = [];
