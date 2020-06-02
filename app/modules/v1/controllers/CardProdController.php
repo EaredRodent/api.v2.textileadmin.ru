@@ -47,6 +47,19 @@ class CardProdController extends ActiveControllerExtended
         return CardProd::getByFilters($form);
     }
 
+    const actionGetByFilters2 = 'GET /v1/card-prod/get-by-filters2';
+
+    /**
+     * Вернуть все изделия соответствующие фильтрам v2
+     * @param $form -
+     * @return array
+     * @throws \Exception
+     */
+    public function actionGetByFilters2($form)
+    {
+        return CardProd::getByFilters2($form);
+    }
+
     const actionGetDetails = 'GET /v1/card-prod/get-details';
 
     /**
@@ -217,5 +230,211 @@ class CardProdController extends ActiveControllerExtended
             'photos' => $card->photos,
         ];
 
+    }
+
+
+    const actionGetAppBarAssort = 'GET /v1/card-prod/get-app-bar-assort';
+
+    public function actionGetAppBarAssort()
+    {
+        $male = [
+            'name' => 'Мужчинам',
+            'ids' => [1],
+            'sort' => 2
+        ];
+
+        $female = [
+            'name' => 'Женщинам',
+            'ids' => [2, 5],
+            'sort' => 1
+        ];
+
+        $kidMale = [
+            'name' => 'Мальчикам',
+            'ids' => [3],
+            'sort' => 4
+        ];
+
+        $kidFemale = [
+            'name' => 'Девочкам',
+            'ids' => [4, 6],
+            'sort' => 3
+        ];
+
+        $sexTranslate = [
+            1 => $male,
+            2 => $female,
+            3 => $kidMale,
+            4 => $kidFemale,
+            5 => $female,
+            6 => $kidFemale,
+        ];
+
+        /** @var RefArtBlank[] $refArtBlanks */
+        $refArtBlanks = RefArtBlank::find()
+            ->where('collection_fk IS NOT NULL')
+            ->andWhere(['flag_price' => 1])
+            ->all();
+
+        /** @var RefProductPrint[] $refProductPrints */
+        $refProductPrints = RefProductPrint::find()
+            ->where('collection_fk IS NOT NULL')
+            ->andWhere(['flag_price' => 1])
+            ->all();
+
+        $prods = [];
+
+        foreach ($refArtBlanks as $refArtBlank) {
+            $prods[] = [
+                'sex' => $sexTranslate[$refArtBlank->modelFk->sex_fk]['name'],
+                'sexSort' => $sexTranslate[$refArtBlank->modelFk->sex_fk]['sort'],
+                'category' => $refArtBlank->collectionFk->divFk->name,
+                'categorySort' => $refArtBlank->collectionFk->divFk->sort,
+                'class' => $refArtBlank->modelFk->classFk->oxouno
+            ];
+        }
+
+        foreach ($refProductPrints as $refProductPrint) {
+            $prods[] = [
+                'sex' => $sexTranslate[$refProductPrint->blankFk->modelFk->sex_fk]['name'],
+                'sexSort' => $sexTranslate[$refProductPrint->blankFk->modelFk->sex_fk]['sort'],
+                'category' => $refProductPrint->collectionFk->divFk->name,
+                'categorySort' => $refProductPrint->collectionFk->divFk->sort,
+                'class' => $refProductPrint->blankFk->modelFk->classFk->oxouno
+            ];
+        }
+
+        $sexSort = array_column($prods, 'sexSort');
+        $categorySort = array_column($prods, 'categorySort');
+        $class = array_column($prods, 'class');
+
+        $tree = [];
+
+        array_multisort($sexSort, $categorySort, $class, $prods);
+
+        foreach ($prods as $prod) {
+            if (!isset($tree[$prod['sexSort']])) {
+                $tree[$prod['sexSort']]['name'] = $prod['sex'];
+                $tree[$prod['sexSort']]['categoryArr'] = [];
+            }
+
+            $categoryArr = &$tree[$prod['sexSort']]['categoryArr'];
+
+            if (!isset($categoryArr[$prod['categorySort']])) {
+                $categoryArr[$prod['categorySort']]['name'] = $prod['category'];
+                $categoryArr[$prod['categorySort']]['classArr'] = [];
+            }
+
+            $classArr = &$categoryArr[$prod['categorySort']]['classArr'];
+
+            if (!in_array($prod['class'], $classArr)) {
+                $classArr[] = $prod['class'];
+            }
+        }
+
+        return $tree;
+    }
+
+    const actionGetAppBarDiscount = 'GET /v1/card-prod/get-app-bar-discount';
+
+    public function actionGetAppBarDiscount()
+    {
+        $male = [
+            'name' => 'Мужчинам',
+            'ids' => [1],
+            'sort' => 2
+        ];
+
+        $female = [
+            'name' => 'Женщинам',
+            'ids' => [2, 5],
+            'sort' => 1
+        ];
+
+        $kidMale = [
+            'name' => 'Мальчикам',
+            'ids' => [3],
+            'sort' => 4
+        ];
+
+        $kidFemale = [
+            'name' => 'Девочкам',
+            'ids' => [4, 6],
+            'sort' => 3
+        ];
+
+        $sexTranslate = [
+            1 => $male,
+            2 => $female,
+            3 => $kidMale,
+            4 => $kidFemale,
+            5 => $female,
+            6 => $kidFemale,
+        ];
+
+        /** @var RefArtBlank[] $refArtBlanks */
+        $refArtBlanks = RefArtBlank::find()
+            ->where('collection_fk IS NULL')
+            ->andWhere(['flag_price' => 1])
+            ->all();
+
+        /** @var RefProductPrint[] $refProductPrints */
+        $refProductPrints = RefProductPrint::find()
+            ->where('collection_fk IS NULL')
+            ->andWhere(['flag_price' => 1])
+            ->all();
+
+        $prods = [];
+
+        foreach ($refArtBlanks as $refArtBlank) {
+            $prods[] = [
+                'sex' => $sexTranslate[$refArtBlank->modelFk->sex_fk]['name'],
+                'sexSort' => $sexTranslate[$refArtBlank->modelFk->sex_fk]['sort'],
+                'group' => $refArtBlank->modelFk->classFk->groupFk->title,
+                'groupSort' => $refArtBlank->modelFk->classFk->groupFk->sort,
+                'class' => $refArtBlank->modelFk->classFk->oxouno
+            ];
+        }
+
+        foreach ($refProductPrints as $refProductPrint) {
+            $prods[] = [
+                'sex' => $sexTranslate[$refProductPrint->blankFk->modelFk->sex_fk]['name'],
+                'sexSort' => $sexTranslate[$refProductPrint->blankFk->modelFk->sex_fk]['sort'],
+                'group' => $refProductPrint->blankFk->modelFk->classFk->groupFk->title,
+                'groupSort' => $refProductPrint->blankFk->modelFk->classFk->groupFk->sort,
+                'class' => $refProductPrint->blankFk->modelFk->classFk->oxouno
+            ];
+        }
+
+        $sexSort = array_column($prods, 'sexSort');
+        $groupSort = array_column($prods, 'groupSort');
+        $class = array_column($prods, 'class');
+
+        $tree = [];
+
+        array_multisort($sexSort, $groupSort, $class, $prods);
+
+        foreach ($prods as $prod) {
+            if (!isset($tree[$prod['sexSort']])) {
+                $tree[$prod['sexSort']]['name'] = $prod['sex'];
+                $tree[$prod['sexSort']]['groupArr'] = [];
+            }
+
+            $groupArr = &$tree[$prod['sexSort']]['groupArr'];
+
+            if (!isset($groupArr[$prod['groupSort']])) {
+                $groupArr[$prod['groupSort']]['name'] = $prod['group'];
+                $groupArr[$prod['groupSort']]['classArr'] = [];
+            }
+
+            $classArr = &$groupArr[$prod['groupSort']]['classArr'];
+
+            if (!in_array($prod['class'], $classArr)) {
+                $classArr[] = $prod['class'];
+            }
+        }
+
+
+        return $tree;
     }
 }

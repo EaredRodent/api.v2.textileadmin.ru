@@ -125,7 +125,7 @@ $config = [
                 'v1/files/public/<dir:[\w-]+>/<name:[\w-.()%\s]+>' => 'v1/files/public',
                 'v1/files/get/<key:[\w-]+>/<dir:[\w-]+>/<name:[\w-.()%\s]+>' => 'v1/files/get',
                 'v1/files/get-order-doc/<urlKey:[\w-]+>/<dir:[\w-]+>/<id:[\d]+>' => 'v1/files/get-order-doc',
-                'v1/files/get-price/<urlKey:[\w-]+>' => 'v1/files/get-price',
+                'v1/files/get-price/<urlKey:[\w-]+>/<fileName:[\w-.]+>' => 'v1/files/get-price',
 
                 'sales/orders/order/<id:\d+>' => 'sales/orders/order',
                 'api/excel-price/<key:[A-Za-z0-9_-]+>' => 'api/excel-price',

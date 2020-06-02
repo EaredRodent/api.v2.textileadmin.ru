@@ -7,6 +7,7 @@ namespace app\rbac;
 use app\modules\v1\controllers\AnxUserController;
 use app\modules\v1\controllers\BaseController;
 use app\modules\v1\controllers\CardProdController;
+use app\modules\v1\controllers\GenerateController;
 use app\modules\v1\controllers\LogErrorController;
 use app\modules\v1\controllers\LogEventController;
 use app\modules\v1\controllers\OxounoApiController;
@@ -502,18 +503,14 @@ class Permissions
             // Аппбар
             RefBlankSexController::actionGetAppBarTree,
             SlsMessageStateController::actionGetForContact,
+            CardProdController::actionGetAppBarAssort,
+            CardProdController::actionGetAppBarDiscount,
 
             // Фильтры
 
-            RefBlankSexController::actionGetSexTags,
-            RefBlankGroupController::actionGetGroups,
-            RefBlankClassController::actionGetClassesGroupType,
-            RefBlankThemeController::actionGetThemes,
-            RefFabricTypeController::actionGetFabricTypes,
-            RefArtBlankController::actionGetByFilters,
-            RefArtBlankController::actionGetByFilters2,
-            RefCollectionController::actionGetAll,
-            CardProdController::actionGetByFilters,
+            PrStorProdController::actionTreeLite,
+            CardProdController::actionGetByFilters2,
+            GenerateController::actionPrice,
 
             // Карта товара
 

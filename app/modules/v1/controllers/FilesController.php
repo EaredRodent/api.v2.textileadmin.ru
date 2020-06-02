@@ -141,15 +141,25 @@ class FilesController extends Controller
         return parent::beforeAction($action);
     }
 
-    function actionGetPrice($form, $urlKey)
+    /**
+     * @param $urlKey
+     * @param $fileName
+     * @throws HttpException
+     */
+    function actionGetPrice($urlKey, $fileName)
     {
-        $userByUrlKey = AnxUser::findOne(['url_key' => $urlKey]);
+        $filePath = Yii::getAlias(AppMod::filesRout[AppMod::filesB2B_Prices]) . '/' . $urlKey . '/' . $fileName;
 
-        if (!$userByUrlKey) {
+        if (!file_exists($filePath)) {
             throw new HttpException(200, 'Нет доступа.', 200);
         }
 
-        $obj = new ExcelPrice2($form, null, null, null);
-        $obj->send();
+        $viewFileName = 'OXOUNO-price-' . date("d.m.y-H:i:s.", filectime($filePath)) . '.xlsx';
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename=' . $viewFileName . ' ');
+        header('Cache-Control: max-age=0');
+        readfile($filePath);
+        exit;
     }
 }

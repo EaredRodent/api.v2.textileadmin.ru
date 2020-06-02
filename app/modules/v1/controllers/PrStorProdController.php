@@ -11,6 +11,7 @@ namespace app\modules\v1\controllers;
 use app\extension\ProdRest;
 use app\extension\Sizes;
 use app\modules\v1\classes\ActiveControllerExtended;
+use app\modules\v1\classes\CardProd;
 use app\modules\v1\models\pr\PrStorProd;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefBlankModel;
@@ -666,14 +667,442 @@ class PrStorProdController extends ActiveControllerExtended
     }
 
 
+    const actionTreeLite = 'GET /v1/pr-stor-prod/tree-lite';
+
+    /**
+     * Вызывает actionTree c fillTree = false
+     * @return array
+     */
+    public function actionTreeLite()
+    {
+        $male = [
+            'name' => 'Мужчинам',
+            'ids' => [1],
+            'sort' => 2
+        ];
+
+        $female = [
+            'name' => 'Женщинам',
+            'ids' => [2, 5],
+            'sort' => 1
+        ];
+
+        $kidMale = [
+            'name' => 'Мальчикам',
+            'ids' => [3],
+            'sort' => 4
+        ];
+
+        $kidFemale = [
+            'name' => 'Девочкам',
+            'ids' => [4, 6],
+            'sort' => 3
+        ];
+
+        $sexTranslate = [
+            1 => $male,
+            2 => $female,
+            3 => $kidMale,
+            4 => $kidFemale,
+            5 => $female,
+            6 => $kidFemale,
+        ];
+
+        $sexLvlTree = [$female, $male, $kidFemale, $kidMale];
+
+        /**
+         * Сгруппировать продукт по blank_fk, print_fk и pack_fk, суммировать размеры
+         * @return PrStorProd[]
+         */
+        function getProds()
+        {
+            return PrStorProd::find()
+                ->select(array_merge(['{{pr_stor_prod}}.*'], Sizes::selectSumAbs))
+                ->joinWith(['blankFk.modelFk.classFk.groupFk', 'blankFk.fabricTypeFk', 'blankFk.themeFk', 'blankFk.collectionFk'])
+                ->having('totalSum > 0')
+                ->groupBy('blank_fk, print_fk, pack_fk')
+                ->all();
+        }
+
+        /**
+         * Сформировать массив объектов с нужными свойствами на основе массива сгруппированных продуктов
+         * @param $prods PrStorProd[]
+         * @return array
+         */
+        function normalizeProds($prods, $sexTranslate)
+        {
+
+            $assortTranslate = [
+                'base' => 'Базовый ассортимент',
+                'period' => 'Периодический ассортимент',
+                null => 'Не определен',
+            ];
+
+            $prices = new Prices();
+
+            // Массив [объекты со свойствами]
+            $result = [];
+
+            $prodRest = new ProdRest();
+
+            foreach ($prods as $prod) {
+                // Пол
+                $sexValue = $prod->blankFk->modelFk->sex_fk;
+                $sexText = $sexTranslate[$sexValue]['name'];
+                $sexSort = $sexTranslate[$sexValue]['sort'];
+
+                // Ассортимент
+                $assortValue = $prod->blankFk->assortment;
+                $assortText = $assortTranslate[$assortValue];
+
+                // Группы
+                $groupId = ' ' . $prod->blankFk->modelFk->classFk->group_fk;
+                $groupText = $prod->blankFk->modelFk->classFk->groupFk->title;
+                $groupSort = $prod->blankFk->modelFk->classFk->groupFk->sort;
+
+                // Наименование
+                $classId = $prod->blankFk->modelFk->class_fk;
+                $classText = $prod->blankFk->modelFk->classFk->title;
+                $className = $prod->blankFk->modelFk->classFk->oxouno;
+
+                // Модель
+
+                $modelId = ' ' . $prod->blankFk->model_fk;
+                $modelText = $prod->blankFk->modelFk->fashion;
+                $modelArt = $prod->blankFk->modelFk->hArt();
+                $modelSort = $prod->blankFk->modelFk->sort;
+
+                // Скидка
+                $discount = $prices->getDiscount($prod->blank_fk, $prod->print_fk);
+
+                // Колллекция
+                if ($prod->print_fk === 1) {
+                    $collection = $prod->blankFk->collectionFk;
+                } else {
+                    /** @var RefProductPrint $rpp */
+                    $rpp = RefProductPrint::find()
+                        ->where(['blank_fk' => $prod->blank_fk])
+                        ->andWhere(['print_fk' => $prod->print_fk])
+                        ->one();
+                    if ($rpp) {
+                        $collection = $rpp->collectionFk;
+                    } else {
+                        $collection = null;
+                    }
+                }
+
+                $collectionId = $collection ? ' ' . $collection->id : null;
+                $collectionText = $collection ? $collection->name : null;
+
+                // Категория
+
+                $divId = $collection ? ' ' . $collection->div_fk : null;
+                $divText = $collection ? $collection->divFk->name : null;
+
+                //Товары
+                $sizesFields = ($sexText == 'Детям') ? Sizes::fieldsRangeKids : Sizes::fieldsRangeAdult;
+                $sizesVal = [];
+                $totalMoney = 0;
+                $realSizes = [
+                    'size_2xs',
+                    'size_xs',
+                    'size_s',
+                    'size_m',
+                    'size_l',
+                    'size_xl',
+                    'size_2xl',
+                    'size_3xl',
+                    'size_4xl',
+                ];
+                foreach ($realSizes as $fSize) {
+                    $sizesVal[] = ['name' => Sizes::adults[$fSize] . ' ' . Sizes::kids[$fSize], 'count' => $prod->$fSize];
+
+                    $price29 = round($prices->getPrice($prod->blank_fk, $prod->print_fk, $fSize) * 0.71);
+                    $totalMoney += $prod->$fSize * $price29;
+                }
+
+                // CardProd construct
+
+                /** @var RefProductPrint|RefArtBlank $cardProdParam */
+                $cardProdParam = null;
+
+                if ($prod->print_fk === 1) {
+                    $cardProdParam = RefArtBlank::findOne(['id' => $prod->blank_fk]);
+                } else {
+                    $cardProdParam = RefProductPrint::findOne(['blank_fk' => $prod->blank_fk, 'print_fk' => $prod->print_fk]);
+                }
+
+                if (!$cardProdParam) {
+                    continue;
+                }
+
+                if ($cardProdParam->flag_price !== 1) {
+                    continue;
+                }
+
+                $cardProd = new CardProd($cardProdParam, $prodRest);
+
+                // Prod normalization
+
+                $prod = [
+                    'prodId' => $prod->blank_fk,
+                    'printId' => $prod->print_fk,
+                    'packId' => $prod->pack_fk,
+                    'art' => $prod->blankFk->hClientArt($prod->print_fk),
+                    'fabric' => $prod->blankFk->fabricTypeFk->type,
+                    'color' => $prod->blankFk->themeFk->title,
+                    'print' => $prod->printFk->id === 1 ? "" : $prod->printFk->title,
+                    'basePrice' => $prices->getMinPrice($prod->blank_fk, $prod->print_fk),
+                    'flagInPrice' => $prices->getFlagInPrice($prod->blank_fk, $prod->print_fk),
+                    'flagInProd' => !(bool)$prod->blankFk->flag_stop_prod,
+                    'sizes' => $sizesVal,
+                    'count' => (int)$prod->totalSum,
+                    'price' => $totalMoney,
+                    'discount' => $discount,
+                    'sex' => $sexText,
+                    'sexSort' => $sexSort,
+                    'assort' => $assortText,
+                    'divId' => $divId,
+                    'divText' => $divText,
+                    'groupId' => $groupId,
+                    'group' => $groupText,
+                    'groupSort' => $groupSort,
+                    'class' => $classText,
+                    'className' => $className,
+                    'collectionId' => $collectionId,
+                    'collection' => $collectionText,
+                    'modelId' => $modelId,
+                    'model' => $modelText,
+                    'modelArt' => $modelArt,
+                    'modelSort' => $modelSort,
+                    'cardProd' => $cardProd
+                ];
+
+                $result[] = $prod;
+            }
+
+            return $result;
+        }
+
+        function makeTopTree($sexLvlTree)
+        {
+            /** @var RefCollectDiv[] $list1 */
+            $list1 = RefCollectDiv::find()->orderBy('sort')->all();
+
+            $id = 0;
+
+            $tree['items'] = [];
+
+            $cDiv = &$tree['items'];
+
+            foreach ($list1 as $item1) {
+                $cDiv[' ' . $item1->id]['name'] = $item1->name;
+                $cDiv[' ' . $item1->id]['type'] = 'category';
+                $cDiv[' ' . $item1->id]['id'] = $id++;
+                $cDiv[' ' . $item1->id]['children'] = [];
+
+                $collectionArr = &$cDiv[' ' . $item1->id]['children'];
+
+                /** @var RefCollection[] $list2 */
+                $list2 = RefCollection::find()->where(['div_fk' => $item1->id])->orderBy('name')->all();
+
+                foreach ($list2 as $item2) {
+                    $collectionArr[' ' . $item2->id]['name'] = $item2->name;
+                    $collectionArr[' ' . $item2->id]['type'] = 'collection';
+                    $collectionArr[' ' . $item2->id]['id'] = $id++;
+                    $collectionArr[' ' . $item2->id]['children'] = [];
+                    $collectionArr[' ' . $item2->id]['collectionDescription'] = $item2->epithets;
+                    $collectionArr[' ' . $item2->id]['comment'] = $item2->comment;
+
+                    $sexArr = &$collectionArr[' ' . $item2->id]['children'];
+
+                    $list3 = $sexLvlTree;
+
+                    foreach ($list3 as $item3) {
+                        $sexArr[$item3['name']]['name'] = $item3['name'];
+                        $sexArr[$item3['name']]['type'] = 'sex';
+                        $sexArr[$item3['name']]['id'] = $id++;
+                        $sexArr[$item3['name']]['children'] = [];
+
+                        $modelArr = &$sexArr[$item3['name']]['children'];
+
+                        /** @var RefArtBlank[] $list4_1 */
+                        $list4_1 = RefArtBlank::find()
+                            ->joinWith(['modelFk'])
+                            ->where(['collection_fk' => $item2->id])
+                            ->andWhere(['in', 'ref_blank_model.sex_fk', $item3['ids']])
+                            ->all();
+
+                        /** @var RefProductPrint[] $list4_2 */
+                        $list4_2 = RefProductPrint::find()
+                            ->joinWith(['blankFk.modelFk'])
+                            ->where(['ref_product_print.collection_fk' => $item2->id])
+                            ->andWhere(['in', 'ref_blank_model.sex_fk', $item3['ids']])
+                            ->all();
+
+                        $list4 = [];
+
+                        foreach ($list4_1 as $rab) {
+                            $list4[] = $rab->modelFk;
+                        }
+
+                        foreach ($list4_2 as $rpp) {
+                            $list4[] = $rpp->blankFk->modelFk;
+                        }
+
+                        usort($list4, function ($a, $b) {
+                            return $a->sort - $b->sort;
+                        });
+
+                        /** @var RefBlankModel[] $list4 */
+                        foreach ($list4 as $item4) {
+                            if (!isset($modelArr[' ' . $item4->id])) {
+                                $modelArr[' ' . $item4->id]['name'] = $item4->fashion;
+                                $modelArr[' ' . $item4->id]['type'] = 'model';
+                                $modelArr[' ' . $item4->id]['id'] = $id++;
+                                $modelArr[' ' . $item4->id]['className'] = $item4->classFk->oxouno;
+                                $modelArr[' ' . $item4->id]['prodArr'] = [];
+                            }
+                        }
+                    }
+                }
+            }
+
+            return $tree;
+        }
+
+        function fillTopTree(&$tree, $prods)
+        {
+            foreach ($prods as $prod) {
+                if (!$prod['divId']) {
+                    continue;
+                }
+
+                $div = &$tree['items'][$prod['divId']];
+                $collection = &$div['children'][$prod['collectionId']];
+                $sex = &$collection['children'][$prod['sex']];
+                $model = &$sex['children'][$prod['modelId']];
+                $model['prodArr'][] = $prod['cardProd'];
+            }
+
+            return $tree;
+        }
+
+        function restructItems($items)
+        {
+            foreach ($items as &$item) {
+                if (isset($item['children'])) {
+                    $item['children'] = restructItems($item['children']);
+                }
+            }
+            return array_values($items);
+        }
+
+        function restructTree(&$tree)
+        {
+            $tree['items'] = restructItems($tree['items']);
+            return $tree;
+        }
+
+        function makeBottomTree($prods)
+        {
+            $prods = array_filter($prods, function ($prod) {
+                return $prod['divId'] === null;
+            });
+
+            $discount = array_column($prods, 'discount');
+            $groupSort = array_column($prods, 'groupSort');
+            $sexSort = array_column($prods, 'sexSort');
+            $modelSort = array_column($prods, 'modelSort');
+            array_multisort($discount, $groupSort, $sexSort, $modelSort, $prods);
+
+            $id = 0;
+
+            $tree['items'] = [];
+
+            $discountArr = &$tree['items'];
+
+            foreach ($prods as $prod) {
+                if (!isset($discountArr[$prod['discount']])) {
+                    $discountArr[$prod['discount']]['name'] = 'Скидка ' . $prod['discount'] . '%';
+                    $discountArr[$prod['discount']]['id'] = $id++;
+                    $discountArr[$prod['discount']]['children'] = [];
+                }
+
+                $groupArr = &$discountArr[$prod['discount']]['children'];
+
+                if (!isset($groupArr[$prod['groupId']])) {
+                    $groupArr[$prod['groupId']]['name'] = $prod['group'];
+                    $groupArr[$prod['groupId']]['id'] = $id++;
+                    $groupArr[$prod['groupId']]['children'] = [];
+                }
+
+                $sexArr = &$groupArr[$prod['groupId']]['children'];
+
+                if (!isset($sexArr[$prod['sex']])) {
+                    $sexArr[$prod['sex']]['name'] = $prod['sex'];
+                    $sexArr[$prod['sex']]['id'] = $id++;
+                    $sexArr[$prod['sex']]['children'] = [];
+                }
+
+                $modelArr = &$sexArr[$prod['sex']]['children'];
+
+                if (!isset($modelArr[$prod['modelId']])) {
+                    $modelArr[$prod['modelId']]['name'] = $prod['model'];
+                    $modelArr[$prod['modelId']]['className'] = $prod['className'];
+                    $modelArr[$prod['modelId']]['id'] = $id++;
+                    $modelArr[$prod['modelId']]['prodArr'] = [];
+                }
+            }
+
+            return $tree;
+        }
+
+        function fillBottomTree($tree, $prods)
+        {
+            $prods = array_filter($prods, function ($prod) {
+                return $prod['divId'] === null;
+            });
+
+            $discountArr = &$tree['items'];
+
+            foreach ($prods as $prod) {
+                $groupArr = &$discountArr[$prod['discount']]['children'];
+                $sexArr = &$groupArr[$prod['groupId']]['children'];
+                $modelArr = &$sexArr[$prod['sex']]['children'];
+
+                $prodArrFromModel = &$modelArr[$prod['modelId']]['prodArr'];
+                $prodArrFromModel[] = $prod['cardProd'];
+            }
+
+            return $tree;
+        }
+
+        $prods = getProds();
+        $normalizedProds = normalizeProds($prods, $sexTranslate);
+        $topTree = makeTopTree($sexLvlTree);
+        $bottomTree = makeBottomTree($normalizedProds);
+
+        $topTree = fillTopTree($topTree, $normalizedProds);
+        $bottomTree = fillBottomTree($bottomTree, $normalizedProds);
+
+        $topTree = restructTree($topTree);
+        $bottomTree = restructTree($bottomTree);
+
+        return [
+            'topTree' => $topTree,
+            'bottomTree' => $bottomTree
+        ];
+    }
+
     const actionTree = 'GET /v1/pr-stor-prod/tree';
 
     /**
      * Возвращает список изделий для страницы "Склад v3"
+     * @param bool $fillTree
      * @return array
-     * @throws \Exception
      */
-    public function actionTree()
+    public function actionTree($fillTree = false)
     {
         $male = [
             'name' => 'Мужчинам',
@@ -761,6 +1190,7 @@ class PrStorProdController extends ActiveControllerExtended
                 // Наименование
                 $classId = $prod->blankFk->modelFk->class_fk;
                 $classText = $prod->blankFk->modelFk->classFk->title;
+                $className = $prod->blankFk->modelFk->classFk->oxouno;
 
                 // Модель
 
@@ -842,6 +1272,7 @@ class PrStorProdController extends ActiveControllerExtended
                     'group' => $groupText,
                     'groupSort' => $groupSort,
                     'class' => $classText,
+                    'className' => $className,
                     'collectionId' => $collectionId,
                     'collection' => $collectionText,
                     'modelId' => $modelId,
@@ -869,6 +1300,7 @@ class PrStorProdController extends ActiveControllerExtended
 
             foreach ($list1 as $item1) {
                 $cDiv[' ' . $item1->id]['name'] = $item1->name;
+                $cDiv[' ' . $item1->id]['id'] = $item1->id;
                 $cDiv[' ' . $item1->id]['collectionArr'] = [];
                 $cDiv[' ' . $item1->id]['prodArr'] = [];
                 $cDiv[' ' . $item1->id]['count'] = 0;
@@ -881,6 +1313,7 @@ class PrStorProdController extends ActiveControllerExtended
 
                 foreach ($list2 as $item2) {
                     $collectionArr[' ' . $item2->id]['name'] = $item2->name;
+                    $collectionArr[' ' . $item2->id]['id'] = $item2->id;
                     $collectionArr[' ' . $item2->id]['sexArr'] = [];
                     $collectionArr[' ' . $item2->id]['prodArr'] = [];
                     $collectionArr[' ' . $item2->id]['count'] = 0;
@@ -931,6 +1364,8 @@ class PrStorProdController extends ActiveControllerExtended
                         foreach ($list4 as $item4) {
                             if (!isset($modelArr[' ' . $item4->id])) {
                                 $modelArr[' ' . $item4->id]['name'] = $item4->fashion;
+                                $modelArr[' ' . $item4->id]['id'] = $item4->id;
+                                $modelArr[' ' . $item4->id]['className'] = $item4->classFk->oxouno;
                                 $modelArr[' ' . $item4->id]['prodArr'] = [];
                                 $modelArr[' ' . $item4->id]['count'] = 0;
                                 $modelArr[' ' . $item4->id]['price'] = 0;
@@ -943,7 +1378,7 @@ class PrStorProdController extends ActiveControllerExtended
             return $tree;
         }
 
-        function fillTopTree($tree, $prods)
+        function fillTopTree(&$tree, $prods)
         {
             foreach ($prods as $prod) {
                 if (!$prod['divId']) {
@@ -999,6 +1434,7 @@ class PrStorProdController extends ActiveControllerExtended
             foreach ($prods as $prod) {
                 if (!isset($discountArr[$prod['discount']])) {
                     $discountArr[$prod['discount']]['name'] = 'Скидка ' . $prod['discount'] . '%';
+                    $discountArr[$prod['discount']]['value'] = $prod['discount'];
                     $discountArr[$prod['discount']]['groupArr'] = [];
                     $discountArr[$prod['discount']]['prodArr'] = [];
                     $discountArr[$prod['discount']]['count'] = 0;
@@ -1009,6 +1445,7 @@ class PrStorProdController extends ActiveControllerExtended
 
                 if (!isset($groupArr[$prod['groupId']])) {
                     $groupArr[$prod['groupId']]['name'] = $prod['group'];
+                    $groupArr[$prod['groupId']]['id'] = $prod['groupId'];
                     $groupArr[$prod['groupId']]['sexArr'] = [];
                     $groupArr[$prod['groupId']]['prodArr'] = [];
                     $groupArr[$prod['groupId']]['count'] = 0;
@@ -1029,10 +1466,28 @@ class PrStorProdController extends ActiveControllerExtended
 
                 if (!isset($modelArr[$prod['modelId']])) {
                     $modelArr[$prod['modelId']]['name'] = $prod['model'];
+                    $modelArr[$prod['modelId']]['id'] = $prod['modelId'];
                     $modelArr[$prod['modelId']]['prodArr'] = [];
                     $modelArr[$prod['modelId']]['count'] = 0;
                     $modelArr[$prod['modelId']]['price'] = 0;
                 }
+            }
+
+            return $tree;
+        }
+
+        function fillBottomTree($tree, $prods)
+        {
+            $prods = array_filter($prods, function ($prod) {
+                return $prod['divId'] === null;
+            });
+
+            $discountArr = &$tree['discountArr'];
+
+            foreach ($prods as $prod) {
+                $groupArr = &$discountArr[$prod['discount']]['groupArr'];
+                $sexArr = &$groupArr[$prod['groupId']]['sexArr'];
+                $modelArr = &$sexArr[$prod['sex']]['modelArr'];
 
                 $prodArrFromDiscount = &$discountArr[$prod['discount']]['prodArr'];
                 $prodArrFromGroup = &$groupArr[$prod['groupId']]['prodArr'];
@@ -1048,6 +1503,9 @@ class PrStorProdController extends ActiveControllerExtended
                 $discountArr[$prod['discount']]['count'] += $prod['count'];
                 $groupArr[$prod['groupId']]['count'] += $prod['count'];
                 $sexArr[$prod['sex']]['count'] += $prod['count'];
+                if (!isset($modelArr[$prod['modelId']]['count'])) {
+                    $dddd = 10;
+                }
                 $modelArr[$prod['modelId']]['count'] += $prod['count'];
 
                 $tree['price'] += $prod['price'];
@@ -1063,8 +1521,12 @@ class PrStorProdController extends ActiveControllerExtended
         $prods = getProds();
         $normalizedProds = normalizeProds($prods, $sexTranslate);
         $topTree = makeTopTree($sexLvlTree);
-        $topTree = fillTopTree($topTree, $normalizedProds);
         $bottomTree = makeBottomTree($normalizedProds);
+
+        if ($fillTree) {
+            $topTree = fillTopTree($topTree, $normalizedProds);
+            $bottomTree = fillBottomTree($bottomTree, $normalizedProds);
+        }
 
         return [
             'topTree' => $topTree,

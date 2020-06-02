@@ -14,6 +14,7 @@ use app\modules\v1\models\log\LogEvent;
 use app\modules\v1\models\ref\RefArtBlank;
 use app\modules\v1\models\ref\RefBlankSex;
 use app\modules\v1\models\ref\RefBlankTheme;
+use app\modules\v1\models\ref\RefCollection;
 use app\modules\v1\models\ref\RefEan;
 use app\modules\v1\models\ref\RefFabricType;
 use app\modules\v1\models\ref\RefProdPack;
@@ -27,6 +28,7 @@ class CardProd
     // ? public $printId; // OXO-NNNN-PPP
 
     public $prodId; // OXO-NNNN
+    public $printId;
 
     public $titleStr;
     public $art;
@@ -43,6 +45,23 @@ class CardProd
     public $flagRest; // 1 - если есть остатки на складе по этому изделию
     public $discount;
     public $discountPrice;
+    public $categoryStr;
+    public $collectionStr;
+    public $groupStr;
+    public $hClientArt;
+
+    public $price_5xs;
+    public $price_4xs;
+    public $price_3xs;
+    public $price_2xs;
+    public $price_xs;
+    public $price_s;
+    public $price_m;
+    public $price_l;
+    public $price_xl;
+    public $price_2xl;
+    public $price_3xl;
+    public $price_4xl;
 
     /**
      * CardProd constructor.
@@ -50,7 +69,7 @@ class CardProd
      * @param ProdRest $prodRest
      * @throws \Exception
      */
-    function __construct($objProd, $prodRest = null)
+    function __construct($objProd, &$prodRest = null)
     {
         $this->prodId = $objProd->calcProdId();
         $this->titleStr = $objProd->fields()['titleStr']();
@@ -60,6 +79,10 @@ class CardProd
         $this->minPrice = $objProd->fields()['minPrice']();
         $this->sizes = $objProd->fields()['sizes']();
 
+        foreach (Sizes::prices as $fSize => $fPrice) {
+            $this->$fPrice = $objProd->$fPrice;
+        }
+
 
         $prod = isset($objProd->blank_fk) ? $objProd->blankFk : $objProd;
 
@@ -67,6 +90,11 @@ class CardProd
         $this->modelFk = $prod->modelFk;
         $this->themeFk = $prod->themeFk;
 
+        $this->categoryStr = $objProd->collection_fk ? $objProd->collectionFk->divFk->name : '';
+        $this->collectionStr = $objProd->collection_fk ? $objProd->collectionFk->name : '';
+        $this->groupStr = $prod->modelFk->classFk->groupFk->title;
+
+        $this->printId = isset($objProd->print_fk) ? $objProd->print_fk : 1;
         $this->printFk = isset($objProd->print_fk) ? $objProd->printFk : RefProdPrint::findOne(['id' => 1]);
 
         // Всегда полиэтилен todo !!!
@@ -77,7 +105,7 @@ class CardProd
         if ($prodRest) {
             foreach (Sizes::fields as $fSize) {
                 $rest = $prodRest->getAvailForOrder($this->prodId, $this->printFk->id, 1, $fSize);
-                if($rest > 0) {
+                if ($rest > 0) {
                     $this->flagRest = 1;
                     break;
                 }
@@ -85,7 +113,9 @@ class CardProd
         }
 
         $this->discount = $objProd->fields()['discount']();
-        $this->discountPrice = $this->minPrice * (1 - $this->discount / 100);
+        $this->discountPrice = round($this->minPrice * (1 - $this->discount / 100));
+
+        $this->hClientArt = $prod->hClientArt($this->printId);
     }
 
 
@@ -242,4 +272,53 @@ class CardProd
             'availableRefFabricType' => $availableRefFabricType
         ];
     }
+
+    /**
+     * Вернуть все изделия соответствующие фильтрам
+     * @param $form -
+     * @return array
+     * @throws \Exception
+     */
+    static public function getByFilters2($form)
+    {
+        $form = json_decode($form, true);
+        $categoryID = isset($form['categoryID']) ? $form['categoryID'] : null;
+        $collectionID = isset($form['collectionID']) ? $form['collectionID'] : null;
+        $sexName = isset($form['sexName']) ? $form['sexName'] : null;
+        $sexTitles = RefBlankSex::calcSexTagsToRealTitles([$sexName]);
+        $modelID = isset($form['modelID']) ? $form['modelID'] : null;
+        $discountNumber = isset($form['discountNumber']) ? $form['discountNumber'] : null;
+        $groupID = isset($form['groupID']) ? $form['groupID'] : null;
+
+
+        $filteredProds = RefArtBlank::readFilterProds2($categoryID, $collectionID, $sexTitles, $modelID, $discountNumber, $groupID);
+        $filteredProdsPrint = RefProductPrint::readFilterProds2($categoryID, $collectionID, $sexTitles, $modelID, $discountNumber, $groupID);
+
+        $prodRests = new ProdRest();
+
+        /** @var $arrCards CardProd[] */
+        $arrCards = [];
+        foreach (array_merge($filteredProds, $filteredProdsPrint) as $prod) {
+            $arrCards[] = new CardProd($prod, $prodRests);
+        }
+
+        CardProd::sort($arrCards);
+
+        LogEvent::log(LogEvent::filterCatalog);
+
+
+        /** @var RefCollection $refCollection */
+        $refCollection = null;
+
+        if ($collectionID && !$sexName && !$modelID) {
+            /** @var RefCollection $refCollection */
+            $refCollection = RefCollection::findOne(['id' => $collectionID]);
+        }
+
+        return [
+            'prods' => $arrCards,
+            'collection' => $refCollection
+        ];
+    }
+
 }

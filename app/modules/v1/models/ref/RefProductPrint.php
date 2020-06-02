@@ -15,6 +15,7 @@ use app\gii\GiiRefProductPrint;
 use app\modules\AppMod;
 use app\modules\v1\classes\ActiveRecordExtended;
 use app\modules\v1\classes\CardProd;
+use app\objects\Prices;
 
 /**
  * Class RefBlankClass
@@ -286,24 +287,37 @@ class RefProductPrint extends GiiRefProductPrint
     }
 
     /**
-     * @param $filterProds
+     * @param $refProductPrints
      * @return array|\yii\db\ActiveRecord[]
      */
-    static function readForPrice($filterProds)
+    static function readForPrice($groupId, $categoryId, $sexId, $refProductPrints, $mode)
     {
         $prods = self::find()
-            ->where(['flag_price' => 1])
-            ->orderBy('blank_fk DESC, print_fk DESC')
-            ->all();
+            ->joinWith('blankFk.modelFk.sexFk')
+            ->joinWith('collectionFk.divFk')
+            ->joinWith('blankFk.modelFk.classFk.groupFk')
+            ->where([
+                'ref_product_print.flag_price' => 1,
+                'ref_blank_model.sex_fk' => $sexId
+            ]);
 
-        $prods = array_filter($prods, function ($prod) use ($filterProds) {
+        if ($mode === 'assort') {
+            $prods = $prods->andWhere(['ref_collect_div.id' => $categoryId]);
+        }
+        if ($mode === 'discount') {
+            $prods = $prods->andWhere(['ref_blank_group.id' => $groupId]);
+        }
+
+        $prods = $prods->orderBy('blank_fk DESC, print_fk DESC')->all();
+
+        /** @var RefProductPrint[] $prods */
+        $prods = array_filter($prods, function ($prod) use ($refProductPrints) {
             /** @var RefProductPrint $prod */
-            /** @var CardProd $filterProd */
 
             $addToProds = false;
 
-            foreach ($filterProds as $filterProd) {
-                if (($prod->blank_fk === $filterProd->prodId) && ($prod->print_fk === $filterProd->printFk->id)) {
+            foreach ($refProductPrints as $refProductPrint) {
+                if (($prod->blank_fk === $refProductPrint[0]) && ($prod->print_fk === $refProductPrint[1])) {
                     $addToProds = true;
                     break;
                 }
@@ -313,5 +327,40 @@ class RefProductPrint extends GiiRefProductPrint
         });
 
         return $prods;
+    }
+
+    /**
+     * Вернуть продукты по фильтрам
+     * @param $categoryID
+     * @param $collectionID
+     * @param $sexTitles
+     * @param $modelID
+     * @param $discountNumber
+     * @param $groupID
+     * @return array|self[]
+     */
+    static public function readFilterProds2($categoryID, $collectionID, $sexTitles, $modelID, $discountNumber, $groupID)
+    {
+        $activeQuery = self::find()
+            ->joinWith('blankFk.modelFk.sexFk')
+            ->joinWith('blankFk.modelFk.classFk.groupFk')
+            ->joinWith('blankFk.fabricTypeFk')
+            ->joinWith('blankFk.themeFk')
+            ->joinWith('collectionFk.divFk')
+            ->filterWhere(['ref_collect_div.id' => $categoryID])
+            ->andFilterWhere(['ref_collection.id' => $collectionID])
+            ->andfilterWhere(['ref_blank_sex.title' => $sexTitles])
+            ->andfilterWhere(['ref_blank_model.id' => $modelID])
+            ->andFilterWhere(['ref_product_print.discount' => $discountNumber])
+            ->andFilterWhere(['ref_blank_group.id' => $groupID])
+            ->andWhere(['ref_product_print.flag_price' => 1]);
+
+        if ($discountNumber === null) {
+            $activeQuery = $activeQuery->andWhere('ref_product_print.collection_fk IS NOT NULL');
+        } else {
+            $activeQuery = $activeQuery->andWhere('ref_product_print.collection_fk IS NULL');
+        }
+
+        return $activeQuery->all();
     }
 }
