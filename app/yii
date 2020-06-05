@@ -15,7 +15,7 @@ if (in_array(gethostname(), ['tsrz-apc', 'apc', 'dell-apc', 'DESKTOP-7Q5VD89']))
     //xdebug_disable();
 }
 
-define('CURRENT_API_URL', 'https://api.textileadmin.ru');
+define('CURRENT_API_URL', 'http://api.textileadmin.loc');
 
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/vendor/yiisoft/yii2/Yii.php';

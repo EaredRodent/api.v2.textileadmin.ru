@@ -73,6 +73,7 @@ class Permissions
     const roleV3Anna = 'roleV3Anna'; // Кассир тгн
     const roleV3Krivinosova = 'roleV3Krivinosova'; //
     const roleV3Client = 'roleV3Client'; // Роль человека, который только выставляет счета
+    const roleOksanaGnibidenko = 'roleOksanaGnibidenko'; // Оксана Гнибиденко
 
     const roles = [
         self::roleGuest => [
@@ -180,6 +181,9 @@ class Permissions
         ],
         self::roleStorRostov => [
             self::taskStorRests,
+        ],
+        self::roleOksanaGnibidenko => [
+          self::taskOksanaGnibidenko,
         ],
 
         // v3
@@ -425,6 +429,11 @@ class Permissions
      */
     const taskLogError = 'taskLogError';
 
+    /**
+     * Доступ к странице остатки на складе v3
+     */
+    const taskOksanaGnibidenko = 'taskOksanaGnibidenko';
+
     const tasks = [
 
         self::taskMaster => [
@@ -650,6 +659,12 @@ class Permissions
 
             self::pageReportsProdRest,
             self::pageReportsProdRest2,
+            self::pageReportsProdRest3,
+        ],
+
+        self::taskOksanaGnibidenko => [
+            CardProdController::actionGetCard,
+            PrStorProdController::actionTree,
             self::pageReportsProdRest3,
         ],
 
