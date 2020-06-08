@@ -129,7 +129,7 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
      * @return string
      * @throws \yii\base\Exception
      */
-    public function fillAuthData($urlKey = true)
+    public function fillAuthData()
     {
         $password = AnxUser::createPasswordForB2BContact();
         $hash = Yii::$app->security->generatePasswordHash($password);
@@ -138,7 +138,7 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
         $this->hash = $hash;
         $this->accesstoken = $accesstoken;
 
-        if ($urlKey) {
+        if (!$this->url_key) {
             $url_key = Yii::$app->security->generateRandomString(16);
             $this->url_key = $url_key;
         }

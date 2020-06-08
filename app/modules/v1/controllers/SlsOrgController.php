@@ -58,7 +58,7 @@ class SlsOrgController extends ActiveControllerExtended
             throw new HttpException(200, 'Такой организации не существует.', 200);
         }
 
-        if($discount < 0) {
+        if ($discount < 0) {
             throw new HttpException(200, 'Скидка не может быть отрицательной.', 200);
         }
 
@@ -140,7 +140,7 @@ class SlsOrgController extends ActiveControllerExtended
             $org->state = 'wait';
         }
 
-        if(isset($form['discount']) && $form['discount'] < 0) {
+        if (isset($form['discount']) && $form['discount'] < 0) {
             throw new HttpException(200, 'Скидка не может быть отрицательной.', 200);
         }
 

@@ -326,8 +326,16 @@ class AnxUserController extends ActiveControllerExtended
         $form = json_decode($form, true);
 
         if (isset($form['id'])) {
+            /** @var AnxUser $user */
             $user = AnxUser::get($form['id']);
+
+            $lastLogin = $user->login;
+
             $user->attributes = $form;
+
+            if($user->login !== $lastLogin) {
+                $user->status = 0;
+            }
         } else {
             $user = new AnxUser();
             $user->attributes = $form;
@@ -336,6 +344,13 @@ class AnxUserController extends ActiveControllerExtended
             $user->hash = 'no hash';
             $user->status = 0;
             $user->auth_key = 'no auth_key';
+        }
+
+        /** @var AnxUser $tryFindAnxUser */
+        $tryFindAnxUser = AnxUser::find()->where(['login' => $form['login']])->one();
+
+        if ($tryFindAnxUser && $user->id !== $tryFindAnxUser) {
+            throw new HttpException(200, 'Такой контакт уже зарегистрирован.', 200);
         }
 
         if (!$user->save()) {
@@ -502,7 +517,7 @@ class AnxUserController extends ActiveControllerExtended
             throw new HttpException(200, 'ID восстановления не найден.', 200);
         }
 
-        $password = $user->fillAuthData(false);
+        $password = $user->fillAuthData();
         $user->restore_id = null;
         $user->save();
         $user->sendSuccessEmail($password);

@@ -231,6 +231,8 @@ class Permissions
 
     const pageSalesClients = 'pageSalesClients';
 
+    const pageSalesClientsWrite = 'pageSalesClientsWrite';
+
     const pageReportsSelling = 'pageReportsSelling';
 
     const pageSalesStatisticsB2B = 'pageSalesStatisticsB2B';
@@ -273,6 +275,7 @@ class Permissions
         self::pageReference => 'Справочник изделий',
         self::pageReferenceB2B => 'B2B',
         self::pageSalesClients => 'Отдел продаж / Клиенты',
+        self::pageSalesClientsWrite => 'Отдел продаж / Клиенты',
         self::pageReportsProduction => 'Отчеты / Производство',
         self::pageV3Invoices => 'Счета',
         self::pageV3RegPays => 'Реестр платежей',
@@ -577,6 +580,7 @@ class Permissions
         ],
 
         self::taskSalesClientsWrite => [
+            self::pageSalesClientsWrite,
             SlsOrgController::actionAccept,
             SlsOrgController::actionReject,
 
