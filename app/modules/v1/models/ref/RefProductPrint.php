@@ -126,6 +126,7 @@ class RefProductPrint extends GiiRefProductPrint
                 $resp['large'] = [];
                 $resp['medium'] = [];
                 $resp['small'] = [];
+                $resp['baseFilePath'] = '';
 
                 $path = realpath(\Yii::getAlias(AppMod::filesRout[AppMod::filesImageProdsPrints]));
 
@@ -139,7 +140,13 @@ class RefProductPrint extends GiiRefProductPrint
                     if (file_exists($fullPath)) {
                         $resp['large'][] = CURRENT_API_URL .
                             '/v1/files/public/' . AppMod::filesImageProdsPrints . '/' . $fileName;
+
+                        if(!$resp['baseFilePath']) {
+                            $resp['baseFilePath'] = $fullPath;
+                        }
                     }
+
+
 
                     $fileName = str_pad($this->blank_fk, 4, '0', STR_PAD_LEFT) . '-' .
                         str_pad($this->print_fk, 3, '0', STR_PAD_LEFT) . '_' . $i . '.md.jpg';

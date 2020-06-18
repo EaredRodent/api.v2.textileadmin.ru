@@ -118,6 +118,7 @@ class RefArtBlank extends GiiRefArtBlank
                 $resp['large'] = [];
                 $resp['medium'] = [];
                 $resp['small'] = [];
+                $resp['baseFilePath'] = '';
 
                 $path = realpath(\Yii::getAlias(AppMod::filesRout[AppMod::filesImageBaseProds]));
 
@@ -130,6 +131,10 @@ class RefArtBlank extends GiiRefArtBlank
                     if (file_exists($fullPath)) {
                         $resp['large'][] = CURRENT_API_URL .
                             '/v1/files/public/' . AppMod::filesImageBaseProds . '/' . $fileName;
+
+                        if(!$resp['baseFilePath']) {
+                            $resp['baseFilePath'] = $fullPath;
+                        }
                     }
 
                     $fileName = str_pad($this->id, 4, '0', STR_PAD_LEFT) . '_' . $i . '.md.jpg';
