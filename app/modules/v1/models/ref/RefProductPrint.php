@@ -63,6 +63,9 @@ class RefProductPrint extends GiiRefProductPrint
             'themeDescript' => function () { //
                 return $this->blankFk->themeFk->descript;
             },
+            'themePhoto' => function () { //
+                return $this->blankFk->themeFk->hGetPhotoAddr();
+            },
             'printProd' => function () { //
                 return $this->printFk->title;
             },

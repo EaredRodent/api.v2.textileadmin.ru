@@ -57,7 +57,9 @@ class RefArtBlank extends GiiRefArtBlank
             'themeDescript' => function () { //
                 return $this->themeFk->descript;
             },
-
+            'themePhoto' => function () { //
+                return $this->themeFk->hGetPhotoAddr();
+            },
             'printProd' => function () { //
                 return 'Без принта';
             },

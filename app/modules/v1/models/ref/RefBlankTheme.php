@@ -9,6 +9,7 @@
 namespace app\modules\v1\models\ref;
 
 use app\gii\GiiRefBlankTheme;
+use app\modules\AppMod;
 
 class RefBlankTheme extends GiiRefBlankTheme
 {
@@ -23,6 +24,16 @@ class RefBlankTheme extends GiiRefBlankTheme
             return "{$this->title} ({$this->descript})";
         } else {
             return "{$this->title}";
+        }
+    }
+
+    public function hGetPhotoAddr()
+    {
+        $fullPath = \Yii::getAlias(AppMod::filesRout[AppMod::filesImageThemes]) . "/theme_{$this->hArt()}.jpg";
+        if (file_exists($fullPath)) {
+            return CURRENT_API_URL . '/v1/files/public/' . AppMod::filesImageThemes . "/theme_{$this->hArt()}.jpg";
+        } else {
+            return null;
         }
     }
 }

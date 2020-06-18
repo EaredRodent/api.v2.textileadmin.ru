@@ -27,6 +27,10 @@ class AppMod
     // Файлы миниатюр для продуктов с пост обработкой
     const filesImageProdsPrints = 'filesImageProdsPrints';
 
+    // Файлы фотографий декора 100x100
+    // http://api.textileadmin.loc/v1/files/public/filesImageThemes/theme_148.jpg
+    const filesImageThemes = 'filesImageThemes';
+
     // Файлы AAA юр.лиц
     const filesB2B_DOC1 = 'filesB2B_DOC1';
 
@@ -67,6 +71,7 @@ class AppMod
         self::filesInvoiceSlsDep => '@app/../../textile/files/sls/invoices',
         self::filesImageBaseProds => '@app/../../textile/files/ref/prod',
         self::filesImageProdsPrints => '@app/../../textile/files/ref/prod-print',
+        self::filesImageThemes => '@app/../../textile/files/ref/themes',
         self::filesB2B_DOC1 => '@app/../../textile/files/b2b-docs/doc1',
         self::filesB2B_DOC2 => '@app/../../textile/files/b2b-docs/doc2',
         self::filesB2B_DOC3 => '@app/../../textile/files/b2b-docs/doc3',

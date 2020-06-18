@@ -92,6 +92,8 @@ class OxounoApiController extends ActiveControllerExtended
             $item['themeId'] = $prodObj->fields()['themeId']();
             $item['themeStr'] = $prodObj->fields()['themeStr']();
             $item['themeDescript'] = $prodObj->fields()['themeDescript']();
+            $item['themePhoto'] = $prodObj->fields()['themePhoto']();
+            //$prodObj->themeFk->hGetPhotoAddr();
             $item['print'] = $prodObj->fields()['printOxo']();
             $item['article'] = $prodObj->fields()['art']();
             $item['size'] = $ean->size;
