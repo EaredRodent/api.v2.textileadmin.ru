@@ -122,7 +122,14 @@ class CardProd
         // age
 
         $tsCreate = isset($objProd->print_fk) ? $objProd->ts_create : $objProd->dt_create;
-        $this->age = (int)((time() - strtotime($tsCreate)) / (3600 * 24));
+
+        if($this->photos['baseFilePath'] === '') {
+            $this->age = 999999;
+        } else {
+            $fctime = filemtime($this->photos['baseFilePath']);
+            $this->age = (time() - $fctime) / (3600 * 24);
+        }
+
     }
 
 
