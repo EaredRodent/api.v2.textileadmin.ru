@@ -263,6 +263,7 @@ class SlsItemController extends ActiveControllerExtended
      * @param array $tags
      * @param array $clients
      * @param array $managers
+     * @param array $types ['matrix', 'discount']
      * @param string $axisX [month|managerName|groupStr|tag|sexStr]
      * @param string $axisY
      * @param string $resultType [rowMoney|rowCount]
@@ -279,6 +280,7 @@ class SlsItemController extends ActiveControllerExtended
         array $tags = [],
         array $clients = [],
         array $managers = [],
+        array $types = [],
         $axisX = 'month',
         $axisY = 'managerName',
         $resultType = 'rowMoney',
@@ -303,6 +305,7 @@ class SlsItemController extends ActiveControllerExtended
             $tags,
             $clients,
             $managers,
+            $types,
             $axisX,
             $axisY,
             $resultType,

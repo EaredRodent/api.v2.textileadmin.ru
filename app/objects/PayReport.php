@@ -36,14 +36,24 @@ class PayReport
     // Результирующая матрица значений
     public $matrixResult = [];
 
+    private $matrixCollects = [];
+
 
     function __construct($dateStart, $dateEnd,
-                         $articles, $sex, $groups, $fabrics, $tags, $clients, $managers,
+                         $articles, $sex, $groups, $fabrics, $tags, $clients, $managers, $types,
                          $axisX, $axisY, $resultType, $sortType)
     {
 
-        // Формирование выборки по запросу
+        $prods = RefArtBlank::getAll();
+        foreach ($prods as $prod) {
+            $this->matrixCollects[$prod->id][1] = $prod->collection_fk;
+        }
+        $prodsPost = RefProductPrint::getAll();
+        foreach ($prodsPost as $prodPost) {
+            $this->matrixCollects[$prodPost->blank_fk][$prodPost->print_fk] = $prodPost->collection_fk;
+        }
 
+        // Формирование выборки по запросу
         $havingSql = "HAVING ";
         $arrayHaving = [];
 
@@ -172,7 +182,21 @@ class PayReport
         " . $havingSql;
 
         $recs = Yii::$app->db->createCommand($sql)->queryAll();
-        $this->queryResult = $recs;
+
+
+        // Если есть фильтр - отфитровать по типу "ассорт матрица"||"акционный товар"
+        if (!empty($types)) {
+            foreach ($recs as $rec) {
+                $recCollect = $this->getCollectId($rec['blank_fk'], $rec['print_fk']);
+                $recCollectStr = ($recCollect > 0) ? 'matrix' : 'discount';
+                if (in_array($recCollectStr, $types)) {
+                    $this->queryResult[] = $rec;
+                }
+            }
+        } else {
+            $this->queryResult = $recs;
+        }
+
 
         // Формирование вспомогательных переменных и отчета
         $this->axisX = $this->getUnicValues($axisX);
@@ -279,5 +303,12 @@ class PayReport
         return $arr;
     }
 
+    private function getCollectId($blankId, $printId) {
+        if (isset($this->matrixCollects[$blankId][$printId])) {
+            return $this->matrixCollects[$blankId][$printId];
+        } else {
+            return null;
+        }
+    }
 
 }
