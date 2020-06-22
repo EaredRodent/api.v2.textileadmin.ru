@@ -7,6 +7,11 @@
 
 namespace app\commands;
 
+use app\extension\Sizes;
+use app\modules\v1\models\ref\RefArtBlank;
+use app\modules\v1\models\ref\RefProductPrint;
+use app\modules\v1\models\sls\SlsItem;
+use app\modules\v1\models\sls\SlsOrder;
 use yii\console\Controller;
 use yii\console\ExitCode;
 
@@ -27,7 +32,56 @@ class HelloController extends Controller
      */
     public function actionIndex($message = 'hello world')
     {
-        echo $message . "\n";
+        /** @var SlsOrder[] $slsOrders */
+        $slsOrders = SlsOrder::find()
+            ->where(['user_fk' => 21])
+            ->andWhere(['>=', 'ts_send', '2020.00.00 00:00:00'])
+            ->andWhere(['status' => 's7_send'])
+            ->andWhere(['flag_return' => 0])
+            ->all();
+
+        $slsOrdersIDs = [];
+
+        foreach ($slsOrders as $slsOrder) {
+            $slsOrdersIDs[] = $slsOrder->id;
+        }
+
+        /** @var SlsItem[] $slsItems */
+        $slsItems = SlsItem::find()
+            ->where(['order_fk' => $slsOrdersIDs])
+            ->all();
+
+
+        $itemsCountAss = 0;
+        $itemsPriceAss = 0;
+        $itemsCountDis = 0;
+        $itemsPriceDis = 0;
+
+        foreach ($slsItems as $slsItem) {
+            if($slsItem->print_fk === 1) {
+                /** @var RefArtBlank $prod */
+                $prod = RefArtBlank::find()->where(['id' => $slsItem->blank_fk])->one();
+            } else {
+                /** @var RefProductPrint $prod */
+                $prod = RefProductPrint::find()->where(['blank_fk' => $slsItem->blank_fk, 'print_fk' => $slsItem->print_fk])->one();
+            }
+
+            $isAssortment = !!$prod->collection_fk;
+
+            foreach (Sizes::prices as $size => $price) {
+                if($slsItem->$size) {
+                    if($isAssortment) {
+                        $itemsCountAss += $slsItem->$size;
+                        $itemsPriceAss += $slsItem->$size * $slsItem->$price;
+                    } else {
+                        $itemsCountDis += $slsItem->$size;
+                        $itemsPriceDis += $slsItem->$size * $slsItem->$price;
+                    }
+                }
+            }
+        }
+
+        echo "Count ass: {$itemsCountAss}\nPrice ass: {$itemsPriceAss}\nCount dis: {$itemsCountDis}\nPrice dis: {$itemsPriceDis}\n";
 
         return ExitCode::OK;
     }
