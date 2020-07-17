@@ -52,6 +52,12 @@ class AppMod
     // Сгенерированные прайс-листы для B2B
     const filesB2B_Prices = 'filesB2B_Prices';
 
+    // Архив с сетом изображений для /outlook
+    const filesB2B_OutlookArchive = 'filesB2B_OutlookArchive';
+
+    // Сет изображений для /outlook
+    const filesB2B_OutlookImgSet = 'filesB2B_OutlookImgSet';
+
     // Типы документов для ИП
     const filesB2B_DocTypes_IP = [
         self::filesB2B_DOC1 => 'Документ 1',
@@ -79,6 +85,8 @@ class AppMod
         self::filesB2B_DOC5 => '@app/../../textile/files/b2b-docs/doc5',
         self::filesB2B_DOC6 => '@app/../../textile/files/b2b-docs/doc6',
         self::filesB2B_Prices => '@app/../../textile/files/b2b-prices',
+        self::filesB2B_OutlookImgSet => '@app/../../textile/files/b2b-outlook/img-set',
+        self::filesB2B_OutlookArchive => '@app/../../textile/files/b2b-outlook/archive'
     ];
 
     const pathProdPhoto = "@app/../../textile/files/ref/prod";

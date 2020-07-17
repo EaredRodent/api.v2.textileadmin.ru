@@ -34,7 +34,8 @@
     "ext-curl": "*",
     "phpoffice/phpspreadsheet": "^1.8",
     "ext-gd": "*",
-    "ext-imap": "*"
+    "ext-imap": "*",
+    "ext-zip": "*"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.1.0",

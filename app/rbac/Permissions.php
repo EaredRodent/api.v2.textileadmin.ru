@@ -10,6 +10,7 @@ use app\modules\v1\controllers\CardProdController;
 use app\modules\v1\controllers\GenerateController;
 use app\modules\v1\controllers\LogErrorController;
 use app\modules\v1\controllers\LogEventController;
+use app\modules\v1\controllers\OutlookController;
 use app\modules\v1\controllers\OxounoApiController;
 use app\modules\v1\controllers\PrStorProdController;
 use app\modules\v1\controllers\RefArtBlankController;
@@ -269,6 +270,8 @@ class Permissions
 
     const pageLogError = 'pageLogError';
 
+    const pageOutlookUpload = 'pageOutlookUpload';
+
     const pages = [
         self::pageRegPays => 'Реестры платежей',
         self::pageTestApi => 'Тестирование API проекта',
@@ -290,6 +293,7 @@ class Permissions
         self::pageManagementRegPaysLite => 'Счета',
         self::pageB2BAny => 'Доступ к любой странице B2B кабинета',
         self::pageLogError => 'Страница с логом ошибок',
+        self::pageOutlookUpload => 'Страница для загрузки outlook в B2B кабинет'
     ];
 
 
@@ -558,6 +562,10 @@ class Permissions
             SlsClientController::actionUploadDocsFromContact,
             SlsClientController::actionGetDocsForContact,
 
+            // Outlook
+
+            OutlookController::actionGetOutlook,
+
             self::pageB2BAny,
         ],
 
@@ -670,6 +678,9 @@ class Permissions
             CardProdController::actionGetCard,
             PrStorProdController::actionTree,
             self::pageReportsProdRest3,
+
+            self::pageOutlookUpload,
+            OutlookController::actionUploadOutlook,
         ],
 
         self::taskV3Invoices => [
