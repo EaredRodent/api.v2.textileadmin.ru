@@ -9,7 +9,6 @@
 namespace app\modules\v1\controllers;
 
 
-use app\extension\Helper;
 use app\modules\AppMod;
 use app\modules\v1\classes\ActiveControllerExtended;
 use Yii;
@@ -44,8 +43,12 @@ class OutlookController extends ActiveControllerExtended
      */
     public function actionUploadOutlook()
     {
-        $archiveDir = Yii::getAlias(AppMod::filesRout[AppMod::filesB2B_OutlookArchive]);
-        $imgSetDir = Yii::getAlias(AppMod::filesRout[AppMod::filesB2B_OutlookImgSet]) . '/';
+        $imgSetDir = Yii::getAlias(AppMod::filesRout[AppMod::filesB2B_OutlookImgSet]);
+
+        $fileNames = glob($imgSetDir . '/*.*');
+        foreach ($fileNames as $fileName) {
+            unlink($fileName);
+        }
 
         $file = array_values($_FILES)[0];
 
@@ -55,6 +58,12 @@ class OutlookController extends ActiveControllerExtended
         if ($res) {
             $zip->extractTo($imgSetDir);
             $zip->close();
+        }
+
+        $fileNames = glob($imgSetDir . '/*.*');
+        foreach ($fileNames as $fileName) {
+            $newFileName = pathinfo($fileName)['dirname'] . '/' . str_pad(pathinfo($fileName)['filename'], 4, '0', STR_PAD_LEFT) . '.' . pathinfo($fileName)['extension'];
+            rename($fileName, $newFileName);
         }
 
         // Модель не обновлялась, но нужно уведомить о загруженном файле
