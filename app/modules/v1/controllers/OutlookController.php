@@ -60,9 +60,10 @@ class OutlookController extends ActiveControllerExtended
             $zip->close();
         }
 
+        $hash = Yii::$app->security->generateRandomString(8);
         $fileNames = glob($imgSetDir . '/*.*');
         foreach ($fileNames as $fileName) {
-            $newFileName = pathinfo($fileName)['dirname'] . '/' . str_pad(pathinfo($fileName)['filename'], 4, '0', STR_PAD_LEFT) . '.' . pathinfo($fileName)['extension'];
+            $newFileName = pathinfo($fileName)['dirname'] . '/' . str_pad(pathinfo($fileName)['filename'], 4, '0', STR_PAD_LEFT) . '_' . $hash . '.' . pathinfo($fileName)['extension'];
             rename($fileName, $newFileName);
         }
 
