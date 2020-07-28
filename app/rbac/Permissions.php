@@ -108,6 +108,7 @@ class Permissions
             self::taskSalesStatisticsB2BWrite,
             self::taskManagementRegPaysLite,
             self::taskLogError,
+            self::taskOutlook,
             ///
             AnxUserController::postCreateUser,
             BaseController::actionPostTestData,
@@ -441,6 +442,11 @@ class Permissions
      */
     const taskOksanaGnibidenko = 'taskOksanaGnibidenko';
 
+    /**
+     * Outlook
+     */
+    const taskOutlook = 'taskOutlook';
+
     const tasks = [
 
         self::taskMaster => [
@@ -564,6 +570,7 @@ class Permissions
 
             // Outlook
 
+            OutlookController::actionGetOutlookMeta,
             OutlookController::actionGetOutlook,
 
             self::pageB2BAny,
@@ -678,9 +685,6 @@ class Permissions
             CardProdController::actionGetCard,
             PrStorProdController::actionTree,
             self::pageReportsProdRest3,
-
-            self::pageOutlookUpload,
-            OutlookController::actionUploadOutlook,
         ],
 
         self::taskV3Invoices => [
@@ -775,7 +779,12 @@ class Permissions
             self::pageLogError,
             LogErrorController::actionGetClientAll,
             LogErrorController::actionGetServerAll,
-        ]
+        ],
+
+        self::taskOutlook => [
+            self::pageOutlookUpload,
+            OutlookController::actionUploadOutlook,
+        ],
     ];
 
 

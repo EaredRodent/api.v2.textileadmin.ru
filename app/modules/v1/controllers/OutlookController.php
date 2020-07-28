@@ -18,19 +18,46 @@ class OutlookController extends ActiveControllerExtended
 {
     public $modelClass = '';
 
+    const actionGetOutlookMeta = 'GET /v1/outlook/get-outlook-meta';
+
+    /**
+     * Outlook meta
+     */
+    function actionGetOutlookMeta() {
+        $imgSetDir = Yii::getAlias(AppMod::filesRout[AppMod::filesB2B_OutlookImgSet]);
+        $dirs = glob($imgSetDir . '/*', GLOB_ONLYDIR);
+        $meta = [];
+
+        foreach ($dirs as $dir) {
+            $dirName = basename($dir);
+            $dirPreviewImgDir = glob($dir . '/*.*')[0];
+            $sizes = getimagesize($dirPreviewImgDir);
+            $dirPreviewImg = pathinfo($dirPreviewImgDir)['basename'];
+            $meta[] = [
+                'name' => $dirName,
+                'previewImg' => CURRENT_API_URL . '/outlook/' . $dirName . '/' . $dirPreviewImg,
+                'width' => $sizes[0],
+                'height' => $sizes[1]
+            ];
+        }
+
+        return $meta;
+    }
+
     const actionGetOutlook = 'GET /v1/outlook/get-outlook';
 
     /**
+     * @param $archiveNumber
      * @return array
      */
-    function actionGetOutlook()
+    function actionGetOutlook($archiveNumber)
     {
-        $dir = Yii::getAlias(AppMod::filesRout[AppMod::filesB2B_OutlookImgSet]);
+        $dir = Yii::getAlias(AppMod::filesRout[AppMod::filesB2B_OutlookImgSet]) . '/' . $archiveNumber;
         $fileNames = glob($dir . '/*.*');
         $fileUrls = [];
 
         foreach ($fileNames as $fileName) {
-            $fileUrls[] = CURRENT_API_URL . '/v1/files/public/filesB2B_OutlookImgSet/' . pathinfo($fileName)['basename'];
+            $fileUrls[] = CURRENT_API_URL . '/outlook/' . $archiveNumber . '/' . pathinfo($fileName)['basename'];
         }
 
         return $fileUrls;
@@ -40,14 +67,21 @@ class OutlookController extends ActiveControllerExtended
 
     /**
      * Upload outlook
+     * @param $archiveNumber
+     * @throws \yii\base\Exception
      */
-    public function actionUploadOutlook()
+    public function actionUploadOutlook($archiveNumber)
     {
-        $imgSetDir = Yii::getAlias(AppMod::filesRout[AppMod::filesB2B_OutlookImgSet]);
+        $imgSetDir = Yii::getAlias(AppMod::filesRout[AppMod::filesB2B_OutlookImgSet]) . '/' . $archiveNumber;
 
-        $fileNames = glob($imgSetDir . '/*.*');
-        foreach ($fileNames as $fileName) {
-            unlink($fileName);
+        if(file_exists($imgSetDir)) {
+            $fileNames = glob($imgSetDir . '/*.*');
+            foreach ($fileNames as $fileName) {
+                unlink($fileName);
+            }
+            rmdir($imgSetDir);
+        } else {
+            mkdir($imgSetDir);
         }
 
         $file = array_values($_FILES)[0];
