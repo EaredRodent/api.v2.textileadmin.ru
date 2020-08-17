@@ -14,7 +14,7 @@ use omnilight\scheduling\Schedule;
  */
 $schedule->call(function () {
    (new CBR())->init();
-})->hourly();
+})->everyFiveMinutes();
 
 $schedule->call(function () {
    (new OrderCleaner())->init();
