@@ -245,7 +245,7 @@ class SlsOrderController extends ActiveControllerExtended
         $sumNormalize = number_format($order->summ_order);
 
         ServTelegramSend::send(AppMod::tgBotOxounoB2b, AppMod::tgGroupOxounoB2b,
-            "Поступил новый заказ №{$order->id} на сумму {$sumNormalize} руб. от клиента {$order->clientFk->orgFk->name}");
+            "Поступил новый заказ №{$order->id} на сумму {$sumNormalize} руб. от клиента \"{$order->clientFk->orgFk->name}\"");
 
         LogEvent::log(LogEvent::commitOrder, json_encode(['id' => $order->id, 'summ_order' => $order->summ_order]));
 

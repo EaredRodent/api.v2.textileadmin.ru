@@ -280,7 +280,7 @@ class AnxUserController extends ActiveControllerExtended
         }
 
         ServTelegramSend::send(AppMod::tgBotOxounoB2b, AppMod::tgGroupOxounoB2b,
-            "Новая заявка на регистрацию: {$slsOrg->name}, {$slsOrg->location}");
+            "Новая заявка на регистрацию для \"{$slsOrg->name}\" ({$slsOrg->location})");
 
         return ['_result_' => 'success'];
     }

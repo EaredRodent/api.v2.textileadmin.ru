@@ -84,8 +84,11 @@ class SlsOrgController extends ActiveControllerExtended
             $contact->sendSuccessEmail($password);
         }
 
+        /** @var AnxUser $acceptBy */
+        $acceptBy = Yii::$app->user->identity;
+
         ServTelegramSend::send(AppMod::tgBotOxounoB2b, AppMod::tgGroupOxounoB2b,
-            "Регистрация Клиента {$org->name} {$org->location} одобрена");
+            "Регистрация для \"{$org->name} {$org->location}\" одобрена пользователем {$acceptBy->name}");
 
         return ['_result_' => 'success'];
     }
