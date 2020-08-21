@@ -242,7 +242,7 @@ class SlsOrderController extends ActiveControllerExtended
             throw new HttpException(200, 'Внутренняя ошибка.', 200);
         }
 
-        $sumNormalize = number_format($order->summ_order);
+        $sumNormalize = number_format($order->summ_order, 0, '.', ' ');
 
         ServTelegramSend::send(AppMod::tgBotOxounoB2b, AppMod::tgGroupOxounoB2b,
             "Поступил новый заказ №{$order->id} на сумму {$sumNormalize} руб. от клиента \"{$order->clientFk->orgFk->name}\"");
