@@ -2,6 +2,7 @@
 
 namespace app\commands\schedule;
 
+use app\commands\schedule\tasks\CacheB2B;
 use app\commands\schedule\tasks\CBR;
 use app\commands\schedule\tasks\OrderCleaner;
 use omnilight\scheduling\Schedule;
@@ -18,4 +19,8 @@ $schedule->call(function () {
 
 $schedule->call(function () {
    (new OrderCleaner())->init();
+})->everyMinute();
+
+$schedule->call(function () {
+   (new CacheB2B())->init();
 })->everyMinute();

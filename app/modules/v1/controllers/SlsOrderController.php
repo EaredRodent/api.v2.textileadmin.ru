@@ -167,7 +167,9 @@ class SlsOrderController extends ActiveControllerExtended
             /** @var AnxUser $contact */
             $contact = Yii::$app->getUser()->getIdentity();
             /** @var SlsClient[] $legalEntities */
-            $legalEntities = SlsClient::findAll(['org_fk' => $contact->org_fk]);
+            $legalEntities = SlsClient::find()
+                ->where(['org_fk' => $contact->org_fk])
+                ->all();
         }
 
         $legalEntitiesIds = [];

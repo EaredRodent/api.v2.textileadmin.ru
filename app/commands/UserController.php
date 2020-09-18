@@ -15,6 +15,21 @@ use yii\console\Controller;
 
 class UserController extends Controller
 {
+    public function actionGetPassword() {
+        $password = AnxUser::createPasswordForB2BContact();
+        $hash = Yii::$app->security->generatePasswordHash($password);
+
+        var_dump($password, $hash);
+    }
+
+    public function actionHashFromPassword($password) {
+        echo Yii::$app->security->generatePasswordHash($password);
+    }
+
+    public function actionCmpHash($password, $hash) {
+        var_dump(Yii::$app->security->validatePassword($password, $hash));
+    }
+
     public function actionCreate($name, $login, $password, $project, $role) {
         $hash = Yii::$app->security->generatePasswordHash($password);
         $accesstoken = Yii::$app->security->generateRandomString(32);

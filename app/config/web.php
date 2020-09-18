@@ -70,6 +70,10 @@ $config = [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'cacheB2B' => [
+            'class' => 'yii\caching\FileCache',
+            'cachePath' => '@app/../b2b-cache'
+        ],
         'user' => [
             'identityClass' => 'app\models\AnxUser',
             'enableAutoLogin' => true,
