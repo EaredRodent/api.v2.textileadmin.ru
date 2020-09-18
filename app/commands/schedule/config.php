@@ -23,4 +23,4 @@ $schedule->call(function () {
 
 $schedule->call(function () {
    (new CacheB2B())->init();
-})->everyThirtyMinutes();
+})->everyMinute();
