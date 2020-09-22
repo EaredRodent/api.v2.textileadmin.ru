@@ -18,10 +18,10 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
     public function fields()
     {
         $fields = array_merge(parent::fields(), [
-            'orgFk',
-            'lastActivity' => function () {
-                return $this->getLastActivity();
-            }
+            'orgFk'
+//            'lastActivity' => function () {
+//                return $this->getLastActivity();
+//            }
         ]);
 
 

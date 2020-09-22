@@ -626,11 +626,11 @@ class Permissions
         ],
 
         self::taskSalesStatisticsB2BAccess => [
-            self::pageSalesStatisticsB2B,
-            self::pageUsersOutdatedBrowsersLog,
-            AnxUserController::actionGetAllContacts,
-            LogEventController::actionGetEvents,
-            LogEventController::actionGetOutdatedBrowsers,
+//            self::pageSalesStatisticsB2B,
+//            self::pageUsersOutdatedBrowsersLog,
+//            AnxUserController::actionGetAllContacts,
+//            LogEventController::actionGetEvents,
+//            LogEventController::actionGetOutdatedBrowsers,
         ],
 
         self::taskSalesStatisticsB2BWrite => [
