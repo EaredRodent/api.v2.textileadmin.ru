@@ -19,9 +19,6 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
     {
         $fields = array_merge(parent::fields(), [
             'orgFk'
-//            'lastActivity' => function () {
-//                return $this->getLastActivity();
-//            }
         ]);
 
 
@@ -181,24 +178,6 @@ class AnxUser extends GiiAnxUser implements \yii\web\IdentityInterface
         if ($result['resp'] !== 'ok') {
             throw new HttpException(200, 'Ошибка отправки почты "' . $result['resp'] . '"', 200);
         }
-    }
-
-
-    public function getLastActivity()
-    {
-        $lastActivity = '';
-
-        /** @var LogEvent[] $logEvents */
-        $logEvents = LogEvent::find()
-            ->where(['user_fk' => $this->id])
-            ->orderBy('ts_create DESC')
-            ->all();
-
-        if (count($logEvents)) {
-            $lastActivity = $logEvents[0]->ts_create;
-        }
-
-        return $lastActivity;
     }
 
     public function getLogin()

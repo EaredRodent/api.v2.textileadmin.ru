@@ -27,12 +27,14 @@ use Yii;
  * @property string|null $accesstoken
  * @property int|null $org_fk если юзер контактное лицо клиента b2b - то тут ссылка на свмого клиента
  * @property string|null $restore_id
+ * @property string|null $last_activity
  *
  * @property AmfilesDirectory[] $amfilesDirectories
  * @property AmfilesFile[] $amfilesFiles
  * @property AnxCmdLog[] $anxCmdLogs
  * @property AnxDbLog[] $anxDbLogs
  * @property SlsOrg $orgFk
+ * @property LogError[] $logErrors
  * @property LogEvent[] $logEvents
  * @property PrInventItem[] $prInventItems
  * @property PrTsdItem[] $prTsdItems
@@ -68,6 +70,7 @@ class GiiAnxUser extends ActiveRecordExtended
             [['project'], 'string'],
             [['login', 'name', 'role', 'status', 'hash', 'auth_key'], 'required'],
             [['status', 'org_fk'], 'integer'],
+            [['last_activity'], 'safe'],
             [['login', 'name', 'role', 'phone', 'auth_key'], 'string', 'max' => 45],
             [['hash'], 'string', 'max' => 60],
             [['url_key'], 'string', 'max' => 16],
@@ -96,6 +99,7 @@ class GiiAnxUser extends ActiveRecordExtended
             'accesstoken' => 'Accesstoken',
             'org_fk' => 'Org Fk',
             'restore_id' => 'Restore ID',
+            'last_activity' => 'Last Activity',
         ];
     }
 
@@ -147,6 +151,16 @@ class GiiAnxUser extends ActiveRecordExtended
     public function getOrgFk()
     {
         return $this->hasOne(SlsOrg::className(), ['id' => 'org_fk']);
+    }
+
+    /**
+     * Gets query for [[LogErrors]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLogErrors()
+    {
+        return $this->hasMany(LogError::className(), ['contact_fk' => 'id']);
     }
 
     /**

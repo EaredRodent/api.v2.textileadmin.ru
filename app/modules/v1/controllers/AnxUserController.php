@@ -148,7 +148,8 @@ class AnxUserController extends ActiveControllerExtended
 
         $permissions = array_keys($am->getPermissionsByUser($user->getId()));
 
-        LogEvent::log(LogEvent::login);
+//        LogEvent::log(LogEvent::login);
+        $user->last_activity = date('Y-m-d H:i:s');
 
         return [
             'id' => $user->id,
@@ -436,6 +437,7 @@ class AnxUserController extends ActiveControllerExtended
     function actionGetAllContacts()
     {
         $contacts = AnxUser::find()
+//            ->with('orgFk')
             ->where(['project' => 'b2b'])
             ->all();
 
@@ -445,10 +447,10 @@ class AnxUserController extends ActiveControllerExtended
          * @return int
          */
         $compareCallback = function ($a, $b) {
-            if ($a->getLastActivity() < $b->getLastActivity()) {
+            if ($a->last_activity < $b->last_activity) {
                 return 1;
             }
-            if ($b->getLastActivity() < $a->getLastActivity()) {
+            if ($b->last_activity < $a->last_activity) {
                 return -1;
             }
             return 0;
