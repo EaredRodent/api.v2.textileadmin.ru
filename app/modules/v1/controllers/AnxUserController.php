@@ -150,6 +150,7 @@ class AnxUserController extends ActiveControllerExtended
 
 //        LogEvent::log(LogEvent::login);
         $user->last_activity = date('Y-m-d H:i:s');
+        $user->save();
 
         return [
             'id' => $user->id,
