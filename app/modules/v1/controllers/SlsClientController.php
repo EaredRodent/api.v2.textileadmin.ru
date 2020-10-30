@@ -340,7 +340,7 @@ class SlsClientController extends ActiveControllerExtended
                     $basename = pathinfo($file)['basename'];
                     $docTypeObj['files'][] = [
                         'name' => $filename,
-                        'url' => CURRENT_API_URL . '/v1/files/get/6spdsd4d44fsdaf89034/' . $docTypeDir . '/' . $basename
+                        'url' => CURRENT_API_URL . '/v1/files/get/' . AppMod::apiFilesGetPublicKey . '/' . $docTypeDir . '/' . $basename
                     ];
                 }
 

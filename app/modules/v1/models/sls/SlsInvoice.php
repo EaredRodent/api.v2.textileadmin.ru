@@ -43,14 +43,11 @@ class SlsInvoice extends GiiSlsInvoice
                 $invoiceId = $this->id;
                 $mask = $pathToFiles . "/{$invoiceId}-*.*";
                 $names = glob($mask);
-
-                /** @var AnxUser $contact */
-                $contact = Yii::$app->getUser()->getIdentity();
-                $urlKey = $contact->url_key;
+                $publicKey = AppMod::apiFilesGetPublicKey;
 
                 foreach ($names as $path) {
                     $baseName = basename($path);
-                    $files[] = CURRENT_API_URL . "/v1/files/get/{$urlKey}/filesInvoiceAttachement/{$baseName}";
+                    $files[] = CURRENT_API_URL . "/v1/files/get/{$publicKey}/filesInvoiceAttachement/{$baseName}";
                 }
                 return $files;
             },

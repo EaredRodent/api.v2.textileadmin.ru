@@ -67,7 +67,7 @@ class FilesController extends Controller
      */
     public function actionGet($key, $dir, $name)
     {
-        if ($key === "6spdsd4d44fsdaf89034") {
+        if ($key === AppMod::apiFilesGetPublicKey) {
             return $this->actionPublic($dir, $name);
         } else {
             throw new HttpException(403, 'Нет доступа');
