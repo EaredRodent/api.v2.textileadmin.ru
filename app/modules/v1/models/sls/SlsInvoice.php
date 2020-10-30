@@ -10,6 +10,7 @@ namespace app\modules\v1\models\sls;
 
 
 use app\gii\GiiSlsInvoice;
+use app\models\AnxUser;
 use app\modules\AppMod;
 use Yii;
 use yii\db\ActiveRecord;
@@ -42,8 +43,14 @@ class SlsInvoice extends GiiSlsInvoice
                 $invoiceId = $this->id;
                 $mask = $pathToFiles . "/{$invoiceId}-*.*";
                 $names = glob($mask);
+
+                /** @var AnxUser $contact */
+                $contact = Yii::$app->getUser()->getIdentity();
+                $urlKey = $contact->url_key;
+
                 foreach ($names as $path) {
-                    $files[] = \basename($path);
+                    $baseName = basename($path);
+                    $files[] = CURRENT_API_URL . "/v1/files/get/{$urlKey}/filesInvoiceAttachement/{$baseName}";
                 }
                 return $files;
             },
