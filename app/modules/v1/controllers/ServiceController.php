@@ -71,7 +71,7 @@ class ServiceController extends ActiveControllerExtended
                 ->setMethod('GET')
                 ->setUrl('https://api.github.com/repos/ralex123/' . $projectName . '/branches/' . $branch)
                 ->setHeaders([
-                    'User-Agent' => 'x3RABBITx3',
+                    'User-Agent' => 'earedrodent@gmail.com',
                     'Authorization' => AppMod::gitHubAuthorizationHeader
                 ])
                 ->send();

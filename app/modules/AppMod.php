@@ -109,8 +109,8 @@ class AppMod
     // Секретный ключ для отправки сообщений по WS
     const wsSenderSecretKey = '149509e79053e4e2af391c01ab56fb6d646f6b434b1a3350532c4065061e3748';
 
-    // Authorization header для авторизованных запросов к GitHub API от лица x3RABBITx3
-    const gitHubAuthorizationHeader = 'Basic cmFiYml0Z2l0OTBAbWFpbC5ydTpmZDhqSWlmOGZpSWR6';
+    // Authorization header для авторизованных запросов к GitHub API от лица EaredRodent
+    const gitHubAuthorizationHeader = 'Basic ZWFyZWRyb2RlbnRAZ21haWwuY29tOmZkOGpJaWY4ZmlJZHo=';
 
     // Секретный ключ для генерации deploy.json
     const metaGenerateSecretKey = 'IuiKnzwda6xFtjeTd92K';
