@@ -37,7 +37,7 @@ class SlsInvoice extends GiiSlsInvoice
             'userFk',
             'typeFk',
             'attachment' => function () {
-                $files = [];
+                $resp = [];
                 $alias = AppMod::filesRout[AppMod::filesInvoiceAttachement];
                 $pathToFiles = realpath(Yii::getAlias($alias));
                 $invoiceId = $this->id;
@@ -47,9 +47,12 @@ class SlsInvoice extends GiiSlsInvoice
 
                 foreach ($names as $path) {
                     $baseName = basename($path);
-                    $files[] = CURRENT_API_URL . "/v1/files/get/{$publicKey}/filesInvoiceAttachement/{$baseName}";
+                    $resp[] = [
+                        'name' => $baseName,
+                        'url' => CURRENT_API_URL . "/v1/files/get/{$publicKey}/filesInvoiceAttachement/{$baseName}"
+                    ];
                 }
-                return $files;
+                return $resp;
             },
             'expired' => function () {
                 if (!$this->ts_pay) {
